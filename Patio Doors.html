@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Patio Doors | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .patio .card .stage{aspect-ratio:1/0.82;}
+  .patio .door-svg{max-height:280px;}
+  .patio.grid{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:1080px){.patio.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:640px){.patio.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="Entry Doors.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html" class="active">Patio Doors</a>
+        <a href="#">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">Patio Doors · Sliding · French · Bi-Fold</div>
+        <h1>Open the wall,<br>not just a <em>door</em>.</h1>
+        <p class="lede">Oversized sash frames, precision tandem rollers and 1" Low-E argon glass. Effortless gliding action, a smooth finished look, and the industry's most comprehensive warranty.</p>
+        <div class="hero-cta">
+          <a class="btn solid" href="#catalog">Browse patio systems</a>
+          <a class="btn ghost" href="Configurator.html">Open configurator</a>
+        </div>
+        <div class="hero-stats">
+          <div class="st"><b>6</b><span>Systems</span></div>
+          <div class="st"><b>1"</b><span>Low-E argon glass</span></div>
+          <div class="st"><b>$1,940</b><span>Starting price</span></div>
+        </div>
+      </div>
+      <div class="hero-media">
+        <image-slot id="patio-hero" shape="rounded" radius="4" placeholder="Drop patio-door lifestyle photo"></image-slot>
+        <div class="floatcard">
+          <div class="door-mini" id="hero-mini" style="width:84px;height:64px;"></div>
+          <div><b>Three Panel Slider</b><small>Sliding · OXO</small></div>
+          <div class="pr">$2,760</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <div class="wrap catalog-head" id="catalog">
+    <div class="eyebrow">The Collection</div>
+    <h2>Patio door systems</h2>
+    <p>Sliding, French, pocket and bi-fold configurations. Every system is custom-built to your opening with oversized frames and a lifetime-warranted sealed glass unit.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="wrap toolbar-inner">
+      <div class="chips" id="typeChips">
+        <button class="chip on" data-type="all">All Systems</button>
+        <button class="chip" data-type="Sliding">Sliding</button>
+        <button class="chip" data-type="French">French</button>
+        <button class="chip" data-type="Pocket">Pocket</button>
+        <button class="chip" data-type="Bi-Fold">Bi-Fold</button>
+      </div>
+      <div class="spacer"></div>
+      <span class="count" id="count"></span>
+      <select class="sortsel" id="sort">
+        <option value="featured">Featured</option>
+        <option value="price-asc">Price · Low to High</option>
+        <option value="price-desc">Price · High to Low</option>
+        <option value="az">Alphabetical · A–Z</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid patio" id="grid"></div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="wrap" style="padding:0 32px;">
+      <div class="features-inner">
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M12 4v16"/></svg>
+          <h4>Tandem rollers</h4>
+          <p>Precision steel rollers and soft-touch fin weatherstrip for an effortless glide.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M9 9v11"/></svg>
+          <h4>1" Low-E argon</h4>
+          <p>Sealed insulated units backed by a lifetime warranty against seal failure.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l9 4-9 4-9-4 9-4zM3 12l9 4 9-4M3 18l9 4 9-4"/></svg>
+          <h4>Twin-point lock</h4>
+          <p>Twin-point lock with inside and outside pulls in a matched paint finish, standard.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 5l9 7 9-7"/></svg>
+          <h4>Hidden screws</h4>
+          <p>Flush screw covers and jamb pocket covers for a clean, finished look inside and out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Doors</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li>
+          <li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li>
+          <li><a href="#">Warranty</a></li><li><a href="#">Shipping</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="doors.js"></script>
+  <script src="patio-data.js"></script>
+  <script src="cart.js"></script>
+  <script src="patio.js"></script>
+</body>
+</html>

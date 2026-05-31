@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Logo Options · doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f4ef; --surface:#fffefb; --ink:#1c1b18; --ink-2:#56534c; --ink-3:#8c887f;
+    --line:#e4e0d6; --line-2:#d3cec1; --accent:#9a6a3c; --accent-ink:#6f4a26; --black:#161513;
+    --serif:'Cormorant Garamond',Georgia,serif; --sans:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 36px;}
+  .head{padding:70px 0 40px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+  .head h1{font-family:var(--serif);font-size:60px;font-weight:500;line-height:1;margin:14px 0 0;letter-spacing:-.01em;}
+  .head p{color:var(--ink-2);max-width:50em;margin:16px 0 0;font-size:16px;line-height:1.6;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:48px 0 90px;}
+  .opt{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
+  .opt .meta{display:flex;justify-content:space-between;align-items:baseline;padding:22px 26px 0;gap:14px;}
+  .opt .meta .no{font-family:var(--serif);font-size:13px;font-weight:700;letter-spacing:.16em;color:var(--accent-ink);text-transform:uppercase;white-space:nowrap;}
+  .opt .meta .nm{font-size:12.5px;font-weight:700;letter-spacing:.03em;white-space:nowrap;}
+  .opt .rationale{padding:12px 26px 22px;color:var(--ink-2);font-size:13px;line-height:1.5;}
+  .stage{min-height:150px;display:grid;place-items:center;padding:26px 28px;background:
+    linear-gradient(180deg,#fbfaf6,#f1ece2);border-top:1px solid var(--line);overflow:hidden;}
+  .stage.dark{background:linear-gradient(180deg,#1d1b18,#121110);}
+  .row2{display:grid;grid-template-columns:1fr;}
+  .mini-row{display:flex;gap:18px;align-items:center;padding:16px 26px;background:var(--surface);}
+  .mini-row .lab{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+  .favi{width:46px;height:46px;border-radius:9px;display:grid;place-items:center;flex:none;}
+
+  /* ============ WORDMARK TREATMENTS ============ */
+  /* 1 — Serif Signature */
+  .lg1{font-family:var(--serif);font-size:50px;font-weight:600;letter-spacing:-.005em;line-height:1;color:var(--ink);}
+  .lg1 em{font-style:italic;font-weight:500;color:var(--accent);}
+  .dark .lg1{color:#f3efe7;}
+
+  /* 2 — Architect (sans uppercase tracked) */
+  .lg2{font-family:var(--sans);font-size:27px;font-weight:700;letter-spacing:.30em;text-transform:uppercase;color:var(--ink);padding-left:.30em;}
+  .lg2 b{color:var(--accent);font-weight:800;}
+  .dark .lg2{color:#f3efe7;}
+
+  /* 3 — Door-glyph lockup */
+  .lg3{display:flex;align-items:center;gap:14px;}
+  .lg3 svg{width:38px;height:54px;}
+  .lg3 .wm{font-family:var(--sans);font-size:30px;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
+  .lg3 .wm b{color:var(--accent);font-weight:700;}
+  .dark .lg3 .wm{color:#f3efe7;}
+
+  /* 4 — Monogram badge */
+  .lg4{display:flex;align-items:center;gap:16px;}
+  .lg4 .badge{width:58px;height:64px;border-radius:7px 7px 7px 7px;background:var(--black);color:#f3efe7;
+    display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}
+  .lg4 .badge::after{content:"";position:absolute;right:9px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent);}
+  .lg4 .badge span{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:.02em;padding-right:6px;}
+  .lg4 .wm{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--ink);line-height:1.05;}
+  .lg4 .wm small{display:block;font-family:var(--sans);font-size:10px;font-weight:600;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-3);margin-top:2px;}
+  .dark .lg4 .wm{color:#f3efe7;}
+  .dark .lg4 .badge{background:#f3efe7;color:var(--black);}
+
+  /* 5 — Stacked editorial */
+  .lg5{text-align:center;line-height:1;}
+  .lg5 .top{font-family:var(--serif);font-size:46px;font-weight:600;letter-spacing:.04em;color:var(--ink);}
+  .lg5 .rule{display:flex;align-items:center;gap:10px;justify-content:center;margin:8px 0 6px;}
+  .lg5 .rule i{height:1px;width:46px;background:var(--line-2);display:block;}
+  .lg5 .rule .dot{width:4px;height:4px;border-radius:50%;background:var(--accent);}
+  .lg5 .bot{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--accent-ink);padding-left:.42em;}
+  .dark .lg5 .top{color:#f3efe7;}
+  .dark .lg5 .rule i{background:rgba(255,255,255,.2);}
+  .dark .lg5 .bot{color:var(--accent);}
+
+  /* 6 — Continuity dot (modern sans) */
+  .lg6{font-family:var(--sans);font-size:38px;font-weight:700;letter-spacing:-.02em;color:var(--ink);}
+  .lg6 i{color:var(--accent);font-style:normal;}
+  .dark .lg6{color:#f3efe7;}
+
+  /* favicon variants */
+  .favi.f-black{background:var(--black);}
+  .favi.f-cream{background:#f1ece2;}
+  .favi.f-accent{background:var(--accent);}
+  .fv-serif{font-family:var(--serif);font-weight:700;font-size:24px;}
+  .fv-sans{font-family:var(--sans);font-weight:800;font-size:20px;letter-spacing:-.02em;}
+
+  @media(max-width:900px){.grid{grid-template-columns:1fr;}.head h1{font-size:44px;}}
+</style>
+</head>
+<body>
+  <div class="wrap head">
+    <div class="eyebrow">Brand exploration</div>
+    <h1>doorbyyou — logo directions</h1>
+    <p>Six wordmark directions for the rename, each shown on light and dark. The name reads “door · by · you” — built by you — so most marks lean on that three-part rhythm with the warm bronze used as the single accent. Tell me which direction (or hybrid) you want and I’ll apply it across the whole site; the storefront currently ships with <b>Option 1</b> as the working default.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+
+      <!-- 1 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 01</span><span class="nm">Serif Signature</span></div>
+        <div class="rationale">Keeps the storefront’s Cormorant serif. “by” turns italic and bronze so the full phrase reads at a glance. Elegant, editorial, premium — the safest evolution of the current look.</div>
+        <div class="row2">
+          <div class="stage"><span class="lg1">door<em>by</em>you</span></div>
+          <div class="stage dark"><span class="lg1">door<em>by</em>you</span></div>
+        </div>
+        <div class="mini-row"><span class="lab">Favicon</span>
+          <div class="favi f-black"><span class="fv-serif" style="color:#f3efe7">d<span style="color:var(--accent)">.</span></span></div>
+          <div class="favi f-cream"><span class="fv-serif" style="color:var(--ink)">d<span style="color:var(--accent)">.</span></span></div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 02</span><span class="nm">Architect</span></div>
+        <div class="rationale">All-caps sans with wide architectural tracking — feels engineered and precise, fitting for custom-built doors. “BY” in bronze splits the phrase into three beats.</div>
+        <div class="row2">
+          <div class="stage"><span class="lg2">DOOR<b>BY</b>YOU</span></div>
+          <div class="stage dark"><span class="lg2">DOOR<b>BY</b>YOU</span></div>
+        </div>
+        <div class="mini-row"><span class="lab">Favicon</span>
+          <div class="favi f-black"><span class="fv-sans" style="color:#f3efe7">D<b style="color:var(--accent)">B</b>Y</span></div>
+          <div class="favi f-accent"><span class="fv-sans" style="color:#fff">DBY</span></div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 03</span><span class="nm">Door Mark</span></div>
+        <div class="rationale">A minimal arch-top door glyph with a bronze knob pairs with a clean sans wordmark. Gives you a standalone icon for app tiles, signage and social.</div>
+        <div class="row2">
+          <div class="stage">
+            <span class="lg3">
+              <svg viewBox="0 0 40 60" fill="none"><path d="M5 58 L5 20 Q5 4 20 4 Q35 4 35 20 L35 58 Z" stroke="#1c1b18" stroke-width="2.4"/><path d="M11 58 L11 22 Q11 11 20 11 Q29 11 29 22 L29 58" stroke="#1c1b18" stroke-width="1.4" opacity=".5"/><circle cx="26.5" cy="36" r="2.1" fill="#9a6a3c"/></svg>
+              <span class="wm">door<b>by</b>you</span>
+            </span>
+          </div>
+          <div class="stage dark">
+            <span class="lg3">
+              <svg viewBox="0 0 40 60" fill="none"><path d="M5 58 L5 20 Q5 4 20 4 Q35 4 35 20 L35 58 Z" stroke="#f3efe7" stroke-width="2.4"/><path d="M11 58 L11 22 Q11 11 20 11 Q29 11 29 22 L29 58" stroke="#f3efe7" stroke-width="1.4" opacity=".45"/><circle cx="26.5" cy="36" r="2.1" fill="#9a6a3c"/></svg>
+              <span class="wm">door<b>by</b>you</span>
+            </span>
+          </div>
+        </div>
+        <div class="mini-row"><span class="lab">App icon</span>
+          <div class="favi f-black"><svg viewBox="0 0 40 60" width="22" height="33" fill="none"><path d="M5 58 L5 20 Q5 4 20 4 Q35 4 35 20 L35 58 Z" stroke="#f3efe7" stroke-width="3"/><circle cx="26.5" cy="36" r="2.6" fill="#9a6a3c"/></svg></div>
+          <div class="favi f-cream"><svg viewBox="0 0 40 60" width="22" height="33" fill="none"><path d="M5 58 L5 20 Q5 4 20 4 Q35 4 35 20 L35 58 Z" stroke="#1c1b18" stroke-width="3"/><circle cx="26.5" cy="36" r="2.6" fill="#9a6a3c"/></svg></div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 04</span><span class="nm">Monogram Badge</span></div>
+        <div class="rationale">A door-proportioned “d.” tile gives a compact, ownable mark; the serif wordmark with a tracked tagline sits alongside for the full lockup.</div>
+        <div class="row2">
+          <div class="stage">
+            <span class="lg4"><span class="badge"><span>d</span></span><span class="wm">doorbyyou<small>Custom · Built by you</small></span></span>
+          </div>
+          <div class="stage dark">
+            <span class="lg4"><span class="badge"><span>d</span></span><span class="wm">doorbyyou<small>Custom · Built by you</small></span></span>
+          </div>
+        </div>
+        <div class="mini-row"><span class="lab">Favicon</span>
+          <div class="favi f-black"><span class="fv-serif" style="color:#f3efe7">d</span></div>
+          <div class="favi f-accent"><span class="fv-serif" style="color:#fff">d</span></div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 05</span><span class="nm">Stacked Editorial</span></div>
+        <div class="rationale">“DOOR” leads in serif with “BY YOU” tracked beneath a hairline rule — a centred, luxury-catalogue lockup that works beautifully on covers and packaging.</div>
+        <div class="row2">
+          <div class="stage"><span class="lg5"><div class="top">DOOR</div><div class="rule"><i></i><span class="dot"></span><i></i></div><div class="bot">by you</div></span></div>
+          <div class="stage dark"><span class="lg5"><div class="top">DOOR</div><div class="rule"><i></i><span class="dot"></span><i></i></div><div class="bot">by you</div></span></div>
+        </div>
+        <div class="mini-row"><span class="lab">Favicon</span>
+          <div class="favi f-black"><span class="fv-serif" style="color:#f3efe7">D</span></div>
+          <div class="favi f-cream"><span class="fv-serif" style="color:var(--ink)">D</span></div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="opt">
+        <div class="meta"><span class="no">Option 06</span><span class="nm">Continuity Dot</span></div>
+        <div class="rationale">A tight, modern sans set lowercase with the bronze period carried over from the original mark — instantly recognisable, scales down to the smallest favicon.</div>
+        <div class="row2">
+          <div class="stage"><span class="lg6">doorbyyou<i>.</i></span></div>
+          <div class="stage dark"><span class="lg6">doorbyyou<i>.</i></span></div>
+        </div>
+        <div class="mini-row"><span class="lab">Favicon</span>
+          <div class="favi f-black"><span class="fv-sans" style="color:#f3efe7">d<i style="color:var(--accent);font-style:normal">.</i></span></div>
+          <div class="favi f-cream"><span class="fv-sans" style="color:var(--ink)">d<i style="color:var(--accent);font-style:normal">.</i></span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

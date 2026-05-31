@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Windows | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .win .card .stage{aspect-ratio:1/0.96;}
+  .win .door-svg{max-height:240px;}
+  .win.grid{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:1080px){.win.grid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:760px){.win.grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="Entry Doors.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html" class="active">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">Windows · Vinyl &amp; Aluminum</div>
+        <h1>More light,<br>less <em>energy</em>.</h1>
+        <p class="lede">Custom replacement windows with Low-E argon glass and fusion-welded frames. Tilt-in sashes, lifetime-warranted seals and a precise fit to every opening.</p>
+        <div class="hero-cta">
+          <a class="btn solid" href="Windows Configurator.html">Build your window</a>
+          <a class="btn ghost" href="#catalog">Browse windows</a>
+        </div>
+        <div class="hero-stats">
+          <div class="st"><b>8</b><span>Styles</span></div>
+          <div class="st"><b>Low-E</b><span>Argon glass</span></div>
+          <div class="st"><b>$268</b><span>Starting price</span></div>
+        </div>
+      </div>
+      <div class="hero-media">
+        <image-slot id="win-hero" shape="rounded" radius="4" placeholder="Drop window lifestyle photo"></image-slot>
+        <div class="floatcard">
+          <div class="door-mini" id="hero-mini" style="width:78px;height:78px;"></div>
+          <div><b>Casement</b><small>Crank-out · Black</small></div>
+          <div class="pr">$396</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap catalog-head" id="catalog">
+    <div class="eyebrow">The Collection</div>
+    <h2>Replacement windows</h2>
+    <p>Hung, casement, slider, picture and specialty shapes — every window custom-built to your opening with energy-efficient sealed glass.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="wrap toolbar-inner">
+      <div class="chips" id="typeChips">
+        <button class="chip on" data-type="all">All Styles</button>
+        <button class="chip" data-type="Hung">Hung</button>
+        <button class="chip" data-type="Casement">Casement / Awning</button>
+        <button class="chip" data-type="Slider">Slider</button>
+        <button class="chip" data-type="Fixed">Picture</button>
+        <button class="chip" data-type="Special">Bay / Bow</button>
+      </div>
+      <div class="spacer"></div>
+      <span class="count" id="count"></span>
+      <select class="sortsel" id="sort">
+        <option value="featured">Featured</option>
+        <option value="price-asc">Price · Low to High</option>
+        <option value="price-desc">Price · High to Low</option>
+        <option value="az">Alphabetical · A–Z</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="wrap"><div class="grid win" id="grid"></div></div>
+
+  <section class="features">
+    <div class="wrap" style="padding:0 32px;">
+      <div class="features-inner">
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 12h16M12 4v16"/></svg><h4>Low-E argon glass</h4><p>Dual-pane sealed units with a soft-coat Low-E layer and argon fill for year-round comfort.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7l8-4 8 4v10l-8 4-8-4V7z" stroke-linejoin="round"/></svg><h4>Fusion-welded frames</h4><p>Multi-chamber frames welded at the corners for strength and a draft-free seal.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v6M12 21v-3M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="3"/></svg><h4>Tilt-in cleaning</h4><p>Sashes tilt inward so you can clean both sides from inside the house.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg><h4>Lifetime warranty</h4><p>Glass, frame and hardware backed by our transferable lifetime limited warranty.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="doors.js"></script>
+  <script src="windows-data.js"></script>
+  <script src="cart.js"></script>
+  <script src="windows.js"></script>
+</body>
+</html>

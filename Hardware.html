@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Hardware, Sidelites &amp; Transoms | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .sec{padding:64px 0;border-bottom:1px solid var(--line);}
+  .sec h2{font-family:var(--serif);font-size:36px;font-weight:500;margin:6px 0 0;}
+  .sec .lead{color:var(--ink-2);max-width:46em;margin:12px 0 30px;}
+  .hw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .hw{background:var(--surface);border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .hw .hs{aspect-ratio:1/1;background:linear-gradient(180deg,#f3efe6,#e6dfcf);display:grid;place-items:center;padding:26px;}
+  .hw .hs svg{width:100%;height:100%;}
+  .hw .ht{padding:15px 16px 17px;}
+  .hw .ht b{font-family:var(--serif);font-size:18px;font-weight:600;display:block;}
+  .hw .ht .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:3px;}
+  .hw .ht span{font-size:12px;color:var(--ink-3);letter-spacing:.04em;}
+  .hw .ht .pr{font-family:var(--serif);font-size:17px;font-weight:600;}
+  .hinge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .hinge{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:20px;display:flex;gap:14px;align-items:center;}
+  .hinge .dot{width:44px;height:44px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.18) inset;}
+  .hinge b{font-family:var(--serif);font-size:18px;font-weight:600;display:block;}
+  .hinge span{font-size:12.5px;color:var(--ink-3);}
+  .st-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;}
+  .st-stage{background:linear-gradient(180deg,#f1ece2,#e6dfcf);border:1px solid var(--line);border-radius:4px;
+    min-height:480px;display:grid;place-items:center;padding:30px;}
+  .st-stage .door-svg{max-height:440px;width:100%;}
+  .st-opts .opt-row{margin-bottom:18px;}
+  @media(max-width:1080px){.hw-grid,.hinge-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:900px){.st-wrap{grid-template-columns:1fr;}.st-stage{order:-1;}}
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="Entry Doors.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="#">Windows</a>
+        <a href="Hardware.html" class="active">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap crumb"><a href="Entry Doors.html">Home</a><span>/</span><span style="color:var(--ink-2)">Hardware</span></div>
+
+  <div class="wrap doc-hero" style="padding:40px 0 10px;">
+    <div class="eyebrow">Finishing touches</div>
+    <h2 style="font-family:var(--serif);font-size:52px;font-weight:500;margin:8px 0 0;line-height:1;">Hardware &amp; surrounds</h2>
+    <p style="font-size:17px;color:var(--ink-2);max-width:42em;margin:16px 0 0;line-height:1.6;">Handles, locks, hinges, sidelites and transoms — every option that wraps your door. Mix and match, then carry your picks straight into the configurator.</p>
+  </div>
+
+  <!-- HANDLES -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="eyebrow">Handles &amp; locks</div>
+      <h2>Pulls, levers &amp; multi-point locks</h2>
+      <p class="lead">Every door is prepped for a multi-point lock as standard. Choose the exterior pull or set that suits the look.</p>
+      <div class="hw-grid" id="handleGrid"></div>
+    </div>
+  </section>
+
+  <!-- HINGES -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="eyebrow">Hinges</div>
+      <h2>Ball-bearing hinge finishes</h2>
+      <p class="lead">Heavy-duty 4" ball-bearing hinges, finished to coordinate with your handle and lock.</p>
+      <div class="hinge-grid" id="hingeGrid"></div>
+    </div>
+  </section>
+
+  <!-- SIDELITES & TRANSOMS -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="eyebrow">Surrounds</div>
+      <h2>Sidelites &amp; transoms</h2>
+      <p class="lead">Frame your entry with glass. Preview combinations live, then fine-tune everything in the configurator.</p>
+      <div class="st-wrap">
+        <div class="st-stage"><div id="stPreview" style="width:100%;"></div></div>
+        <div class="st-opts">
+          <div class="opt"><div class="lbl" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:11px;">Sidelites</div>
+            <div class="opt-row" id="slRow"></div></div>
+          <div class="opt"><div class="lbl" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin:18px 0 11px;">Transom</div>
+            <div class="opt-row" id="trRow"></div></div>
+          <div class="opt"><div class="lbl" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin:18px 0 11px;">Glass</div>
+            <div class="opt-row" id="glRow"></div></div>
+          <div style="margin-top:26px;"><a class="btn solid" href="Configurator.html">Build it in the configurator</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Doors</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Configurator.html">Configurator</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="#">Warranty</a></li>
+          <li><a href="#">Shipping</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="doors.js"></script>
+  <script src="cart.js"></script>
+  <script src="hardware.js"></script>
+</body>
+</html>

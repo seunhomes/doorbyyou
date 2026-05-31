@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Cart &amp; Checkout | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .co-head{padding:34px 0 0;}
+  .co-head h1{font-family:var(--serif);font-size:46px;font-weight:500;margin:8px 0 0;}
+  .co-grid{display:grid;grid-template-columns:1.5fr .9fr;gap:46px;padding:30px 0 80px;align-items:start;}
+  .lines{display:flex;flex-direction:column;}
+  .line{display:grid;grid-template-columns:84px 1fr auto;gap:18px;padding:22px 0;border-top:1px solid var(--line);align-items:center;}
+  .line:first-child{border-top:none;}
+  .line .thumb{width:84px;height:84px;border-radius:4px;background:linear-gradient(180deg,#f1ece2,#e4ddcd);
+    display:grid;place-items:center;overflow:hidden;}
+  .line .thumb .door-svg{max-height:74px;}
+  .line .nm{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.05;}
+  .line .sb{font-size:12.5px;color:var(--ink-3);margin-top:3px;}
+  .line .rm{font-size:12px;color:var(--ink-3);background:none;border:none;cursor:pointer;margin-top:8px;padding:0;text-decoration:underline;}
+  .line .rm:hover{color:var(--ink);}
+  .qty{display:inline-flex;align-items:center;border:1px solid var(--line-2);border-radius:100px;overflow:hidden;}
+  .qty button{width:32px;height:32px;border:none;background:var(--surface);cursor:pointer;font-size:16px;color:var(--ink);}
+  .qty button:hover{background:#efece4;}
+  .qty span{min-width:30px;text-align:center;font-weight:600;font-size:14px;}
+  .line .lp{font-family:var(--serif);font-size:22px;font-weight:600;text-align:right;min-width:96px;}
+  .empty-cart{padding:80px 0;text-align:center;}
+  .empty-cart h2{font-family:var(--serif);font-size:34px;font-weight:500;margin:0 0 8px;}
+  .empty-cart p{color:var(--ink-2);margin:0 0 22px;}
+
+  .summary-card{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:26px;position:sticky;top:96px;}
+  .summary-card h3{font-family:var(--serif);font-size:24px;font-weight:600;margin:0 0 18px;}
+  .srow{display:flex;justify-content:space-between;font-size:14px;padding:9px 0;color:var(--ink-2);}
+  .srow.big{border-top:1px solid var(--line);margin-top:8px;padding-top:16px;font-size:16px;color:var(--ink);align-items:baseline;}
+  .srow.big b{font-family:var(--serif);font-size:30px;font-weight:600;}
+  .summary-card .btn{width:100%;justify-content:center;margin-top:20px;}
+  .co-note{font-size:12px;color:var(--ink-3);margin-top:14px;display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
+  .co-note svg{width:15px;height:15px;color:var(--accent);flex:none;margin-top:1px;}
+
+  /* checkout form (revealed) */
+  .checkout{display:none;}
+  .checkout.on{display:block;}
+  .cart-view.hide{display:none;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:6px;}
+  .field input,.field select{width:100%;font-family:inherit;font-size:14px;padding:11px 13px;border:1px solid var(--line-2);
+    border-radius:var(--radius);background:var(--surface);color:var(--ink);}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
+  .field.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field.row > div{display:flex;flex-direction:column;}
+  .fs-title{font-family:var(--serif);font-size:22px;font-weight:600;margin:26px 0 14px;}
+  .fs-title:first-child{margin-top:0;}
+  .ok-screen{text-align:center;padding:70px 0;display:none;}
+  .ok-screen.on{display:block;}
+  .ok-screen .check{width:74px;height:74px;border-radius:50%;background:var(--accent);display:grid;place-items:center;margin:0 auto 20px;}
+  .ok-screen h2{font-family:var(--serif);font-size:40px;font-weight:500;margin:0 0 10px;}
+  .ok-screen p{color:var(--ink-2);max-width:34em;margin:0 auto 24px;}
+  @media(max-width:900px){.co-grid{grid-template-columns:1fr;gap:30px;}.summary-card{position:static;}}
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="Entry Doors.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap co-head">
+    <div class="eyebrow" id="crumbEyebrow">Your cart</div>
+    <h1 id="coTitle">Cart</h1>
+  </div>
+
+  <!-- CART VIEW -->
+  <div class="wrap cart-view" id="cartView">
+    <div class="co-grid">
+      <div class="lines" id="lines"></div>
+      <aside class="summary-card" id="summary"></aside>
+    </div>
+  </div>
+
+  <!-- CHECKOUT VIEW -->
+  <div class="wrap checkout" id="checkoutView">
+    <div class="co-grid">
+      <form id="coForm" onsubmit="return false;">
+        <div class="fs-title">Contact</div>
+        <div class="field"><label>Email</label><input type="email" required placeholder="you@email.com" /></div>
+        <div class="field"><label>Phone</label><input type="tel" required placeholder="(555) 555-5555" /></div>
+
+        <div class="fs-title">Shipping address</div>
+        <div class="field"><label>Full name</label><input required placeholder="Jordan Avery" /></div>
+        <div class="field"><label>Street address</label><input required placeholder="123 Main St" /></div>
+        <div class="field row">
+          <div><label>City</label><input required placeholder="Austin" /></div>
+          <div><label>State</label><input required placeholder="TX" /></div>
+        </div>
+        <div class="field row">
+          <div><label>ZIP</label><input required placeholder="78701" /></div>
+          <div><label>Country</label><select><option>United States</option></select></div>
+        </div>
+
+        <div class="fs-title">Payment</div>
+        <div class="field"><label>Card number</label><input required placeholder="•••• •••• •••• ••••" /></div>
+        <div class="field row">
+          <div><label>Expiry</label><input required placeholder="MM / YY" /></div>
+          <div><label>CVC</label><input required placeholder="•••" /></div>
+        </div>
+        <div class="co-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>This is a demo checkout — no card is charged and no data is sent anywhere.</div>
+      </form>
+      <aside class="summary-card" id="summary2"></aside>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="wrap ok-screen" id="okScreen">
+    <div class="check"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2"><path d="M5 12l4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2>Order placed</h2>
+    <p>Thanks! A confirmation is on its way. Our team will reach out to schedule a final measurement before your doors go into production.</p>
+    <a class="btn solid" href="Entry Doors.html">Continue shopping</a>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="doors.js"></script>
+  <script src="patio-data.js"></script>
+  <script src="windows-data.js"></script>
+  <script src="cart.js"></script>
+  <script src="checkout.js"></script>
+</body>
+</html>

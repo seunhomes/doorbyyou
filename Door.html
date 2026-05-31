@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Door | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;padding:26px 0 70px;align-items:start;}
+  .pdp-stage{position:sticky;top:96px;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
+    border:1px solid var(--line);border-radius:4px;padding:34px;min-height:560px;display:grid;place-items:center;}
+  .pdp-stage .door-svg{max-height:520px;width:100%;}
+  .pdp-thumbs{display:flex;gap:10px;margin-top:16px;justify-content:center;}
+  .pdp-thumb{width:54px;height:54px;border-radius:50%;border:2px solid transparent;cursor:pointer;
+    box-shadow:0 0 0 1px rgba(0,0,0,.18) inset;}
+  .pdp-thumb.on{border-color:var(--accent);}
+  .pdp-info h1{font-family:var(--serif);font-size:52px;font-weight:600;line-height:.98;margin:8px 0 0;}
+  .pdp-price{font-family:var(--serif);font-size:40px;font-weight:600;margin:18px 0 2px;}
+  .pdp-price small{display:block;font-family:var(--sans);font-size:12px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  .pdp-desc{color:var(--ink-2);font-size:15px;line-height:1.65;margin:14px 0 0;max-width:42em;}
+  .grp{padding:22px 0;border-top:1px solid var(--line);}
+  .grp:first-of-type{border-top:none;}
+  .grp .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
+    display:flex;justify-content:space-between;margin-bottom:12px;}
+  .grp .lbl b{color:var(--ink);font-weight:600;letter-spacing:0;text-transform:none;font-size:13px;}
+  .pdp-cta{display:flex;gap:12px;margin-top:8px;}
+  .pdp-cta .btn{flex:1;justify-content:center;}
+  .ship-note{display:flex;gap:18px;margin-top:18px;flex-wrap:wrap;}
+  .ship-note div{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2);}
+  .ship-note svg{width:16px;height:16px;color:var(--accent);}
+
+  /* specs + guide band */
+  .band{border-top:1px solid var(--line);background:var(--surface);}
+  .band-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;padding:70px 0;}
+  .band h2{font-family:var(--serif);font-size:34px;font-weight:500;margin:0 0 22px;}
+  table.specs{width:100%;border-collapse:collapse;}
+  table.specs td{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top;}
+  table.specs td:first-child{color:var(--ink-3);width:38%;font-weight:600;letter-spacing:.02em;}
+  .acc-item{border-bottom:1px solid var(--line);}
+  .acc-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:18px 0;
+    font-family:var(--serif);font-size:21px;font-weight:600;}
+  .acc-head .pm{width:22px;height:22px;position:relative;flex:none;}
+  .acc-head .pm::before,.acc-head .pm::after{content:"";position:absolute;background:var(--accent);}
+  .acc-head .pm::before{left:0;right:0;top:10px;height:2px;}
+  .acc-head .pm::after{top:0;bottom:0;left:10px;width:2px;transition:.2s;}
+  .acc-item.open .pm::after{transform:scaleY(0);}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .acc-body .inner{padding:0 0 20px;color:var(--ink-2);font-size:14px;line-height:1.65;}
+  .acc-body ol{margin:0;padding-left:18px;display:grid;gap:9px;}
+  .related{padding:64px 0 80px;}
+  @media(max-width:900px){
+    .pdp{grid-template-columns:1fr;gap:30px;}
+    .pdp-stage{position:static;min-height:0;}
+    .band-inner{grid-template-columns:1fr;gap:40px;}
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="Entry Doors.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html" class="active">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="#">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap crumb">
+    <a href="Entry Doors.html">Entry Doors</a><span>/</span><a id="crumbMat" href="Entry Doors.html">Fiberglass</a><span>/</span><span id="crumbName" style="opacity:1;color:var(--ink-2)">Door</span>
+  </div>
+
+  <div class="wrap pdp">
+    <div>
+      <div class="pdp-stage"><div id="visual" style="width:100%;"></div></div>
+      <div class="pdp-thumbs" id="thumbs"></div>
+    </div>
+    <div class="pdp-info" id="info"></div>
+  </div>
+
+  <!-- specs + measuring guide -->
+  <section class="band">
+    <div class="wrap band-inner">
+      <div>
+        <h2>Specifications</h2>
+        <table class="specs" id="specs"></table>
+      </div>
+      <div>
+        <h2>Measuring &amp; install</h2>
+        <div id="guide">
+          <div class="acc-item open">
+            <div class="acc-head">Measure the rough opening<span class="pm"></span></div>
+            <div class="acc-body"><div class="inner"><ol>
+              <li>For a prehung door system, measure the <b>rough opening</b> — the framed hole in the wall — at its width and height.</li>
+              <li>Take the width in three places (top, middle, bottom) and use the smallest. Do the same for height.</li>
+              <li>Standard prehung units need roughly <b>2"–2½"</b> more than the door slab in both directions for shimming.</li>
+            </ol></div></div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-head">Slab-only replacement<span class="pm"></span></div>
+            <div class="acc-body"><div class="inner"><ol>
+              <li>Measure the existing <b>slab</b> itself — width, height and thickness — not the frame.</li>
+              <li>Most steel &amp; fiberglass 36" slabs measure about <b>35¾"</b> wide and a 6'8" slab about <b>79"–79¼"</b> tall.</li>
+              <li>Match the <b>hinge hand</b> (left or right) and bore locations to your existing door.</li>
+            </ol></div></div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-head">Thickness &amp; clearance<span class="pm"></span></div>
+            <div class="acc-body"><div class="inner"><ol>
+              <li>Standard entry doors are <b>1¾"</b> thick. Confirm your jamb depth matches the wall.</li>
+              <li>Allow a sweep gap at the threshold; the bottom seal is not included in slab height.</li>
+              <li>8' (96") tall and double-door configurations can be special-ordered in the configurator.</li>
+            </ol></div></div>
+          </div>
+        </div>
+        <div style="margin-top:24px;"><a class="btn ghost sm" href="Measuring Guide.html">Full measuring guide →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- related -->
+  <div class="wrap related">
+    <div class="catalog-head" style="padding:0 0 8px;"><div class="eyebrow">You may also like</div><h2 style="font-size:32px;">Related doors</h2></div>
+    <div class="grid" id="related" style="padding:28px 0 0;"></div>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Doors</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li>
+          <li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li>
+          <li><a href="#">Warranty</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li>
+          <li><a href="#">Reviews</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="doors.js"></script>
+  <script src="visualizer.js"></script>
+  <script src="cart.js"></script>
+  <script src="builds.js"></script>
+  <script src="detail.js"></script>
+</body>
+</html>

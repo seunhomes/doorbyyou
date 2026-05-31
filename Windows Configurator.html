@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Window Configurator | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .cfg-head{padding:30px 0 0;}
+  .cfg-head h1{font-family:var(--serif);font-size:40px;font-weight:500;margin:8px 0 0;}
+  .steps{display:flex;gap:0;margin:26px 0 0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);}
+  .step{flex:1;display:flex;gap:12px;align-items:center;padding:16px 20px;border-right:1px solid var(--line);font-size:13px;color:var(--ink-3);}
+  .step:last-child{border-right:none;}
+  .step .n{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;}
+  .step.active{color:var(--ink);}
+  .step.active .n{background:var(--black);border-color:var(--black);color:#fff;}
+  .step.done .n{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .step b{font-weight:600;letter-spacing:.02em;}
+
+  .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
+  .cfg-preview{position:sticky;top:96px;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
+    border:1px solid var(--line);border-radius:4px;min-height:540px;display:grid;place-items:center;padding:32px;}
+  .cfg-preview .door-svg{max-height:460px;width:auto;}
+  .cfg-preview .empty{color:var(--ink-3);text-align:center;font-size:14px;}
+  .cfg-pane h2{font-family:var(--serif);font-size:30px;font-weight:600;margin:0 0 4px;}
+  .cfg-pane .sub{color:var(--ink-2);font-size:14px;margin:0 0 22px;}
+
+  .mat-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .mat-card{border:1.5px solid var(--line-2);border-radius:4px;padding:24px;cursor:pointer;background:var(--surface);transition:.15s;}
+  .mat-card:hover{border-color:var(--ink-3);}
+  .mat-card.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);}
+  .mat-card h3{font-family:var(--serif);font-size:24px;font-weight:600;margin:0 0 6px;}
+  .mat-card p{font-size:13px;color:var(--ink-2);margin:0 0 14px;line-height:1.5;}
+  .mat-card .from{font-size:12px;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase;}
+
+  .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-height:560px;overflow:auto;padding:2px;}
+  .model{border:1.5px solid var(--line);border-radius:4px;cursor:pointer;overflow:hidden;background:var(--surface);transition:.15s;}
+  .model:hover{border-color:var(--ink-3);}
+  .model.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);}
+  .model .ms{aspect-ratio:1/1;background:linear-gradient(180deg,#f3efe6,#e6dfcf);display:grid;place-items:center;padding:14px;}
+  .model .ms .door-svg{max-height:150px;}
+  .model .mt{padding:9px 11px 11px;}
+  .model .mt b{font-family:var(--serif);font-size:16px;font-weight:600;display:block;}
+  .model .mt span{font-size:11px;color:var(--ink-3);}
+
+  .grp{padding:18px 0;border-top:1px solid var(--line);}
+  .grp:first-child{border-top:none;}
+  .grp .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;display:flex;justify-content:space-between;margin-bottom:11px;}
+  .grp .lbl b{color:var(--ink);font-weight:600;letter-spacing:0;text-transform:none;font-size:13px;}
+
+  .summary{border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .summary .srow{display:flex;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px;}
+  .summary .srow span:first-child{color:var(--ink-3);}
+  .summary .srow.total{background:var(--black);color:#fff;border-bottom:none;padding:18px;}
+  .summary .srow.total span:first-child{color:#cfcabd;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;align-self:center;}
+  .summary .srow.total b{font-family:var(--serif);font-size:30px;font-weight:600;}
+
+  .cfg-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:22px;}
+  .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
+  @media(max-width:900px){
+    .cfg-body{grid-template-columns:1fr;}
+    .cfg-preview{position:static;min-height:0;order:-1;}
+    .steps{flex-wrap:wrap;}.step{min-width:50%;}
+    .model-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html" class="active">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap cfg-head">
+    <div class="eyebrow">Design Studio · Windows</div>
+    <h1>Build your window</h1>
+    <div class="steps" id="steps">
+      <div class="step" data-s="0"><span class="n">1</span><b>Frame</b></div>
+      <div class="step" data-s="1"><span class="n">2</span><b>Style</b></div>
+      <div class="step" data-s="2"><span class="n">3</span><b>Configure</b></div>
+      <div class="step" data-s="3"><span class="n">4</span><b>Review</b></div>
+    </div>
+  </div>
+
+  <div class="wrap cfg-body">
+    <div class="cfg-preview"><div id="preview" style="width:100%;display:grid;place-items:center;"><div class="empty">Choose a frame and style<br>to preview your window</div></div></div>
+    <div class="cfg-pane">
+      <div id="pane"></div>
+      <div class="cfg-nav">
+        <button class="btn ghost" id="back">Back</button>
+        <div class="price-tag" id="priceTag"></div>
+        <button class="btn solid" id="next">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Door Configurator</a></li>
+          <li><a href="Saved.html">Saved builds</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="doors.js"></script>
+  <script src="windows-data.js"></script>
+  <script src="cart.js"></script>
+  <script src="builds.js"></script>
+  <script src="win-configurator.js"></script>
+</body>
+</html>

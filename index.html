@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>doorbyyou · Custom Entry Doors, Patio Doors &amp; Windows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  /* big landing hero */
+  .home-hero{position:relative;border-bottom:1px solid var(--line);overflow:hidden;
+    background:radial-gradient(130% 100% at 78% -10%, #efe8da 0%, rgba(239,232,218,0) 56%),var(--bg);}
+  .home-hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center;padding:84px 0 90px;}
+  .home-hero h1{font-family:var(--serif);font-weight:500;font-size:86px;line-height:.96;letter-spacing:-.015em;margin:18px 0 0;}
+  .home-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .home-hero .lede{font-size:18px;color:var(--ink-2);max-width:31em;margin:26px 0 0;line-height:1.6;}
+  .home-hero .hero-cta{margin-top:34px;}
+  .home-hero-stage{position:relative;height:560px;display:grid;place-items:center;
+    background:linear-gradient(180deg,#f1ece2 0%,#e5dece 100%);border:1px solid var(--line);border-radius:5px;overflow:hidden;}
+  .home-hero-stage image-slot{position:absolute;inset:0;width:100%;height:100%;}
+  .home-hero-stage .door-float{position:relative;z-index:2;height:460px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.3));}
+  .home-hero-stage .door-float svg{height:100%;}
+  .trust-row{display:flex;gap:0;border-top:1px solid var(--line);}
+  .trust-row .t{flex:1;padding:22px 24px;border-right:1px solid var(--line);display:flex;gap:12px;align-items:center;}
+  .trust-row .t:last-child{border-right:none;}
+  .trust-row svg{width:22px;height:22px;color:var(--accent);flex:none;}
+  .trust-row b{font-size:13.5px;display:block;}
+  .trust-row span{font-size:12px;color:var(--ink-3);}
+
+  /* category cards */
+  .cats{padding:80px 0 30px;}
+  .cats .head{text-align:center;max-width:40em;margin:0 auto 44px;}
+  .cats .head h2{font-family:var(--serif);font-size:46px;font-weight:500;margin:8px 0 0;}
+  .cats .head p{color:var(--ink-2);margin:12px 0 0;}
+  .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .cat{position:relative;border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--surface);
+    cursor:pointer;transition:.24s;text-decoration:none;color:inherit;display:flex;flex-direction:column;}
+  .cat:hover{transform:translateY(-5px);box-shadow:0 36px 60px -38px rgba(0,0,0,.5);}
+  .cat .cstage{aspect-ratio:1/0.92;background:linear-gradient(180deg,#f3efe6 0%,#e4ddcd 100%);display:grid;place-items:center;padding:30px 30px 0;position:relative;}
+  .cat .cstage > div{height:280px;display:grid;place-items:center;}
+  .cat .cstage .door-svg{height:280px;width:auto;filter:drop-shadow(0 16px 22px rgba(0,0,0,.18));}
+  .cat .cbody{padding:24px 26px 28px;}
+  .cat .cbody h3{font-family:var(--serif);font-size:30px;font-weight:600;margin:0;}
+  .cat .cbody p{color:var(--ink-2);font-size:14px;margin:8px 0 0;line-height:1.5;}
+  .cat .cbody .go{display:inline-flex;gap:7px;align-items:center;margin-top:16px;font-size:12.5px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);}
+  .cat .cbody .go svg{width:15px;height:15px;transition:.18s;}
+  .cat:hover .cbody .go svg{transform:translateX(4px);}
+  .cat .from{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.85);backdrop-filter:blur(4px);
+    font-size:12px;font-weight:600;color:var(--ink-2);padding:6px 12px;border-radius:100px;}
+
+  /* configurator teaser */
+  .teaser{margin:70px 0 0;background:var(--black);color:#ece7db;}
+  .teaser-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:0;}
+  .teaser-copy{padding:74px 0;}
+  .teaser-copy .eyebrow{color:#a9a08f;}
+  .teaser-copy h2{font-family:var(--serif);font-size:50px;font-weight:500;line-height:1.02;margin:14px 0 0;color:#fff;}
+  .teaser-copy p{color:#b3ac9f;font-size:16px;margin:18px 0 0;max-width:30em;line-height:1.6;}
+  .teaser-steps{display:flex;gap:28px;margin:30px 0 34px;}
+  .teaser-steps .s{flex:1;}
+  .teaser-steps .s b{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--accent);display:block;}
+  .teaser-steps .s span{font-size:12.5px;color:#a9a08f;letter-spacing:.04em;}
+  .teaser-stage{align-self:stretch;background:linear-gradient(180deg,#232120 0%,#191817 100%);display:grid;place-items:center;padding:50px;}
+  .teaser-stage > div{height:420px;display:grid;place-items:center;}
+  .teaser-stage .door-svg{height:420px;max-height:420px;width:auto;filter:drop-shadow(0 24px 36px rgba(0,0,0,.5));}
+
+  /* reviews */
+  .reviews{padding:84px 0;}
+  .reviews .head{text-align:center;margin-bottom:42px;}
+  .reviews .head h2{font-family:var(--serif);font-size:40px;font-weight:500;margin:8px 0 0;}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .rev{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:28px;}
+  .stars{display:flex;gap:3px;color:var(--accent);margin-bottom:14px;}
+  .stars svg{width:17px;height:17px;}
+  .rev p{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 18px;}
+  .rev .who{display:flex;gap:12px;align-items:center;}
+  .rev .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c2945a,#8a5a2c);
+    display:grid;place-items:center;color:#fff;font-weight:600;font-family:var(--serif);font-size:17px;}
+  .rev .who b{font-size:13.5px;display:block;}
+  .rev .who span{font-size:12px;color:var(--ink-3);}
+
+  /* closing CTA */
+  .closer{padding:90px 0;text-align:center;border-top:1px solid var(--line);
+    background:radial-gradient(100% 120% at 50% 0%, #efe8da 0%, rgba(239,232,218,0) 60%),var(--bg);}
+  .closer h2{font-family:var(--serif);font-size:56px;font-weight:500;line-height:1;margin:0 0 14px;}
+  .closer p{color:var(--ink-2);font-size:17px;margin:0 auto 28px;max-width:34em;}
+  .closer .hero-cta{justify-content:center;}
+
+  @media(max-width:980px){
+    .home-hero-inner{grid-template-columns:1fr;gap:40px;}
+    .home-hero h1{font-size:62px;}
+    .home-hero-stage{height:440px;}
+    .teaser-inner{grid-template-columns:1fr;}
+    .teaser-copy{padding:54px 0 0;}
+    .teaser-stage{padding:40px;}
+  }
+  @media(max-width:760px){
+    .cat-grid,.rev-grid{grid-template-columns:1fr;}
+    .trust-row{flex-wrap:wrap;}.trust-row .t{min-width:50%;border-bottom:1px solid var(--line);}
+    .home-hero h1{font-size:48px;}
+    .closer h2{font-size:40px;}
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="#">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="home-hero">
+    <div class="wrap home-hero-inner">
+      <div>
+        <div class="eyebrow">Custom doors &amp; windows · Factory-direct</div>
+        <h1>Built to your<br>opening. Made<br>to <em>last</em>.</h1>
+        <p class="lede">Premium steel and fiberglass entry doors, patio-door walls and energy-efficient windows — engineered to your exact size and finished to order, shipped free with a lifetime warranty.</p>
+        <div class="hero-cta">
+          <a class="btn solid" href="Configurator.html">Build your door</a>
+          <a class="btn ghost" href="Entry Doors.html">Browse the collection</a>
+        </div>
+      </div>
+      <div class="home-hero-stage">
+        <image-slot id="home-hero" shape="rect" placeholder="Drop a photo of a house exterior — focused on the front door"></image-slot>
+      </div>
+    </div>
+    <div class="wrap" style="padding:0 32px;">
+      <div class="trust-row">
+        <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h18M21 6v12M3 12l4-4M3 12l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Free US shipping</b><span>Crated &amp; inspected</span></div></div>
+        <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Lifetime warranty</b><span>Transferable coverage</span></div></div>
+        <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7l8-4 8 4v10l-8 4-8-4V7z" stroke-linejoin="round"/><path d="M4 7l8 4 8-4M12 11v10" stroke-linejoin="round"/></svg><div><b>Built to your specs</b><span>Custom size &amp; finish</span></div></div>
+        <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-5" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>4.8 / 5 rated</b><span>3,400+ installs</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="cats">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Shop by category</div>
+        <h2>Three ways to transform an opening</h2>
+        <p>Every product is custom-built and configurable — pick a starting point and make it yours.</p>
+      </div>
+      <div class="cat-grid">
+        <a class="cat" href="Entry Doors.html">
+          <div class="cstage"><span class="from">from $676</span><div id="catDoor"></div></div>
+          <div class="cbody"><h3>Entry Doors</h3><p>27+ steel &amp; fiberglass designs in seven finishes, with sidelites, transoms and decorative glass.</p>
+            <span class="go">Shop entry doors <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </a>
+        <a class="cat" href="Patio Doors.html">
+          <div class="cstage"><span class="from">from $1,940</span><div id="catPatio"></div></div>
+          <div class="cbody"><h3>Patio Doors</h3><p>Sliding, French, pocket and bi-fold glass walls that open your living space to the outdoors.</p>
+            <span class="go">Shop patio doors <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </a>
+        <a class="cat" href="Windows.html">
+          <div class="cstage"><span class="from">from $268</span><div id="catWindow"></div></div>
+          <div class="cbody"><h3>Windows</h3><p>Hung, casement, slider and specialty shapes with Low-E argon glass and fusion-welded frames.</p>
+            <span class="go">Shop windows <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIGURATOR TEASER -->
+  <section class="teaser">
+    <div class="wrap">
+      <div class="teaser-inner">
+        <div class="teaser-copy">
+          <div class="eyebrow">Design Studio</div>
+          <h2>Design your door<br>in four steps.</h2>
+          <p>Pick a material and model, configure size, finish, glass and hardware, then see it on a photo of your own home before you buy.</p>
+          <div class="teaser-steps">
+            <div class="s"><b>01</b><span>Material</span></div>
+            <div class="s"><b>02</b><span>Model</span></div>
+            <div class="s"><b>03</b><span>Configure</span></div>
+            <div class="s"><b>04</b><span>Review</span></div>
+          </div>
+          <a class="btn solid" href="Configurator.html" style="background:var(--accent);border-color:var(--accent);">Launch the configurator</a>
+        </div>
+        <div class="teaser-stage"><div id="teaserDoor"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">What homeowners say</div>
+        <h2>Rated 4.8 / 5 across 3,400+ installs</h2>
+      </div>
+      <div class="rev-grid" id="reviews"></div>
+    </div>
+  </section>
+
+  <!-- CLOSER -->
+  <section class="closer">
+    <div class="wrap">
+      <div class="eyebrow">Ready when you are</div>
+      <h2>Your new door<br>starts here.</h2>
+      <p>Configure your exact size and finish, see a live price in seconds, and have it shipped free to your door.</p>
+      <div class="hero-cta">
+        <a class="btn solid" href="Configurator.html">Build your door</a>
+        <a class="btn ghost" href="Measuring Guide.html">How to measure</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="#">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="doors.js"></script>
+  <script src="patio-data.js"></script>
+  <script src="windows-data.js"></script>
+  <script src="cart.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>
