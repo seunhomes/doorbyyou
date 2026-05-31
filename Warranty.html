@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Warranty | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .page-hero{border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 90% at 85% -10%, #efe9dd 0%, rgba(239,233,221,0) 55%),var(--bg);}
+  .page-hero-inner{padding:70px 0 60px;max-width:46em;}
+  .page-hero h1{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1;letter-spacing:-.015em;margin:16px 0 0;}
+  .page-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .page-hero .lede{font-size:18px;color:var(--ink-2);margin:22px 0 0;line-height:1.6;}
+
+  /* coverage cards */
+  .coverage{padding:72px 0 20px;}
+  .cov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .cov{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:30px;}
+  .cov .ic{width:44px;height:44px;border-radius:9px;display:grid;place-items:center;
+    background:#efe7da;color:var(--accent-ink);margin-bottom:16px;}
+  .cov .ic svg{width:24px;height:24px;}
+  .cov .term{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;}
+  .cov h3{font-family:var(--serif);font-size:25px;font-weight:600;margin:6px 0 8px;}
+  .cov p{font-size:14.5px;color:var(--ink-2);line-height:1.6;margin:0;}
+
+  /* details */
+  .terms{padding:64px 0 86px;}
+  .terms-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:start;}
+  .terms h2{font-family:var(--serif);font-size:38px;font-weight:500;line-height:1.05;margin:0 0 20px;}
+  .terms h4{font-family:var(--serif);font-size:21px;font-weight:600;margin:26px 0 8px;}
+  .terms p{font-size:15.5px;color:var(--ink-2);line-height:1.65;margin:0 0 12px;}
+  .terms ul{margin:0;padding-left:20px;color:var(--ink-2);font-size:15px;line-height:1.7;}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:30px;position:sticky;top:24px;}
+  .panel h3{font-family:var(--serif);font-size:24px;font-weight:600;margin:0 0 6px;}
+  .panel p{font-size:14px;color:var(--ink-2);line-height:1.6;margin:0 0 18px;}
+  .panel .btn{width:100%;justify-content:center;margin-bottom:10px;}
+  .panel ol{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink-2);line-height:1.7;}
+
+  @media(max-width:900px){
+    .cov-grid{grid-template-columns:1fr;}
+    .terms-inner{grid-template-columns:1fr;gap:40px;}
+    .panel{position:static;}
+    .page-hero h1{font-size:48px;}
+  }
+  @media(max-width:560px){ .page-hero h1{font-size:40px;} }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="About.html">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <div class="eyebrow">Our promise</div>
+      <h1>A <em>lifetime</em><br>warranty.</h1>
+      <p class="lede">Every doorbyyou door, finish and sealed-glass unit is backed for as long as you own your home — and the coverage transfers to the next owner. Here's exactly what that means.</p>
+    </div>
+  </section>
+
+  <!-- COVERAGE -->
+  <section class="coverage">
+    <div class="wrap">
+      <div class="cov-grid">
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" stroke-linejoin="round"/></svg></div>
+          <div class="term">Lifetime</div>
+          <h3>Door slab &amp; frame</h3>
+          <p>The steel, fiberglass or aluminum slab and frame are covered against warping, rot, rust-through and delamination for the life of your ownership.</p>
+        </div>
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M10 4v16" /></svg></div>
+          <div class="term">Lifetime</div>
+          <h3>Sealed glass units</h3>
+          <p>Low-E argon insulated glass is guaranteed against seal failure, fogging and condensation between panes — replacement glass shipped free.</p>
+        </div>
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="term">10 years</div>
+          <h3>Factory finish</h3>
+          <p>The baked-on factory finish is covered against peeling, blistering and excessive fade for ten years from the date of delivery.</p>
+        </div>
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 4l6 6-9 9H5v-6z" stroke-linejoin="round"/><path d="M11 7l6 6" /></svg></div>
+          <div class="term">10 years</div>
+          <h3>Hardware &amp; locks</h3>
+          <p>Multi-point locks, hinges and handlesets are guaranteed against mechanical and finish defects for ten years of normal residential use.</p>
+        </div>
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18" /><circle cx="12" cy="12" r="9"/></svg></div>
+          <div class="term">Transferable</div>
+          <h3>Stays with the home</h3>
+          <p>Sell your house and the remaining coverage transfers to the new owner at no cost — a documented selling point at closing.</p>
+        </div>
+        <div class="cov">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v12H4z"/><path d="M4 9h16M9 16v4M15 16v4M7 20h10" stroke-linecap="round"/></svg></div>
+          <div class="term">Free</div>
+          <h3>Parts &amp; shipping</h3>
+          <p>Approved warranty replacements — glass, hardware or finish components — ship free anywhere in the contiguous US.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMS -->
+  <section class="terms">
+    <div class="wrap terms-inner">
+      <div>
+        <h2>What's covered, and what isn't</h2>
+        <p>This warranty applies to the original product as delivered, installed according to our published guidelines, and used in a normal residential setting. It begins on the delivery date.</p>
+
+        <h4>Covered</h4>
+        <ul>
+          <li>Manufacturing and material defects in the slab, frame and weather seal</li>
+          <li>Insulated-glass seal failure, fogging and stress cracks not caused by impact</li>
+          <li>Finish peeling, blistering or excessive fade within the finish term</li>
+          <li>Mechanical failure of locks, hinges and operating hardware under normal use</li>
+        </ul>
+
+        <h4>Not covered</h4>
+        <ul>
+          <li>Damage from improper installation, alteration or non-approved hardware</li>
+          <li>Impact, accident, misuse, vandalism or acts of nature</li>
+          <li>Normal wear, surface scratches and minor finish variation over time</li>
+          <li>Doors finished or painted by a third party after delivery</li>
+          <li>Labor for removal or reinstallation</li>
+        </ul>
+
+        <h4>How long it lasts</h4>
+        <p>Slab, frame and sealed-glass coverage runs for the life of the original purchaser's ownership and transfers once to a subsequent owner. Finish and hardware coverage run ten years from delivery. All terms are subject to the full written warranty provided with your order.</p>
+      </div>
+
+      <aside class="panel">
+        <h3>File a claim</h3>
+        <p>Have your order number and a photo of the issue ready — most claims are approved within two business days.</p>
+        <a class="btn solid" href="Contact.html">Start a warranty claim</a>
+        <a class="btn ghost" href="FAQ.html">Read the FAQ</a>
+        <ol>
+          <li>Submit your order number and photos.</li>
+          <li>Our team reviews and approves coverage.</li>
+          <li>Replacement parts ship free to your door.</li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Warranty.html">Warranty</a></li><li><a href="Contact.html">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="About.html">About doorbyyou</a></li><li><a href="Reviews.html">Reviews</a></li><li><a href="FAQ.html">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>

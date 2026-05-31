@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Reviews | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .page-hero{border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 90% at 85% -10%, #efe9dd 0%, rgba(239,233,221,0) 55%),var(--bg);}
+  .page-hero-inner{padding:70px 0 60px;max-width:46em;}
+  .page-hero h1{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1;letter-spacing:-.015em;margin:16px 0 0;}
+  .page-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .page-hero .lede{font-size:18px;color:var(--ink-2);margin:22px 0 0;line-height:1.6;}
+
+  /* rating summary band */
+  .ratesum{border-bottom:1px solid var(--line);background:var(--surface);}
+  .ratesum-inner{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;padding:38px 0;}
+  .ratesum .big{display:flex;align-items:baseline;gap:6px;}
+  .ratesum .big b{font-family:var(--serif);font-size:64px;font-weight:600;line-height:1;}
+  .ratesum .big span{font-size:20px;color:var(--ink-3);}
+  .ratesum .bigstars{display:flex;gap:3px;color:var(--accent);margin-top:8px;}
+  .ratesum .bigstars svg{width:20px;height:20px;}
+  .ratesum .count{font-size:13px;color:var(--ink-3);margin-top:8px;letter-spacing:.04em;}
+  .bars{display:grid;gap:8px;max-width:440px;}
+  .bar{display:grid;grid-template-columns:42px 1fr 40px;gap:12px;align-items:center;font-size:13px;color:var(--ink-2);}
+  .bar .track{height:8px;background:var(--bg);border:1px solid var(--line);border-radius:99px;overflow:hidden;}
+  .bar .fill{height:100%;background:var(--accent);}
+
+  /* review grid (reuses .rev / .stars from site feel) */
+  .reviews{padding:70px 0 84px;}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .rev{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:28px;display:flex;flex-direction:column;}
+  .rev .stars{display:flex;gap:3px;color:var(--accent);margin-bottom:14px;}
+  .rev .stars svg{width:17px;height:17px;}
+  .rev p{font-size:15px;line-height:1.6;color:var(--ink);margin:0 0 18px;flex:1;}
+  .rev .who{display:flex;gap:12px;align-items:center;}
+  .rev .av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c2945a,#8a5a2c);
+    color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:18px;font-weight:600;}
+  .rev .who b{font-size:13.5px;display:block;}
+  .rev .who span{font-size:12px;color:var(--ink-3);}
+
+  .rev-cta{margin-top:48px;text-align:center;}
+  .rev-cta .btn{justify-content:center;}
+
+  @media(max-width:980px){ .rev-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:760px){
+    .ratesum-inner{grid-template-columns:1fr;gap:28px;}
+    .rev-grid{grid-template-columns:1fr;}
+    .page-hero h1{font-size:48px;}
+  }
+  @media(max-width:560px){ .page-hero h1{font-size:40px;} }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="About.html">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <div class="eyebrow">What homeowners say</div>
+      <h1>Loved at the<br><em>threshold</em>.</h1>
+      <p class="lede">Real reviews from real installs across the country. We build to order, ship free and back every door for life — and homeowners notice the difference.</p>
+    </div>
+  </section>
+
+  <!-- RATING SUMMARY -->
+  <section class="ratesum">
+    <div class="wrap ratesum-inner">
+      <div>
+        <div class="big"><b>4.8</b><span>/ 5</span></div>
+        <div class="bigstars" id="bigStars"></div>
+        <div class="count">Based on 3,400+ verified installs</div>
+      </div>
+      <div class="bars">
+        <div class="bar"><span>5 ★</span><div class="track"><div class="fill" style="width:86%"></div></div><span>86%</span></div>
+        <div class="bar"><span>4 ★</span><div class="track"><div class="fill" style="width:10%"></div></div><span>10%</span></div>
+        <div class="bar"><span>3 ★</span><div class="track"><div class="fill" style="width:3%"></div></div><span>3%</span></div>
+        <div class="bar"><span>2 ★</span><div class="track"><div class="fill" style="width:1%"></div></div><span>1%</span></div>
+        <div class="bar"><span>1 ★</span><div class="track"><div class="fill" style="width:0%"></div></div><span>0%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews">
+    <div class="wrap">
+      <div class="rev-grid" id="reviews"></div>
+      <div class="rev-cta">
+        <a class="btn solid" href="Configurator.html">Build your door</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Warranty.html">Warranty</a></li><li><a href="Contact.html">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="About.html">About doorbyyou</a></li><li><a href="Reviews.html">Reviews</a></li><li><a href="FAQ.html">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    (function () {
+      var star = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>';
+      var bs = document.getElementById('bigStars');
+      if (bs) bs.innerHTML = star.repeat(5);
+
+      var REVIEWS = [
+        { t: 'The configurator made it painless — I picked my size, finish and glass and saw the price instantly. The door arrived perfectly crated and dropped right in.', n: 'Marcus T.', l: 'Fiberglass Chevron · Austin, TX' },
+        { t: 'Half the price of the local showroom quote for a better-built door. The matte black finish is flawless inside and out and the multi-point lock feels like a vault.', n: 'Priya R.', l: 'Steel Uno Flush · Denver, CO' },
+        { t: 'We added sidelites and a transom and the whole entry feels custom. Being able to preview it on a photo of our actual house sealed the decision.', n: 'Dana &amp; Will', l: 'Versailles + surrounds · Raleigh, NC' },
+        { t: 'Shipping was genuinely free and the crate showed up without a scratch. Build quality is well above what our contractor expected for the price.', n: 'Elena G.', l: 'Aluminum Slim · Seattle, WA' },
+        { t: 'Ordered a four-panel slider for the back of the house. The glass is huge, the rollers are smooth, and the room feels twice as bright now.', n: 'Tom B.', l: 'Four Panel Slider · Phoenix, AZ' },
+        { t: 'Customer service walked me through measuring over the phone so I got the rough opening exactly right. No regrets — it looks like it cost three times as much.', n: 'Sandra M.', l: 'French Patio · Charleston, SC' },
+        { t: 'I am not a pro and I still installed it in an afternoon. Pre-hung, square, and the weatherstripping seals tight — no draft this winter at all.', n: 'Hector V.', l: 'Steel Two Panel · Minneapolis, MN' },
+        { t: 'The bronze finish on the bi-fold wall is stunning. We open the whole span in summer and it disappears. Best upgrade we have made to the house.', n: 'Renee &amp; Sam', l: 'Bi-Fold Wall · San Diego, CA' },
+        { t: 'Warranty paperwork was clear and it transfers if we sell. That peace of mind plus the look made this an easy call over the big-box options.', n: 'David K.', l: 'Pocket Slider · Portland, OR' }
+      ];
+      var revs = document.getElementById('reviews');
+      if (revs) revs.innerHTML = REVIEWS.map(function (r) {
+        return '<div class="rev"><div class="stars">' + star.repeat(5) + '</div>'
+          + '<p>“' + r.t + '”</p>'
+          + '<div class="who"><div class="av">' + r.n.trim()[0] + '</div>'
+          + '<div><b>' + r.n + '</b><span>' + r.l + '</span></div></div></div>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>

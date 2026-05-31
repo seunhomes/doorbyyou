@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>FAQ | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .page-hero{border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 90% at 85% -10%, #efe9dd 0%, rgba(239,233,221,0) 55%),var(--bg);}
+  .page-hero-inner{padding:70px 0 60px;max-width:46em;}
+  .page-hero h1{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1;letter-spacing:-.015em;margin:16px 0 0;}
+  .page-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .page-hero .lede{font-size:18px;color:var(--ink-2);margin:22px 0 0;line-height:1.6;}
+
+  .faq{padding:64px 0 80px;}
+  .faq-inner{display:grid;grid-template-columns:230px 1fr;gap:54px;align-items:start;}
+  .faq-nav{position:sticky;top:24px;display:grid;gap:4px;}
+  .faq-nav a{font-size:14px;color:var(--ink-2);text-decoration:none;padding:9px 12px;border-radius:5px;border-left:2px solid transparent;}
+  .faq-nav a:hover{background:var(--surface);color:var(--ink);}
+
+  .faq-group{margin-bottom:42px;}
+  .faq-group > h2{font-family:var(--serif);font-size:30px;font-weight:500;margin:0 0 16px;
+    padding-bottom:12px;border-bottom:1px solid var(--line);}
+  details{background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:12px;overflow:hidden;}
+  details[open]{border-color:var(--accent);}
+  summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:16.5px;font-weight:500;color:var(--ink);
+    display:flex;justify-content:space-between;align-items:center;gap:16px;}
+  summary::-webkit-details-marker{display:none;}
+  summary .pl{flex:none;width:18px;height:18px;position:relative;transition:transform .2s;}
+  summary .pl::before,summary .pl::after{content:'';position:absolute;background:var(--accent);border-radius:2px;}
+  summary .pl::before{top:8px;left:0;width:18px;height:2px;}
+  summary .pl::after{left:8px;top:0;width:2px;height:18px;}
+  details[open] summary .pl{transform:rotate(45deg);}
+  details .ans{padding:0 22px 20px;font-size:15px;color:var(--ink-2);line-height:1.65;}
+  details .ans a{color:var(--accent-ink);}
+
+  .faq-cta{margin-top:54px;text-align:center;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:42px;}
+  .faq-cta h3{font-family:var(--serif);font-size:30px;font-weight:500;margin:0 0 8px;}
+  .faq-cta p{color:var(--ink-2);margin:0 0 20px;}
+
+  @media(max-width:860px){
+    .faq-inner{grid-template-columns:1fr;}
+    .faq-nav{position:static;grid-auto-flow:column;overflow:auto;}
+    .page-hero h1{font-size:48px;}
+  }
+  @media(max-width:560px){ .page-hero h1{font-size:40px;} }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="About.html">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <div class="eyebrow">Help center</div>
+      <h1>Questions,<br><em>answered</em>.</h1>
+      <p class="lede">Everything about ordering, measuring, finishes, shipping and warranty — in one place. Still stuck? Our build team is one message away.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="wrap faq-inner">
+      <nav class="faq-nav">
+        <a href="#ordering">Ordering &amp; pricing</a>
+        <a href="#measuring">Sizing &amp; measuring</a>
+        <a href="#shipping">Shipping &amp; install</a>
+        <a href="#warranty">Warranty &amp; returns</a>
+      </nav>
+
+      <div>
+        <div class="faq-group" id="ordering">
+          <h2>Ordering &amp; pricing</h2>
+          <details><summary>How is doorbyyou cheaper than a local showroom?<span class="pl"></span></summary><div class="ans">We design and build in-house and sell factory-direct, so there's no showroom markup or middleman. A comparable made-to-order door is typically about half a local quote, with the same premium materials.</div></details>
+          <details><summary>Is the price I see the final price?<span class="pl"></span></summary><div class="ans">Yes. The price in the <a href="Configurator.html">configurator</a> includes your size, finish, glass and standard hardware. Free shipping is already included for the contiguous US — there are no surprise add-ons at checkout.</div></details>
+          <details><summary>Can I see my door before I buy?<span class="pl"></span></summary><div class="ans">Every design renders live as you configure it, and you can preview it against a photo of your own home. You can also save configurations to revisit before ordering.</div></details>
+          <details><summary>Do you offer trade or bulk pricing?<span class="pl"></span></summary><div class="ans">We do — builders, remodelers and multi-unit projects get dedicated pricing. <a href="Contact.html">Reach out</a> with your project details and we'll set you up.</div></details>
+        </div>
+
+        <div class="faq-group" id="measuring">
+          <h2>Sizing &amp; measuring</h2>
+          <details><summary>How do I measure my rough opening?<span class="pl"></span></summary><div class="ans">Our step-by-step <a href="Measuring Guide.html">Measuring Guide</a> walks you through width, height and jamb depth in a few minutes. Measure in three spots and use the smallest reading.</div></details>
+          <details><summary>What if my opening is a non-standard size?<span class="pl"></span></summary><div class="ans">Every door is made to order, so non-standard sizes are the norm, not an upcharge. Enter your exact dimensions in the configurator and we build to them.</div></details>
+          <details><summary>Can I add sidelites or a transom?<span class="pl"></span></summary><div class="ans">Yes — sidelites and transoms are configurable surrounds that price and render live alongside the door so the whole entry stays cohesive.</div></details>
+        </div>
+
+        <div class="faq-group" id="shipping">
+          <h2>Shipping &amp; install</h2>
+          <details><summary>How long until my door arrives?<span class="pl"></span></summary><div class="ans">Made-to-order doors typically ship in 3–5 weeks depending on finish and glass. You'll get a build status and tracking once your order is confirmed.</div></details>
+          <details><summary>Is shipping really free?<span class="pl"></span></summary><div class="ans">Yes, free freight to the contiguous US. Doors ship fully crated and inspected. Alaska, Hawaii and international destinations are quoted separately.</div></details>
+          <details><summary>Do you install, or is it DIY?<span class="pl"></span></summary><div class="ans">Doors ship pre-hung and ready to drop in, so a capable DIYer or any local installer can handle it. We don't provide installation labor directly.</div></details>
+        </div>
+
+        <div class="faq-group" id="warranty">
+          <h2>Warranty &amp; returns</h2>
+          <details><summary>What does the warranty cover?<span class="pl"></span></summary><div class="ans">A transferable lifetime warranty on the slab, frame and sealed glass, plus ten years on finish and hardware. See the full <a href="Warranty.html">Warranty</a> page for details.</div></details>
+          <details><summary>What if my door arrives damaged?<span class="pl"></span></summary><div class="ans">Note any freight damage on the delivery receipt and send us photos within 48 hours — we'll expedite a replacement at no cost.</div></details>
+          <details><summary>Can I return a custom door?<span class="pl"></span></summary><div class="ans">Because each door is built to your exact specs, custom orders aren't returnable, but anything defective or not-as-ordered is covered. <a href="Contact.html">Contact us</a> and we'll make it right.</div></details>
+        </div>
+
+        <div class="faq-cta">
+          <h3>Still have a question?</h3>
+          <p>Our build team replies within one business day.</p>
+          <a class="btn solid" href="Contact.html">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Warranty.html">Warranty</a></li><li><a href="Contact.html">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="About.html">About doorbyyou</a></li><li><a href="Reviews.html">Reviews</a></li><li><a href="FAQ.html">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>

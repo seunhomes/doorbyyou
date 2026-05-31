@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>Contact | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  .page-hero{border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 90% at 85% -10%, #efe9dd 0%, rgba(239,233,221,0) 55%),var(--bg);}
+  .page-hero-inner{padding:70px 0 60px;max-width:46em;}
+  .page-hero h1{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1;letter-spacing:-.015em;margin:16px 0 0;}
+  .page-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .page-hero .lede{font-size:18px;color:var(--ink-2);margin:22px 0 0;line-height:1.6;}
+
+  .contact{padding:72px 0;border-bottom:1px solid var(--line);}
+  .contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  .cform{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:34px;}
+  .cform .row{display:grid;gap:6px;margin-bottom:18px;}
+  .cform .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .cform label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);}
+  .cform input,.cform select,.cform textarea{font:inherit;font-size:15px;color:var(--ink);
+    background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px 13px;outline:none;}
+  .cform input:focus,.cform select:focus,.cform textarea:focus{border-color:var(--accent);}
+  .cform textarea{min-height:120px;resize:vertical;}
+  .cform .btn{width:100%;justify-content:center;margin-top:4px;}
+  .cform .note{font-size:12.5px;color:var(--ink-3);margin:14px 0 0;text-align:center;}
+
+  .cinfo .eyebrow{margin-bottom:8px;}
+  .cinfo h2{font-family:var(--serif);font-size:34px;font-weight:500;line-height:1.05;margin:0 0 10px;}
+  .cinfo p{color:var(--ink-2);font-size:15.5px;line-height:1.6;margin:0 0 28px;}
+  .cblock{display:flex;gap:15px;padding:20px 0;border-top:1px solid var(--line);}
+  .cblock:last-child{border-bottom:1px solid var(--line);}
+  .cblock svg{width:22px;height:22px;color:var(--accent);flex:none;margin-top:2px;}
+  .cblock b{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:4px;}
+  .cblock a,.cblock span{font-size:16px;color:var(--ink);text-decoration:none;}
+  .cblock a:hover{color:var(--accent-ink);}
+
+  @media(max-width:900px){
+    .contact-inner{grid-template-columns:1fr;gap:40px;}
+    .page-hero h1{font-size:48px;}
+  }
+  @media(max-width:560px){
+    .cform .two{grid-template-columns:1fr;}
+    .page-hero h1{font-size:40px;}
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="About.html">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <div class="eyebrow">Get in touch</div>
+      <h1>Let's talk about<br>your <em>opening</em>.</h1>
+      <p class="lede">Questions about sizing, finishes, lead times or a bulk order? Send us a note and a real person on our build team will get back to you within one business day.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact">
+    <div class="wrap contact-inner">
+      <form class="cform" id="contactForm" novalidate>
+        <div class="two">
+          <div class="row"><label for="cf-name">Name</label><input id="cf-name" name="name" type="text" required placeholder="Jane Doe" /></div>
+          <div class="row"><label for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" placeholder="(555) 123-4567" /></div>
+        </div>
+        <div class="row"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" required placeholder="you@email.com" /></div>
+        <div class="row"><label for="cf-topic">How can we help?</label>
+          <select id="cf-topic" name="topic">
+            <option>Product question</option>
+            <option>Sizing &amp; measuring</option>
+            <option>Order status</option>
+            <option>Warranty claim</option>
+            <option>Bulk / trade order</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="row"><label for="cf-msg">Message</label><textarea id="cf-msg" name="message" required placeholder="Tell us about your project, rough opening size, and timeline."></textarea></div>
+        <button class="btn solid" type="submit">Send message</button>
+        <p class="note" id="cf-note">We typically reply within one business day.</p>
+      </form>
+
+      <div class="cinfo">
+        <div class="eyebrow">Other ways to reach us</div>
+        <h2>We're here<br>six days a week.</h2>
+        <p>Prefer to talk it through? Our team can walk you through measuring, finishes and lead times — no pressure, no showroom markup.</p>
+        <div class="cblock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z" fill="none"/><path d="M4 6l8 6 8-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><b>Email</b><a href="mailto:hello@doorbyyou.com">hello@doorbyyou.com</a></div>
+        </div>
+        <div class="cblock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h4l2 5-3 2a12 12 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" stroke-linejoin="round"/></svg>
+          <div><b>Phone</b><a href="tel:18005551234">1 (800) 555-1234</a></div>
+        </div>
+        <div class="cblock">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><b>Hours</b><span>Mon–Fri 8a–7p · Sat 9a–4p ET</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="Warranty.html">Warranty</a></li><li><a href="Contact.html">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="About.html">About doorbyyou</a></li><li><a href="Reviews.html">Reviews</a></li><li><a href="FAQ.html">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    (function () {
+      var f = document.getElementById('contactForm');
+      var note = document.getElementById('cf-note');
+      if (!f) return;
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!f.checkValidity()) { f.reportValidity(); return; }
+        f.querySelectorAll('input,select,textarea,button').forEach(function (el) { el.disabled = true; });
+        note.textContent = 'Thanks — your message is on its way. We’ll reply within one business day.';
+        note.style.color = 'var(--accent-ink)';
+      });
+    })();
+  </script>
+</body>
+</html>
