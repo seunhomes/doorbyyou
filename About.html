@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<title>About | doorbyyou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="site.css" />
+<style>
+  /* about hero */
+  .about-hero{position:relative;border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 90% at 85% -10%, #efe9dd 0%, rgba(239,233,221,0) 55%),var(--bg);}
+  .about-hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:78px 0 82px;}
+  .about-hero h1{font-family:var(--serif);font-weight:500;font-size:72px;line-height:1;letter-spacing:-.015em;margin:18px 0 0;}
+  .about-hero h1 em{font-style:italic;color:var(--accent-ink);}
+  .about-hero .lede{font-size:18px;color:var(--ink-2);max-width:32em;margin:26px 0 0;line-height:1.6;}
+  .about-hero .hero-cta{margin-top:32px;}
+  .about-hero-media image-slot{width:100%;height:480px;}
+
+  /* stat band */
+  .statband{border-bottom:1px solid var(--line);background:var(--surface);}
+  .statband-inner{display:grid;grid-template-columns:repeat(4,1fr);}
+  .statband .s{padding:34px 28px;border-right:1px solid var(--line);}
+  .statband .s:last-child{border-right:none;}
+  .statband .s b{font-family:var(--serif);font-size:42px;font-weight:600;line-height:1;display:block;}
+  .statband .s span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:8px;display:block;}
+
+  /* story */
+  .story{padding:86px 0;border-bottom:1px solid var(--line);}
+  .story-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;}
+  .story h2{font-family:var(--serif);font-size:46px;font-weight:500;line-height:1.04;margin:14px 0 0;}
+  .story ul{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:15px;}
+  .story li{display:flex;gap:13px;font-size:15.5px;color:var(--ink-2);align-items:flex-start;line-height:1.55;}
+  .story li svg{width:20px;height:20px;color:var(--accent);flex:none;margin-top:2px;}
+  .story-stage{background:linear-gradient(180deg,#f3efe6 0%,#e4ddcd 100%);border:1px solid var(--line);
+    border-radius:5px;display:grid;place-items:center;padding:44px;min-height:460px;}
+  .story-stage .door-svg{height:380px;width:auto;}
+
+  /* values */
+  .values{background:var(--black);color:#ece7db;}
+  .values-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.08);}
+  .val{background:var(--black);padding:42px 30px;}
+  .val .n{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--accent);display:block;margin-bottom:12px;}
+  .val h4{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 8px;color:#fff;}
+  .val p{font-size:13.5px;color:#a9a397;margin:0;line-height:1.55;}
+
+  /* closer */
+  .closer{padding:90px 0;text-align:center;
+    background:radial-gradient(100% 120% at 50% 0%, #efe8da 0%, rgba(239,232,218,0) 60%),var(--bg);}
+  .closer h2{font-family:var(--serif);font-size:54px;font-weight:500;line-height:1;margin:0 0 14px;}
+  .closer p{color:var(--ink-2);font-size:17px;margin:0 auto 28px;max-width:34em;}
+  .closer .hero-cta{justify-content:center;display:flex;gap:14px;}
+
+  @media(max-width:980px){
+    .about-hero-inner,.story-inner{grid-template-columns:1fr;gap:40px;}
+    .about-hero h1{font-size:58px;}
+    .about-hero-media image-slot{height:400px;}
+    .statband-inner,.values-inner{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:560px){
+    .about-hero h1{font-size:44px;}
+    .closer h2{font-size:38px;}
+    .statband-inner,.values-inner{grid-template-columns:1fr;}
+    .statband .s{border-right:none;border-bottom:1px solid var(--line);}
+  }
+</style>
+</head>
+<body>
+  <div class="announce">Factory-direct pricing &nbsp;·&nbsp; <strong>Free shipping across the US</strong> &nbsp;·&nbsp; Lifetime warranty</div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="index.html"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></a>
+      <nav class="main">
+        <a href="Entry Doors.html">Entry Doors</a>
+        <a href="Patio Doors.html">Patio Doors</a>
+        <a href="Windows.html">Windows</a>
+        <a href="Hardware.html">Hardware</a>
+        <a href="Configurator.html">Configurator</a>
+        <a href="About.html" class="active">About</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg></button>
+        <a class="icon-btn" href="Saved.html" aria-label="Saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg></a>
+        <a class="icon-btn" href="Cart.html" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 016 0" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="wrap about-hero-inner">
+      <div>
+        <div class="eyebrow">Our Story</div>
+        <h1>Doors worth<br>the <em>threshold</em>.</h1>
+        <p class="lede">doorbyyou started with a simple idea: a premium custom entry door shouldn't cost a fortune or take a season to arrive. We engineer steel, fiberglass and European aluminum doors in-house, then sell them factory-direct — so you get showroom quality at roughly half the showroom price.</p>
+        <div class="hero-cta">
+          <a class="btn solid" href="Configurator.html">Build your door</a>
+          <a class="btn ghost" href="Entry Doors.html">Browse the collection</a>
+        </div>
+      </div>
+      <div class="about-hero-media">
+        <image-slot id="about-hero" shape="rounded" radius="4" placeholder="Drop a photo of your team, factory, or a finished install"></image-slot>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="statband">
+    <div class="wrap"><div class="statband-inner">
+      <div class="s"><b>3,400+</b><span>Installs nationwide</span></div>
+      <div class="s"><b>27+</b><span>Door designs</span></div>
+      <div class="s"><b>7</b><span>Factory finishes</span></div>
+      <div class="s"><b>4.8 / 5</b><span>Average rating</span></div>
+    </div></div>
+  </section>
+
+  <!-- STORY -->
+  <section class="story">
+    <div class="wrap story-inner">
+      <div>
+        <div class="eyebrow">Why doorbyyou</div>
+        <h2>Built around the<br>opening — not the<br>showroom.</h2>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Every door is made to order to your exact size and finish — no compromises to fit a stock opening.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/></svg>We cut out the middleman. Factory-direct pricing is typically half of a local showroom quote.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-point locks, Low-E argon glass and no-rot composite edges come standard, never as upsells.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"/></svg>A transferable lifetime warranty backs the slab, the factory finish and the glass seal.</li>
+        </ul>
+      </div>
+      <div class="story-stage"><div id="storyDoor"></div></div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="values">
+    <div class="wrap" style="padding:0 32px;">
+      <div class="values-inner">
+        <div class="val"><span class="n">01</span><h4>Engineering-first</h4><p>We design for thermal performance, security and a slab that won't warp — then make it beautiful.</p></div>
+        <div class="val"><span class="n">02</span><h4>Honest pricing</h4><p>Factory-direct means one fair price, posted up front. No showroom markup, no high-pressure quotes.</p></div>
+        <div class="val"><span class="n">03</span><h4>Made to order</h4><p>Nothing ships from a shelf. Your size, finish, glass and hardware are built for your opening.</p></div>
+        <div class="val"><span class="n">04</span><h4>Backed for life</h4><p>A transferable lifetime warranty stands behind every door, finish and sealed-glass unit we ship.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSER -->
+  <section class="closer">
+    <div class="wrap">
+      <div class="eyebrow">Ready when you are</div>
+      <h2>Let's build your<br>entrance.</h2>
+      <p>Configure your exact size and finish, see a live price in seconds, and have it shipped free to your door.</p>
+      <div class="hero-cta">
+        <a class="btn solid" href="Configurator.html">Build your door</a>
+        <a class="btn ghost" href="Measuring Guide.html">How to measure</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="brand"><span class="brandmark"><span class="bm-top">DOOR</span><span class="bm-rule"><i></i><span class="bm-dot"></span><i></i></span><span class="bm-bot">by you</span></span></div>
+          <p class="blurb">Premium custom steel, fiberglass, and European aluminum entry doors and patio-door systems. Luxury quality, factory-direct pricing.</p>
+        </div>
+        <div><h5>Shop</h5><ul>
+          <li><a href="Entry Doors.html">Entry Doors</a></li><li><a href="Patio Doors.html">Patio Doors</a></li>
+          <li><a href="Windows.html">Windows</a></li><li><a href="Hardware.html">Hardware</a></li>
+        </ul></div>
+        <div><h5>Support</h5><ul>
+          <li><a href="Measuring Guide.html">Measuring Guide</a></li><li><a href="Configurator.html">Configurator</a></li>
+          <li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li>
+        </ul></div>
+        <div><h5>Company</h5><ul>
+          <li><a href="About.html">About doorbyyou</a></li><li><a href="#">Reviews</a></li><li><a href="#">FAQ</a></li><li><a href="#">Careers</a></li>
+        </ul></div>
+      </div>
+      <div class="foot-bot">
+        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>Free shipping · Lifetime warranty · Lowest-price guarantee</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="image-slot.js"></script>
+  <script src="doors.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    (function () {
+      var P = window.PANES;
+      if (!P) return;
+      var d = P.DOORS.find(function (x) { return x.name === 'Versailles'; }) || P.DOORS[0];
+      var stage = document.getElementById('storyDoor');
+      if (stage) stage.innerHTML = P.doorSceneHTML(d);
+    })();
+  </script>
+</body>
+</html>
