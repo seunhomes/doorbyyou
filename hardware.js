@@ -37,7 +37,7 @@
     </div>`).join('');
 
   /* ---- live sidelite / transom preview ---- */
-  const door = DOORS.find(d => d.name === 'Quattro') || DOORS[0];
+  const door = DOORS.find(d => d.name === 'Chevron') || DOORS[0];
   const sel = defaultSel(door);
   sel.glass = 1; // clear lite so surrounds read as glass
   const preview = document.getElementById('stPreview');

@@ -196,7 +196,7 @@
     (function () {
       var P = window.PANES;
       if (!P) return;
-      var d = P.DOORS.find(function (x) { return x.name === 'Versailles'; }) || P.DOORS[0];
+      var d = P.DOORS.find(function (x) { return x.name === 'Herringbone'; }) || P.DOORS[0];
       var stage = document.getElementById('storyDoor');
       if (stage) stage.innerHTML = P.doorSceneHTML(d);
     })();

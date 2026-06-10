@@ -13,7 +13,7 @@
   if (heroDoor) heroDoor.innerHTML = doorSceneHTML(hero);
 
   const catDoor = document.getElementById('catDoor');
-  if (catDoor) catDoor.innerHTML = doorSceneHTML(pick(DOORS, 'Quattro'));
+  if (catDoor) catDoor.innerHTML = doorSceneHTML(pick(DOORS, 'Herringbone'));
 
   const catPatio = document.getElementById('catPatio');
   if (catPatio) catPatio.innerHTML = patioSVG(pick(PATIO, 'Three Panel Slider'));
@@ -22,7 +22,7 @@
   if (catWindow) catWindow.innerHTML = windowSVG(pick(WINDOWS, 'Casement'));
 
   const teaserDoor = document.getElementById('teaserDoor');
-  if (teaserDoor) teaserDoor.innerHTML = doorSceneHTML(pick(DOORS, 'Versailles'));
+  if (teaserDoor) teaserDoor.innerHTML = doorSceneHTML(pick(DOORS, 'Mosaic'));
 
   /* reviews */
   const REVIEWS = [

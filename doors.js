@@ -16,37 +16,26 @@ const FINISHES = {
   sage:    { label: 'Sage Green',   swatch: '#6b735f', stops: ['#8a917d','#79806b','#69715b','#57604c'], groove: 'rgba(0,0,0,.34)', high: 'rgba(255,255,255,.13)', text: '#fff' },
 };
 
-/* ---- The catalog (factual product data from the published price list) ---- */
+/* ---- The catalog: doorbyyou woodgrain entry-door designs (oak finish renders) ---- */
 const DOORS = [
-  // ===== Fiberglass =====
-  { name: 'Quattro',            material: 'Fiberglass', style: 'Contemporary', price: 2199, pattern: 'vGroove4',   finish: 'black',  desc: 'Minimal fiberglass door with precise four-groove lines.' },
-  { name: 'Elite',              material: 'Fiberglass', style: 'Contemporary', price: 2250, pattern: 'vGroove3off', finish: 'iron',   desc: 'Premium fiberglass door with sophisticated groove composition.' },
-  { name: 'Tower',              material: 'Fiberglass', style: 'Contemporary', price: 2301, pattern: 'vChannel',   finish: 'black',  desc: 'Bold fiberglass door with strong vertical groove channels.' },
-  { name: 'Deck 2',             material: 'Fiberglass', style: 'Contemporary', price: 2301, pattern: 'hVaried',    finish: 'walnut', desc: 'Fiberglass door with varied horizontal groove spacing.' },
-  { name: 'Eternal',            material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'mixGroove',  finish: 'sage',   desc: 'Timeless fiberglass door with harmonious groove arrangement.' },
-  { name: 'Masonry',            material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'grid',       finish: 'black',  desc: 'Fiberglass door with masonry-inspired grid groove pattern.' },
-  { name: 'Sku',                material: 'Fiberglass', style: 'Modern',       price: 2403, pattern: 'abstract',   finish: 'iron',   desc: 'Modern fiberglass door with abstract linear groove pattern.' },
-  { name: 'Chevron',            material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'chevron',    finish: 'black',  desc: 'Contemporary fiberglass door with bold chevron groove pattern.' },
-  { name: 'Glide',              material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'hFlow',      finish: 'oak',    desc: 'Contemporary fiberglass door with flowing groove lines.' },
-  { name: 'Deck 3',             material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'hRefined',   finish: 'walnut', desc: 'Fiberglass door with refined horizontal groove composition.' },
-  { name: 'Two Panel Orleans',  material: 'Fiberglass', style: 'Traditional',  price: 2479, pattern: 'twoPanel',   finish: 'white',  desc: 'Elegant fiberglass door with Orleans-style tall panel proportions.' },
-  { name: 'Tower 2',            material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'vChannel2',  finish: 'bronze', desc: 'Fiberglass door with evolved vertical groove arrangement.' },
-  { name: 'Heather',            material: 'Fiberglass', style: 'Contemporary', price: 2607, pattern: 'organic',    finish: 'oak',    desc: 'Nature-inspired fiberglass door with organic groove texture.' },
-  { name: 'Deck',               material: 'Fiberglass', style: 'Contemporary', price: 2862, pattern: 'hChannel',   finish: 'black',  desc: 'Contemporary fiberglass door with horizontal groove channels.' },
-  { name: 'Note',               material: 'Fiberglass', style: 'Contemporary', price: 2913, pattern: 'rhythm',     finish: 'iron',   desc: 'Fiberglass door with rhythmic groove composition.' },
-  { name: 'Herringbone',        material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringbone',finish: 'walnut', desc: 'Fiberglass door with classic herringbone groove pattern.' },
-  { name: '6 Panel',            material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'sixPanel',   finish: 'white',  desc: 'Traditional fiberglass door with classic six-panel layout.' },
-  { name: 'Curved 3 Panel Top', material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'curved3',   finish: 'sage',   desc: 'Traditional fiberglass door with curved three-panel design.' },
-  { name: 'Versailles',         material: 'Fiberglass', style: 'Traditional',  price: 4220, pattern: 'medallion',  finish: 'white',  desc: 'Elegant traditional fiberglass door with ornate medallion and curved panel details.' },
-  { name: 'One Panel Plank',    material: 'Fiberglass', style: 'Modern',       price: 4220, pattern: 'plank',      finish: 'oak',    desc: 'Fiberglass single-panel door with vertical plank grooves.' },
-  // ===== Steel =====
-  { name: 'Uno Flush',          material: 'Steel', style: 'Modern',       price: 676.72, pattern: 'flush',     finish: 'black',  desc: 'Clean modern flush steel door.' },
-  { name: 'Soho',               material: 'Steel', style: 'Traditional',  price: 827.84, pattern: 'fourPanelR',finish: 'white',  desc: 'Classic four-panel raised steel door.' },
-  { name: 'Linea',              material: 'Steel', style: 'Modern',       price: 834.30, pattern: 'hRound',    finish: 'iron',   desc: 'Steel door with rounded horizontal groove channels.' },
-  { name: 'Vog',                material: 'Steel', style: 'Modern',       price: 854.12, pattern: 'hLines',    finish: 'black',  desc: 'Modern steel door with horizontal groove lines.' },
-  { name: 'Oso',                material: 'Steel', style: 'Modern',       price: 854.12, pattern: 'hTriple',   finish: 'bronze', desc: 'Steel door with triple horizontal groove pattern.' },
-  { name: 'Era',                material: 'Steel', style: 'Contemporary', price: 935.40, pattern: 'offset',    finish: 'iron',   desc: 'Contemporary steel door with offset groove accents.' },
-  { name: 'Tao',                material: 'Steel', style: 'Modern',       price: 962.32, pattern: 'hCurve',    finish: 'black',  desc: 'Steel door with curved horizontal accents.' },
+  { name: 'Chevron',       material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'chevron',     finish: 'oak', image: 'images/doors/chevron.jpg',       desc: 'Bold mirrored chevron grooves across a warm oak woodgrain slab.' },
+  { name: 'Chevron Boxed', material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'chevron',     finish: 'oak', image: 'images/doors/chevron-boxed.jpg', desc: 'Chevron pattern framed within a clean boxed border for added structure.' },
+  { name: 'Herringbone',   material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringbone', finish: 'oak', image: 'images/doors/herringbone.jpg',   desc: 'Classic herringbone groovework in a rich oak woodgrain.' },
+  { name: 'Parquet',       material: 'Fiberglass', style: 'Traditional',  price: 2999, pattern: 'herringbone', finish: 'oak', image: 'images/doors/parquet.jpg',       desc: 'Interlocking parquet blocks for a tailored, heritage look.' },
+  { name: 'Envelope',      material: 'Fiberglass', style: 'Modern',       price: 2607, pattern: 'abstract',    finish: 'oak', image: 'images/doors/envelope.jpg',      desc: 'Crossed diagonals fold the slab into a striking envelope motif.' },
+  { name: 'Arrow',         material: 'Fiberglass', style: 'Modern',       price: 2454, pattern: 'chevron',     finish: 'oak', image: 'images/doors/arrow.jpg',         desc: 'Directional arrow grooves give this oak door confident movement.' },
+  { name: 'Two Way',       material: 'Fiberglass', style: 'Contemporary', price: 2556, pattern: 'chevron',     finish: 'oak', image: 'images/doors/two-way.jpg',       desc: 'Opposing groove fields meet at a crisp two-way centre line.' },
+  { name: 'Mosaic',        material: 'Fiberglass', style: 'Contemporary', price: 3100, pattern: 'grid',        finish: 'oak', image: 'images/doors/mosaic.jpg',        desc: 'A composed grid of grooved tiles for a refined mosaic face.' },
+  { name: 'Address',       material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'hVaried',     finish: 'oak', image: 'images/doors/address.jpg',       desc: 'Personalised house-number engraving above a stepped groove field.' },
+  { name: 'Craft',         material: 'Fiberglass', style: 'Traditional',  price: 2862, pattern: 'sixPanel',    finish: 'oak', image: 'images/doors/craft.jpg',         desc: 'Craftsman-inspired panelled composition in warm oak.' },
+  { name: 'Duo',           material: 'Fiberglass', style: 'Modern',       price: 2301, pattern: 'twoPanel',    finish: 'oak', image: 'images/doors/duo.jpg',           desc: 'Two clean panels split the slab for a balanced modern look.' },
+  { name: 'Plank',         material: 'Fiberglass', style: 'Modern',       price: 2250, pattern: 'plank',       finish: 'oak', image: 'images/doors/plank.jpg',         desc: 'Vertical plank grooves for a clean, contemporary entrance.' },
+  { name: 'Busy Plank',    material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'plank',       finish: 'oak', image: 'images/doors/busy-plank.jpg',    desc: 'Densely spaced plank grooves add rhythm and fine detail.' },
+  { name: 'Full Step',     material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'hChannel',    finish: 'oak', image: 'images/doors/full-step.jpg',     desc: 'Full-width stepped channels march down the oak slab.' },
+  { name: 'Half Step',     material: 'Fiberglass', style: 'Contemporary', price: 2352, pattern: 'hVaried',     finish: 'oak', image: 'images/doors/half-step.jpg',     desc: 'Offset half-step grooves for a quietly dynamic surface.' },
+  { name: 'Odd',           material: 'Fiberglass', style: 'Modern',       price: 2352, pattern: 'abstract',    finish: 'oak', image: 'images/doors/odd.jpg',           desc: 'An off-beat asymmetric groove layout for a design-forward entry.' },
+  { name: 'Mild',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'oak', image: 'images/doors/mild.jpg',          desc: 'Understated horizontal lines for a soft, minimal statement.' },
+  { name: 'Even',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'oak', image: 'images/doors/even.jpg',          desc: 'Evenly spaced horizontal grooves — calm, linear and modern.' },
 ];
 
 /* ============================================================
@@ -116,6 +105,7 @@ function patternSVG(pattern, g, hi) {
 /* Build the full door "scene": studio wall + frame + slab + glass + handle */
 let _sceneSeq = 0;
 function doorSceneHTML(d, opts = {}) {
+  if (d.image) return `<img class="door-svg door-photo" src="${d.image}" alt="${d.name} entry door" loading="lazy" />`;
   const f = FINISHES[d.finish] || FINISHES.black;
   const uid = 'dr' + (_sceneSeq++);
   const st = f.stops;
@@ -328,11 +318,13 @@ function unitSVG(door, sel, opts) {
     <g transform="translate(${doorX}, ${topY})">
       <rect x="6" y="8" width="${DW}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
       ${opts.bare ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
-      <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>
-      ${grain}
+      ${door.image
+        ? `<clipPath id="slab-${uid}"><rect x="0" y="0" width="${DW}" height="${DH}" rx="3"/></clipPath>
+      <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#slab-${uid})"/>`
+        : `<rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>${grain}`}
       <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
-      ${doorGlass}
-      ${doorGlass ? '' : grooves}
+      ${door.image ? '' : doorGlass}
+      ${door.image ? '' : (doorGlass ? '' : grooves)}
       <rect x="${DW-20}" y="${DH/2-30}" width="6" height="60" rx="3" fill="${handleColor}"/>
       <rect x="${DW-19}" y="${DH/2-29}" width="2.5" height="58" rx="2" fill="rgba(255,255,255,.3)"/>
     </g>
