@@ -26,8 +26,11 @@
 
   .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
   .cfg-preview{position:sticky;top:24px;align-self:start;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
-    border:1px solid var(--line);border-radius:4px;min-height:320px;max-height:calc(100vh - 40px);overflow:hidden;display:grid;place-items:center;padding:24px;}
+    border:1px solid var(--line);border-radius:4px;min-height:320px;max-height:calc(100vh - 40px);overflow:hidden;display:grid;place-items:center;padding:24px;text-align:center;}
   .cfg-preview .door-svg{width:100%;max-height:min(500px, calc(100vh - 130px));}
+  /* image-based door (doorSceneHTML) — size by height, keep aspect, don't stretch/crop */
+  .cfg-preview .door-svg.door-tint{width:auto;max-width:100%;}
+  .cfg-preview .door-tint > img{width:auto;height:auto;max-width:100%;max-height:min(500px, calc(100vh - 130px));}
   .cfg-preview .empty{color:var(--ink-3);text-align:center;font-size:14px;}
   .cfg-pane h2{font-family:var(--serif);font-size:30px;font-weight:600;margin:0 0 4px;}
   .cfg-pane .sub{color:var(--ink-2);font-size:14px;margin:0 0 22px;}

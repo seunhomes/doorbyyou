@@ -184,9 +184,9 @@ footer ul a:hover{color:#fff;}
   transform:translateY(14px) scale(.98);transition:.24s;}
 .overlay.open .modal{transform:none;}
 .modal .m-stage{background:linear-gradient(180deg,#f1ece2 0%,#e4ddcd 100%);display:grid;place-items:center;
-  padding:34px;position:relative;}
-.modal .m-stage .door-svg{max-height:480px;}
-.modal .m-info{padding:38px 38px 34px;overflow-y:auto;}
+  padding:34px;position:relative;min-height:0;}
+.modal .m-stage .door-svg{max-height:min(480px, 84vh);}
+.modal .m-info{padding:38px 38px 34px;overflow-y:auto;max-height:90vh;min-height:0;}
 .modal .m-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;
   background:rgba(255,255,255,.8);border:none;cursor:pointer;display:grid;place-items:center;color:var(--ink);}
 .m-info h3{font-family:var(--serif);font-size:38px;font-weight:600;margin:6px 0 0;line-height:1;}
