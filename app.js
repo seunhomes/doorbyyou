@@ -15,7 +15,7 @@
 
   /* swatch dots shown on each card (a few finish options) */
   function swatchDots(d) {
-    const opts = ['snow-white', 'monterey-sand', 'meadow-fern', 'majestic-brick'];
+    const opts = ['natural', 'golden-oak', 'walnut-stain', 'espresso'];
     return opts.map(k => `<span class="sw" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></span>`).join('');
   }
 
