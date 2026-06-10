@@ -306,14 +306,18 @@ function unitSVG(door, sel, opts) {
   const gl = CONFIG.glass[sel ? sel.glass : 0];
   const hinge = CONFIG.hinges[sel ? sel.hinge : 0];
 
-  const slW = sl.sides ? 64 : 0;       // sidelite render width
-  const gap = sl.sides ? 10 : 0;
   const leftS = sl.sides >= 1, rightS = sl.sides >= 2;
-  const doorX = (leftS ? slW + gap : 0);
-  const totalW = doorX + DW + (rightS ? gap + slW : 0);
+  const hasSL = leftS || rightS;
+  const FR = 13;                       // uniform jamb / mullion thickness
+  const SG = 54;                       // sidelite glass width
+  const leftPad  = leftS  ? FR + SG + FR : (hasSL ? FR : 0);
+  const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
+  const doorX = leftPad;
+  const totalW = leftPad + DW + rightPad;
   const trH = tr.h ? 70 : 0;
   const topY = trH ? trH + 12 : 0;
-  const totalH = topY + DH;
+  const slabY = topY + (hasSL ? FR : 0);
+  const totalH = slabY + DH + (hasSL ? FR : 0);
 
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
@@ -339,14 +343,12 @@ function unitSVG(door, sel, opts) {
       frames += glassPanel(8, 8, totalW - 16, trH - 16, gl.tint || 'clear', uid, false);
     }
   }
-  // sidelites
-  function sidelite(x) {
-    let s = `<rect x="${x}" y="${topY}" width="${slW}" height="${DH}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-    s += glassPanel(x + 8, topY + 10, slW - 16, DH - 20, gl.tint || 'frost', uid, true);
-    return s;
+  // unified jamb behind the door + sidelites, so every mullion is equal width
+  if (hasSL) {
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="#fbfaf6" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
-  if (leftS) frames += sidelite(0);
-  if (rightS) frames += sidelite(doorX + DW + gap);
+  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'frost', uid, true);
+  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'frost', uid, true);
 
   return `
   <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -356,9 +358,9 @@ function unitSVG(door, sel, opts) {
     </defs>
     ${frames}
     <!-- door group -->
-    <g transform="translate(${doorX}, ${topY})">
+    <g transform="translate(${doorX}, ${slabY})">
       <rect x="6" y="8" width="${DW}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
-      ${opts.bare ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
+      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${door.image
         ? `<clipPath id="slab-${uid}"><rect x="0" y="0" width="${DW}" height="${DH}" rx="3"/></clipPath>
       <g clip-path="url(#slab-${uid})" style="isolation:isolate">
