@@ -7,13 +7,13 @@
 
 /* ---- Finish swatches: realistic painted / stained door faces ---- */
 const FINISHES = {
-  black:   { label: 'Matte Black',  swatch: '#222224', stops: ['#34343680','#2b2b2d','#202022','#141416'], groove: 'rgba(0,0,0,.6)',  high: 'rgba(255,255,255,.07)', text: '#fff' },
-  white:   { label: 'Snow White',   swatch: '#ecebe4', stops: ['#faf9f5','#f1f0ea','#e7e6df','#dad8d0'], groove: 'rgba(0,0,0,.17)', high: 'rgba(255,255,255,.85)', text: '#222' },
-  iron:    { label: 'Iron Grey',    swatch: '#5b5d61', stops: ['#7a7c80','#6a6c70','#5a5c60','#48494d'], groove: 'rgba(0,0,0,.42)', high: 'rgba(255,255,255,.14)', text: '#fff' },
-  bronze:  { label: 'Dark Bronze',  swatch: '#3a3128', stops: ['#564a3e','#463b30','#382f26','#29221c'], groove: 'rgba(0,0,0,.45)', high: 'rgba(255,255,255,.08)', text: '#fff' },
-  oak:     { label: 'Natural Oak',  swatch: '#b9854b', stops: ['#d2a973','#c2945a','#b07c45','#9a6c39'], groove: 'rgba(76,46,18,.5)',  high: 'rgba(255,247,233,.24)', text: '#3a2a14', grain: true },
-  walnut:  { label: 'Walnut Stain', swatch: '#583620', stops: ['#7a5232','#654227','#523320','#3d2616'], groove: 'rgba(20,10,2,.55)',  high: 'rgba(255,235,205,.15)', text: '#f3e6d6', grain: true },
-  sage:    { label: 'Sage Green',   swatch: '#6b735f', stops: ['#8a917d','#79806b','#69715b','#57604c'], groove: 'rgba(0,0,0,.34)', high: 'rgba(255,255,255,.13)', text: '#fff' },
+  black:   { label: 'Matte Black',  swatch: '#222224', stops: ['#34343680','#2b2b2d','#202022','#141416'], groove: 'rgba(0,0,0,.6)',  high: 'rgba(255,255,255,.07)', text: '#fff', filter: 'grayscale(1) brightness(.34) contrast(1.15)' },
+  white:   { label: 'Snow White',   swatch: '#ecebe4', stops: ['#faf9f5','#f1f0ea','#e7e6df','#dad8d0'], groove: 'rgba(0,0,0,.17)', high: 'rgba(255,255,255,.85)', text: '#222', filter: 'grayscale(1) brightness(1.8) contrast(.82)' },
+  iron:    { label: 'Iron Grey',    swatch: '#5b5d61', stops: ['#7a7c80','#6a6c70','#5a5c60','#48494d'], groove: 'rgba(0,0,0,.42)', high: 'rgba(255,255,255,.14)', text: '#fff', filter: 'grayscale(1) brightness(.82) contrast(1.05)' },
+  bronze:  { label: 'Dark Bronze',  swatch: '#3a3128', stops: ['#564a3e','#463b30','#382f26','#29221c'], groove: 'rgba(0,0,0,.45)', high: 'rgba(255,255,255,.08)', text: '#fff', filter: 'sepia(1) saturate(1.5) hue-rotate(-12deg) brightness(.62) contrast(1.05)' },
+  oak:     { label: 'Natural Oak',  swatch: '#b9854b', stops: ['#d2a973','#c2945a','#b07c45','#9a6c39'], groove: 'rgba(76,46,18,.5)',  high: 'rgba(255,247,233,.24)', text: '#3a2a14', grain: true, filter: 'none' },
+  walnut:  { label: 'Walnut Stain', swatch: '#583620', stops: ['#7a5232','#654227','#523320','#3d2616'], groove: 'rgba(20,10,2,.55)',  high: 'rgba(255,235,205,.15)', text: '#f3e6d6', grain: true, filter: 'sepia(1) saturate(1.7) hue-rotate(-18deg) brightness(.5) contrast(1.05)' },
+  sage:    { label: 'Sage Green',   swatch: '#6b735f', stops: ['#8a917d','#79806b','#69715b','#57604c'], groove: 'rgba(0,0,0,.34)', high: 'rgba(255,255,255,.13)', text: '#fff', filter: 'grayscale(1) sepia(1) hue-rotate(50deg) saturate(.55) brightness(.92)' },
 };
 
 /* ---- The catalog: doorbyyou woodgrain entry-door designs (oak finish renders) ---- */
@@ -105,7 +105,10 @@ function patternSVG(pattern, g, hi) {
 /* Build the full door "scene": studio wall + frame + slab + glass + handle */
 let _sceneSeq = 0;
 function doorSceneHTML(d, opts = {}) {
-  if (d.image) return `<img class="door-svg door-photo" src="${d.image}" alt="${d.name} entry door" loading="lazy" />`;
+  if (d.image) {
+    const ff = (FINISHES[d.finish] || {}).filter || 'none';
+    return `<img class="door-svg door-photo" src="${d.image}" alt="${d.name} entry door" loading="lazy" style="filter:${ff}" />`;
+  }
   const f = FINISHES[d.finish] || FINISHES.black;
   const uid = 'dr' + (_sceneSeq++);
   const st = f.stops;
@@ -320,7 +323,7 @@ function unitSVG(door, sel, opts) {
       ${opts.bare ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${door.image
         ? `<clipPath id="slab-${uid}"><rect x="0" y="0" width="${DW}" height="${DH}" rx="3"/></clipPath>
-      <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#slab-${uid})"/>`
+      <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#slab-${uid})" style="filter:${fin.filter || 'none'}"/>`
         : `<rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>${grain}`}
       <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
       ${door.image ? '' : doorGlass}
