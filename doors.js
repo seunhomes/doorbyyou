@@ -14,28 +14,63 @@ const FINISHES = {
   oak:     { label: 'Natural Oak',  swatch: '#b9854b', stops: ['#d2a973','#c2945a','#b07c45','#9a6c39'], groove: 'rgba(76,46,18,.5)',  high: 'rgba(255,247,233,.24)', text: '#3a2a14', grain: true, filter: 'none' },
   walnut:  { label: 'Walnut Stain', swatch: '#583620', stops: ['#7a5232','#654227','#523320','#3d2616'], groove: 'rgba(20,10,2,.55)',  high: 'rgba(255,235,205,.15)', text: '#f3e6d6', grain: true, filter: 'sepia(1) saturate(1.7) hue-rotate(-18deg) brightness(.5) contrast(1.05)' },
   sage:    { label: 'Sage Green',   swatch: '#6b735f', stops: ['#8a917d','#79806b','#69715b','#57604c'], groove: 'rgba(0,0,0,.34)', high: 'rgba(255,255,255,.13)', text: '#fff', filter: 'grayscale(1) sepia(1) hue-rotate(50deg) saturate(.55) brightness(.92)' },
+
+  /* ---- doorbyyou exterior colour palette (20 finishes for entry doors) ---- */
+  'snow-white':      { label: 'Snow White',      swatch: '#ECEAE1', palette: true },
+  'dover-gray':      { label: 'Dover Gray',      swatch: '#9B9B93', palette: true },
+  'rockwell-blue':   { label: 'Rockwell Blue',   swatch: '#98A7AC', palette: true },
+  'almond':          { label: 'Almond',          swatch: '#E7DCC2', palette: true },
+  'chesapeake-gray': { label: 'Chesapeake Gray', swatch: '#8A979C', palette: true },
+  'midnight-surf':   { label: 'Midnight Surf',   swatch: '#3C4F54', palette: true },
+  'monterey-sand':   { label: 'Monterey Sand',   swatch: '#C8B48F', palette: true },
+  'storm':           { label: 'Storm',           swatch: '#6C787C', palette: true },
+  'marine-dusk':     { label: 'Marine Dusk',     swatch: '#3D4857', palette: true },
+  'pebble':          { label: 'Pebble',          swatch: '#A89A86', palette: true },
+  'hudson-slate':    { label: 'Hudson Slate',    swatch: '#6B7B85', palette: true },
+  'meadow-fern':     { label: 'Meadow Fern',     swatch: '#6E7B5D', palette: true },
+  'dark-drift':      { label: 'Dark Drift',      swatch: '#7D766A', palette: true },
+  'windswept-smoke': { label: 'Windswept Smoke', swatch: '#8C8D88', palette: true },
+  'moonlit-moss':    { label: 'Moonlit Moss',    swatch: '#7B8073', palette: true },
+  'rockport-brown':  { label: 'Rockport Brown',  swatch: '#7A6350', palette: true },
+  'iron-ore':        { label: 'Iron Ore',        swatch: '#474746', palette: true },
+  'majestic-brick':  { label: 'Majestic Brick',  swatch: '#7B3F39', palette: true },
+  'smoked-timber':   { label: 'Smoked Timber',   swatch: '#4E443B', palette: true },
+  'coastal-blue':    { label: 'Coastal Blue',    swatch: '#345468', palette: true },
 };
+
+/* Tint a (grayscale) oak render toward a finish swatch. Returns the swatch
+   colour plus a brightness level derived from its luminance, so flat areas of
+   the door land on the true swatch colour while grooves keep their shading. */
+function finishTint(key) {
+  const f = FINISHES[key];
+  if (!f || !f.swatch) return null;
+  const n = parseInt(f.swatch.slice(1), 16);
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;   // 0..1
+  const lvl = Math.max(0.25, Math.min(2.2, lum / 0.55));   // 0.55 ≈ oak render mean
+  return { color: f.swatch, lvl: lvl.toFixed(3) };
+}
 
 /* ---- The catalog: doorbyyou woodgrain entry-door designs (oak finish renders) ---- */
 const DOORS = [
-  { name: 'Chevron',       material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'chevron',     finish: 'oak', image: 'images/doors/chevron.jpg',       desc: 'Bold mirrored chevron grooves across a warm oak woodgrain slab.' },
-  { name: 'Chevron Boxed', material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'chevron',     finish: 'oak', image: 'images/doors/chevron-boxed.jpg', desc: 'Chevron pattern framed within a clean boxed border for added structure.' },
-  { name: 'Herringbone',   material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringbone', finish: 'oak', image: 'images/doors/herringbone.jpg',   desc: 'Classic herringbone groovework in a rich oak woodgrain.' },
-  { name: 'Parquet',       material: 'Fiberglass', style: 'Traditional',  price: 2999, pattern: 'herringbone', finish: 'oak', image: 'images/doors/parquet.jpg',       desc: 'Interlocking parquet blocks for a tailored, heritage look.' },
-  { name: 'Envelope',      material: 'Fiberglass', style: 'Modern',       price: 2607, pattern: 'abstract',    finish: 'oak', image: 'images/doors/envelope.jpg',      desc: 'Crossed diagonals fold the slab into a striking envelope motif.' },
-  { name: 'Arrow',         material: 'Fiberglass', style: 'Modern',       price: 2454, pattern: 'chevron',     finish: 'oak', image: 'images/doors/arrow.jpg',         desc: 'Directional arrow grooves give this oak door confident movement.' },
-  { name: 'Two Way',       material: 'Fiberglass', style: 'Contemporary', price: 2556, pattern: 'chevron',     finish: 'oak', image: 'images/doors/two-way.jpg',       desc: 'Opposing groove fields meet at a crisp two-way centre line.' },
-  { name: 'Mosaic',        material: 'Fiberglass', style: 'Contemporary', price: 3100, pattern: 'grid',        finish: 'oak', image: 'images/doors/mosaic.jpg',        desc: 'A composed grid of grooved tiles for a refined mosaic face.' },
-  { name: 'Address',       material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'hVaried',     finish: 'oak', image: 'images/doors/address.jpg',       desc: 'Personalised house-number engraving above a stepped groove field.' },
-  { name: 'Craft',         material: 'Fiberglass', style: 'Traditional',  price: 2862, pattern: 'sixPanel',    finish: 'oak', image: 'images/doors/craft.jpg',         desc: 'Craftsman-inspired panelled composition in warm oak.' },
-  { name: 'Duo',           material: 'Fiberglass', style: 'Modern',       price: 2301, pattern: 'twoPanel',    finish: 'oak', image: 'images/doors/duo.jpg',           desc: 'Two clean panels split the slab for a balanced modern look.' },
-  { name: 'Plank',         material: 'Fiberglass', style: 'Modern',       price: 2250, pattern: 'plank',       finish: 'oak', image: 'images/doors/plank.jpg',         desc: 'Vertical plank grooves for a clean, contemporary entrance.' },
-  { name: 'Busy Plank',    material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'plank',       finish: 'oak', image: 'images/doors/busy-plank.jpg',    desc: 'Densely spaced plank grooves add rhythm and fine detail.' },
-  { name: 'Full Step',     material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'hChannel',    finish: 'oak', image: 'images/doors/full-step.jpg',     desc: 'Full-width stepped channels march down the oak slab.' },
-  { name: 'Half Step',     material: 'Fiberglass', style: 'Contemporary', price: 2352, pattern: 'hVaried',     finish: 'oak', image: 'images/doors/half-step.jpg',     desc: 'Offset half-step grooves for a quietly dynamic surface.' },
-  { name: 'Odd',           material: 'Fiberglass', style: 'Modern',       price: 2352, pattern: 'abstract',    finish: 'oak', image: 'images/doors/odd.jpg',           desc: 'An off-beat asymmetric groove layout for a design-forward entry.' },
-  { name: 'Mild',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'oak', image: 'images/doors/mild.jpg',          desc: 'Understated horizontal lines for a soft, minimal statement.' },
-  { name: 'Even',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'oak', image: 'images/doors/even.jpg',          desc: 'Evenly spaced horizontal grooves — calm, linear and modern.' },
+  { name: 'Chevron',       material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'chevron',     finish: 'pebble', image: 'images/doors/chevron.jpg',       desc: 'Bold mirrored chevron grooves across a warm oak woodgrain slab.' },
+  { name: 'Chevron Boxed', material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'chevron',     finish: 'pebble', image: 'images/doors/chevron-boxed.jpg', desc: 'Chevron pattern framed within a clean boxed border for added structure.' },
+  { name: 'Herringbone',   material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringbone', finish: 'pebble', image: 'images/doors/herringbone.jpg',   desc: 'Classic herringbone groovework in a rich oak woodgrain.' },
+  { name: 'Parquet',       material: 'Fiberglass', style: 'Traditional',  price: 2999, pattern: 'herringbone', finish: 'pebble', image: 'images/doors/parquet.jpg',       desc: 'Interlocking parquet blocks for a tailored, heritage look.' },
+  { name: 'Envelope',      material: 'Fiberglass', style: 'Modern',       price: 2607, pattern: 'abstract',    finish: 'pebble', image: 'images/doors/envelope.jpg',      desc: 'Crossed diagonals fold the slab into a striking envelope motif.' },
+  { name: 'Arrow',         material: 'Fiberglass', style: 'Modern',       price: 2454, pattern: 'chevron',     finish: 'pebble', image: 'images/doors/arrow.jpg',         desc: 'Directional arrow grooves give this oak door confident movement.' },
+  { name: 'Two Way',       material: 'Fiberglass', style: 'Contemporary', price: 2556, pattern: 'chevron',     finish: 'pebble', image: 'images/doors/two-way.jpg',       desc: 'Opposing groove fields meet at a crisp two-way centre line.' },
+  { name: 'Mosaic',        material: 'Fiberglass', style: 'Contemporary', price: 3100, pattern: 'grid',        finish: 'pebble', image: 'images/doors/mosaic.jpg',        desc: 'A composed grid of grooved tiles for a refined mosaic face.' },
+  { name: 'Address',       material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'hVaried',     finish: 'pebble', image: 'images/doors/address.jpg',       desc: 'Personalised house-number engraving above a stepped groove field.' },
+  { name: 'Craft',         material: 'Fiberglass', style: 'Traditional',  price: 2862, pattern: 'sixPanel',    finish: 'pebble', image: 'images/doors/craft.jpg',         desc: 'Craftsman-inspired panelled composition in warm oak.' },
+  { name: 'Duo',           material: 'Fiberglass', style: 'Modern',       price: 2301, pattern: 'twoPanel',    finish: 'pebble', image: 'images/doors/duo.jpg',           desc: 'Two clean panels split the slab for a balanced modern look.' },
+  { name: 'Plank',         material: 'Fiberglass', style: 'Modern',       price: 2250, pattern: 'plank',       finish: 'pebble', image: 'images/doors/plank.jpg',         desc: 'Vertical plank grooves for a clean, contemporary entrance.' },
+  { name: 'Busy Plank',    material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'plank',       finish: 'pebble', image: 'images/doors/busy-plank.jpg',    desc: 'Densely spaced plank grooves add rhythm and fine detail.' },
+  { name: 'Full Step',     material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'hChannel',    finish: 'pebble', image: 'images/doors/full-step.jpg',     desc: 'Full-width stepped channels march down the oak slab.' },
+  { name: 'Half Step',     material: 'Fiberglass', style: 'Contemporary', price: 2352, pattern: 'hVaried',     finish: 'pebble', image: 'images/doors/half-step.jpg',     desc: 'Offset half-step grooves for a quietly dynamic surface.' },
+  { name: 'Odd',           material: 'Fiberglass', style: 'Modern',       price: 2352, pattern: 'abstract',    finish: 'pebble', image: 'images/doors/odd.jpg',           desc: 'An off-beat asymmetric groove layout for a design-forward entry.' },
+  { name: 'Mild',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'pebble', image: 'images/doors/mild.jpg',          desc: 'Understated horizontal lines for a soft, minimal statement.' },
+  { name: 'Even',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'pebble', image: 'images/doors/even.jpg',          desc: 'Evenly spaced horizontal grooves — calm, linear and modern.' },
 ];
 
 /* ============================================================
@@ -106,8 +141,9 @@ function patternSVG(pattern, g, hi) {
 let _sceneSeq = 0;
 function doorSceneHTML(d, opts = {}) {
   if (d.image) {
-    const ff = (FINISHES[d.finish] || {}).filter || 'none';
-    return `<img class="door-svg door-photo" src="${d.image}" alt="${d.name} entry door" loading="lazy" style="filter:${ff}" />`;
+    const t = finishTint(d.finish);
+    if (!t) return `<img class="door-svg door-photo" src="${d.image}" alt="${d.name} entry door" loading="lazy" />`;
+    return `<span class="door-svg door-tint" style="--tint:${t.color};--lvl:${t.lvl}"><img src="${d.image}" alt="${d.name} entry door" loading="lazy" /></span>`;
   }
   const f = FINISHES[d.finish] || FINISHES.black;
   const uid = 'dr' + (_sceneSeq++);
@@ -160,7 +196,7 @@ const CONFIG = {
     { label: `42" × 8'`,   w: 42, h: 96, mult: 1.34 },
     { label: `Double 72" × 8'`, w: 72, h: 96, mult: 1.95, dbl: true },
   ],
-  finishKeys: ['black', 'white', 'iron', 'bronze', 'oak', 'walnut', 'sage'],
+  finishKeys: ['snow-white', 'dover-gray', 'rockwell-blue', 'almond', 'chesapeake-gray', 'midnight-surf', 'monterey-sand', 'storm', 'marine-dusk', 'pebble', 'hudson-slate', 'meadow-fern', 'dark-drift', 'windswept-smoke', 'moonlit-moss', 'rockport-brown', 'iron-ore', 'majestic-brick', 'smoked-timber', 'coastal-blue'],
   glass: [
     { label: 'Solid (no glass)', add: 0,   tint: null },
     { label: 'Clear Lite',       add: 380, tint: 'clear' },
@@ -262,7 +298,9 @@ function unitSVG(door, sel, opts) {
   const f = FINISHES[door.finish] || FINISHES.black;
   const fin = sel && sel.finish != null ? FINISHES[CONFIG.finishKeys[sel.finish]] : f;
   const uid = 'u' + (_sceneSeq++);
-  const st = fin.stops;
+  const st = fin.stops || ['#cfcabd', '#bdb7a8', '#a79f8e', '#8f8674'];
+  const finKey = sel && sel.finish != null ? CONFIG.finishKeys[sel.finish] : door.finish;
+  const tint = finishTint(finKey);
   const sl = CONFIG.sidelites[sel ? sel.sidelite : 0];
   const tr = CONFIG.transoms[sel ? sel.transom : 0];
   const gl = CONFIG.glass[sel ? sel.glass : 0];
@@ -323,7 +361,10 @@ function unitSVG(door, sel, opts) {
       ${opts.bare ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${door.image
         ? `<clipPath id="slab-${uid}"><rect x="0" y="0" width="${DW}" height="${DH}" rx="3"/></clipPath>
-      <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#slab-${uid})" style="filter:${fin.filter || 'none'}"/>`
+      <g clip-path="url(#slab-${uid})" style="isolation:isolate">
+        <rect x="0" y="0" width="${DW}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
+        <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
+      </g>`
         : `<rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>${grain}`}
       <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
       ${door.image ? '' : doorGlass}

@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   const P_ = window.PANES;
-  const { DOORS, FINISHES, doorSceneHTML } = window.PANES;
+  const { DOORS, FINISHES, CONFIG, doorSceneHTML } = window.PANES;
   const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: n % 1 ? 2 : 0 });
 
   const grid = document.getElementById('grid');
@@ -15,7 +15,7 @@
 
   /* swatch dots shown on each card (a few finish options) */
   function swatchDots(d) {
-    const opts = ['black', 'white', 'iron', d.finish].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+    const opts = ['snow-white', 'monterey-sand', 'meadow-fern', 'majestic-brick'];
     return opts.map(k => `<span class="sw" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></span>`).join('');
   }
 
@@ -95,7 +95,7 @@
     { label: 'Sandblasted', add: 520 },
     { label: 'Decorative', add: 740 },
   ];
-  const FINISH_KEYS = ['black', 'white', 'iron', 'bronze', 'oak', 'walnut', 'sage'];
+  const FINISH_KEYS = CONFIG.finishKeys;
 
   let cfg = null; // {door, size, finish, glass}
 
