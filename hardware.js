@@ -20,12 +20,18 @@
       ${HANDLE_SVG[sku] || ''}</svg>`;
   }
 
+  const HANDLES = [
+    { label: 'Tubular Pull · 48"',   sku: 'H-TP48' },
+    { label: 'Square Lever Set',     sku: 'H-SQL' },
+    { label: 'Modern Bar · 60"',     sku: 'H-MB60' },
+    { label: 'Entry Set + Deadbolt', sku: 'H-ESD' },
+  ];
   const handleGrid = document.getElementById('handleGrid');
-  handleGrid.innerHTML = CONFIG.handles.map(h => `
+  handleGrid.innerHTML = HANDLES.map(h => `
     <div class="hw">
       <div class="hs">${handleArt(h.sku)}</div>
       <div class="ht"><b>${h.label}</b>
-        <div class="row"><span>Matte finish</span><span class="pr">${h.add ? '+' + fmt(h.add) : 'Included'}</span></div>
+        <div class="row"><span>Matte finish</span><span class="pr">Included</span></div>
       </div>
     </div>`).join('');
 
@@ -44,10 +50,12 @@
 
   function paint() { preview.innerHTML = unitSVG(door, sel); }
 
-  function buildRow(elId, items, key, withPrice) {
+  const priceOf = (it) => (it.add != null ? it.add : it.price) || 0;
+  function buildRow(elId, items, key) {
     const el = document.getElementById(elId);
+    if (!el) return;
     el.innerHTML = items.map((it, i) =>
-      `<button class="opt-btn ${i === sel[key] ? 'on' : ''}" data-i="${i}">${it.label}${withPrice && it.add ? ' +' + fmt(it.add) : ''}</button>`).join('');
+      `<button class="opt-btn ${i === sel[key] ? 'on' : ''}" data-i="${i}">${it.label}${priceOf(it) ? ' +' + fmt(priceOf(it)) : ''}</button>`).join('');
     el.addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]'); if (!b) return;
       sel[key] = +b.dataset.i;
@@ -55,13 +63,10 @@
       paint();
     });
   }
-  buildRow('slRow', CONFIG.sidelites, 'sidelite', true);
-  buildRow('trRow', CONFIG.transoms, 'transom', true);
-  buildRow('glRow', CONFIG.glass, 'glass', true);
-
-  // default to a flattering combo
-  sel.sidelite = 2; sel.transom = 1;
-  document.querySelectorAll('#slRow .opt-btn').forEach((x, i) => x.classList.toggle('on', i === sel.sidelite));
-  document.querySelectorAll('#trRow .opt-btn').forEach((x, i) => x.classList.toggle('on', i === sel.transom));
+  // default to a flattering combo: single + 2 sidelites, rectangular transom
+  sel.config = 2; sel.transom = 1;
+  buildRow('slRow', CONFIG.configurations, 'config');
+  buildRow('trRow', CONFIG.transoms, 'transom');
+  buildRow('glRow', CONFIG.glass, 'glass');
   paint();
 })();

@@ -49,21 +49,21 @@
   function stepMaterial() {
     const fg = DOORS.filter(d => d.material === 'Fiberglass');
     const stl = DOORS.filter(d => d.material === 'Steel');
-    const min = (arr) => Math.min(...arr.map(d => d.price));
+    const min = (arr) => arr.length ? Math.min(...arr.map(d => computePrice(d, defaultSel(d)))) : 0;
     paneR.innerHTML = `
       <h2>Choose a material</h2>
-      <p class="sub">Both are insulated, low-maintenance and built to your size. Fiberglass takes wood-grain stains; steel is the value workhorse.</p>
+      <p class="sub">Insulated, low-maintenance fibreglass slabs in a wood-grain finish, built to your exact size and stained to order.</p>
       <div class="mat-cards">
         <div class="mat-card ${st.material==='Fiberglass'?'on':''}" data-mat="Fiberglass">
           <h3>Fiberglass</h3>
-          <p>Smooth or grained skin, dent-proof, stainable. The broadest range of groove designs.</p>
+          <p>Wood-grain skin, dent-proof and stainable, in oak / mahogany / teak species. The full range of groove designs.</p>
           <div class="from">${fg.length} models · from ${fmt(min(fg))}</div>
         </div>
-        <div class="mat-card ${st.material==='Steel'?'on':''}" data-mat="Steel">
+        ${stl.length ? `<div class="mat-card ${st.material==='Steel'?'on':''}" data-mat="Steel">
           <h3>Steel</h3>
           <p>24-gauge galvanized face, polyurethane core. The most affordable secure entry.</p>
           <div class="from">${stl.length} models · from ${fmt(min(stl))}</div>
-        </div>
+        </div>` : ''}
       </div>`;
     paneR.querySelectorAll('.mat-card').forEach(c => c.addEventListener('click', () => {
       st.material = c.dataset.mat;
@@ -80,7 +80,7 @@
       <div class="model-grid">
         ${list.map(d => `<div class="model ${st.door&&st.door.name===d.name?'on':''}" data-name="${d.name}">
           <div class="ms">${doorSceneHTML(d)}</div>
-          <div class="mt"><b>${d.name}</b><span>${d.style} · ${fmt(d.price)}</span></div>
+          <div class="mt"><b>${d.name}</b><span>${d.style} · from ${fmt(computePrice(d, defaultSel(d)))}</span></div>
         </div>`).join('')}
       </div>`;
     paneR.querySelectorAll('.model').forEach(m => m.addEventListener('click', () => {
@@ -101,20 +101,20 @@
     paneR.innerHTML = `
       <h2>Configure ${st.door.name}</h2>
       <p class="sub">Live price updates as you build. Everything ships free with a lifetime warranty.</p>
+      <div class="grp"><div class="lbl">Configuration <b>${CONFIG.configurations[s.config].label}</b></div>
+        ${optRow(CONFIG.configurations,'config',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
+      <div class="grp"><div class="lbl">Height <b>${CONFIG.heights[s.height].label}</b></div>
+        ${optRow(CONFIG.heights,'height',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="grp"><div class="lbl">Size <b>${CONFIG.sizes[s.size].label}</b></div>
-        ${optRow(CONFIG.sizes,'size',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
-      <div class="grp"><div class="lbl">Finish <b>${FINISHES[fk[s.finish]].label}</b></div>
+        ${optRow(CONFIG.sizes,'size',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+      <div class="grp"><div class="lbl">Stain colour <b>${FINISHES[fk[s.finish]].label}</b></div>
         ${optRow(fk,'finish',(k,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
       <div class="grp"><div class="lbl">Decorative glass <b>${CONFIG.glass[s.glass].label}</b></div>
-        ${optRow(CONFIG.glass,'glass',(g,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.add?' +'+fmt(g.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Sidelites <b>${CONFIG.sidelites[s.sidelite].label}</b></div>
-        ${optRow(CONFIG.sidelites,'sidelite',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+        ${optRow(CONFIG.glass,'glass',(g,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Transom <b>${CONFIG.transoms[s.transom].label}</b></div>
         ${optRow(CONFIG.transoms,'transom',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Handle &amp; lock <b>${CONFIG.handles[s.handle].label}</b></div>
-        ${optRow(CONFIG.handles,'handle',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Hinges <b>${CONFIG.hinges[s.hinge].label}</b></div>
-        ${optRow(CONFIG.hinges,'hinge',(x,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}" style="background:${x.swatch}"></button>`)}</div>
+        ${optRow(CONFIG.hinges,'hinge',(x,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}${x.add?' +'+fmt(x.add):''}" style="background:${x.swatch}"></button>`)}</div>
       <button class="btn ghost sm" id="vizBtn" style="margin-top:20px;width:100%;justify-content:center;">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         See it on your home
@@ -132,12 +132,12 @@
     const s = st.sel, d = st.door;
     const rows = [
       ['Model', `${d.name} · ${d.material}`],
+      ['Configuration', CONFIG.configurations[s.config].label],
+      ['Height', CONFIG.heights[s.height].label],
       ['Size', CONFIG.sizes[s.size].label],
-      ['Finish', FINISHES[CONFIG.finishKeys[s.finish]].label],
+      ['Stain colour', FINISHES[CONFIG.finishKeys[s.finish]].label],
       ['Decorative glass', CONFIG.glass[s.glass].label],
-      ['Sidelites', CONFIG.sidelites[s.sidelite].label],
       ['Transom', CONFIG.transoms[s.transom].label],
-      ['Handle & lock', CONFIG.handles[s.handle].label],
       ['Hinges', CONFIG.hinges[s.hinge].label],
     ];
     paneR.innerHTML = `
@@ -157,7 +157,7 @@
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" stroke-linecap="round"/></svg>Copy share link</button>
       </div>`;
     const build = () => ({ product: 'door', name: d.name, sel: s, price: computePrice(d, s),
-      title: d.name, sub: `${CONFIG.sizes[s.size].label} · ${FINISHES[CONFIG.finishKeys[s.finish]].label}` });
+      title: d.name, sub: `${CONFIG.configurations[s.config].label} · ${FINISHES[CONFIG.finishKeys[s.finish]].label}` });
     const sb = paneR.querySelector('#saveBuild');
     if (sb) sb.addEventListener('click', () => {
       P.builds.save(build());
@@ -194,9 +194,9 @@
     if (st.step === 3) {
       const fk = CONFIG.finishKeys[st.sel.finish];
       P.cart.add({
-        key: `door-${st.door.name}-${st.sel.size}-${fk}-${st.sel.glass}-${st.sel.sidelite}-${st.sel.transom}-${Date.now()}`,
+        key: `door-${st.door.name}-${st.sel.config}-${st.sel.height}-${fk}-${st.sel.glass}-${st.sel.transom}-${Date.now()}`,
         title: st.door.name,
-        sub: `${CONFIG.sizes[st.sel.size].label} · ${FINISHES[fk].label}${st.sel.sidelite?' · sidelites':''}${st.sel.transom?' · transom':''}`,
+        sub: `${CONFIG.configurations[st.sel.config].label} · ${FINISHES[fk].label}${st.sel.transom?' · transom':''}`,
         price: computePrice(st.door, st.sel),
         art: { kind: 'door', name: st.door.name, finish: fk },
       });

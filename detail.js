@@ -44,32 +44,32 @@
       <p class="pdp-desc">${door.desc} Finished identically inside and out, prepped for a multi-point lock and ready to drop into your opening.</p>
 
       <div class="grp">
-        <div class="lbl">Size <b>${CONFIG.sizes[sel.size].label}</b></div>
-        ${optRow(CONFIG.sizes, 'size', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}</button>`)}
+        <div class="lbl">Configuration <b>${CONFIG.configurations[sel.config].label}</b></div>
+        ${optRow(CONFIG.configurations, 'config', (c, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${c.label}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Finish <b>${FINISHES[fk[sel.finish]].label}</b></div>
+        <div class="lbl">Height <b>${CONFIG.heights[sel.height].label}</b></div>
+        ${optRow(CONFIG.heights, 'height', (h, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${h.label}</button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Size <b>${CONFIG.sizes[sel.size].label}</b></div>
+        ${optRow(CONFIG.sizes, 'size', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}${s.add?' +'+fmt(s.add):''}</button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Stain colour <b>${FINISHES[fk[sel.finish]].label}</b></div>
         ${optRow(fk, 'finish', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}
       </div>
       <div class="grp">
         <div class="lbl">Decorative glass <b>${CONFIG.glass[sel.glass].label}</b></div>
-        ${optRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.add?' +'+fmt(g.add):''}</button>`)}
-      </div>
-      <div class="grp">
-        <div class="lbl">Sidelites <b>${CONFIG.sidelites[sel.sidelite].label}</b></div>
-        ${optRow(CONFIG.sidelites, 'sidelite', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}${s.add?' +'+fmt(s.add):''}</button>`)}
+        ${optRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}
       </div>
       <div class="grp">
         <div class="lbl">Transom <b>${CONFIG.transoms[sel.transom].label}</b></div>
         ${optRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Handle &amp; lock <b>${CONFIG.handles[sel.handle].label}</b></div>
-        ${optRow(CONFIG.handles, 'handle', (h, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${h.label}${h.add?' +'+fmt(h.add):''}</button>`)}
-      </div>
-      <div class="grp">
         <div class="lbl">Hinges <b>${CONFIG.hinges[sel.hinge].label}</b></div>
-        ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}" style="background:${h.swatch}"></button>`)}
+        ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
       </div>
 
       <div class="pdp-cta">
@@ -95,7 +95,7 @@
         const b = e.target.closest('[data-i]'); if (!b) return;
         const key = row.dataset.key;
         sel[key] = +b.dataset.i;
-        const visualKeys = ['finish', 'glass', 'sidelite', 'transom', 'hinge'];
+        const visualKeys = ['config', 'finish', 'glass', 'transom', 'hinge'];
         paintInfo();
         if (visualKeys.includes(key)) paintVisual();
         paintThumbsActive();
@@ -109,9 +109,9 @@
     if (ab) ab.addEventListener('click', () => {
       const fk = CONFIG.finishKeys[sel.finish];
       P.cart.add({
-        key: `door-${door.name}-${sel.size}-${fk}-${sel.glass}-${sel.sidelite}-${sel.transom}`,
+        key: `door-${door.name}-${sel.config}-${sel.height}-${fk}-${sel.glass}-${sel.transom}`,
         title: door.name,
-        sub: `${CONFIG.sizes[sel.size].label} · ${FINISHES[fk].label}${sel.sidelite?' · sidelites':''}${sel.transom?' · transom':''}`,
+        sub: `${CONFIG.configurations[sel.config].label} · ${FINISHES[fk].label}${sel.transom?' · transom':''}`,
         price: computePrice(door, sel),
         art: { kind: 'door', name: door.name, finish: fk },
       });
@@ -120,7 +120,7 @@
 
     const buildOf = () => ({ product: 'door', name: door.name, sel: Object.assign({}, sel),
       price: computePrice(door, sel), title: door.name,
-      sub: `${CONFIG.sizes[sel.size].label} · ${FINISHES[CONFIG.finishKeys[sel.finish]].label}` });
+      sub: `${CONFIG.configurations[sel.config].label} · ${FINISHES[CONFIG.finishKeys[sel.finish]].label}` });
     const svb = info.querySelector('#saveBtn');
     if (svb) svb.addEventListener('click', () => {
       P.builds.save(buildOf());
@@ -160,7 +160,7 @@
     document.getElementById('related').innerHTML = pool.map(d => `
       <a class="card" href="Door.html?door=${encodeURIComponent(d.name)}">
         <div class="stage"><span class="badge">${d.material}</span>${doorSceneHTML(d)}</div>
-        <div class="info"><div class="top"><div class="name">${d.name}</div><div class="price">${fmt(d.price)}</div></div>
+        <div class="info"><div class="top"><div class="name">${d.name}</div><div class="price">${fmt(computePrice(d, defaultSel(d)))}</div></div>
         <div class="from">${d.style} · Starting from</div></div>
       </a>`).join('');
   }

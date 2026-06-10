@@ -199,58 +199,65 @@ function doorSceneHTML(d, opts = {}) {
    Configurator options + pricing (shared across pages)
    ============================================================ */
 const CONFIG = {
+  /* Door + frame configuration. Base price = frame + stain, indexed
+     [standard height, 8ft height]. Figures from the 2026 price sheets. */
+  configurations: [
+    { label: 'Single',               sides: 0, dbl: false, frame: [1550, 2000], stain: [1000, 1250] },
+    { label: 'Single + 1 sidelite',  sides: 1, dbl: false, frame: [1900, 2350], stain: [1300, 1450] },
+    { label: 'Single + 2 sidelites', sides: 2, dbl: false, frame: [2300, 2800], stain: [1800, 2200] },
+    { label: 'Double door',          sides: 0, dbl: true,  frame: [2900, 3750], stain: [2700, 2950] },
+    { label: 'Double + 2 sidelites', sides: 2, dbl: true,  frame: [3500, 4300], stain: [3200, 3500] },
+  ],
+  heights: [
+    { label: `Standard · up to 7'` },
+    { label: `8 ft tall` },
+  ],
+  // oversize adders (over the standard width/height)
   sizes: [
-    { label: `32" × 6'8"`, w: 32, h: 80, mult: 1.00 },
-    { label: `36" × 6'8"`, w: 36, h: 80, mult: 1.06 },
-    { label: `36" × 8'`,   w: 36, h: 96, mult: 1.22 },
-    { label: `42" × 8'`,   w: 42, h: 96, mult: 1.34 },
-    { label: `Double 72" × 8'`, w: 72, h: 96, mult: 1.95, dbl: true },
+    { label: 'Standard size', add: 0 },
+    { label: `42" × 79"`,  add: 250 },
+    { label: `42" × 95"`,  add: 300 },
+    { label: `48" × 95"`,  add: 425 },
+    { label: `48" × 108"`, add: 1000 },
   ],
   finishKeys: ['natural', 'golden-oak', 'cedar', 'chestnut', 'walnut-stain', 'dark-walnut', 'mahogany', 'espresso'],
+  // Direct-glaze glass; price is the 0–5 sq ft rate (typical lite). Larger glazing is quoted by sq ft.
   glass: [
-    { label: 'Solid (no glass)', add: 0,   tint: null },
-    { label: 'Clear Lite',       add: 380, tint: 'clear' },
-    { label: 'Sandblasted',      add: 520, tint: 'frost' },
-    { label: 'Rain',             add: 560, tint: 'rain' },
-    { label: 'Decorative Iron',  add: 740, tint: 'iron' },
-  ],
-  sidelites: [
-    { label: 'None',            add: 0,    sides: 0, w: 0 },
-    { label: 'One side · 12"',  add: 690,  sides: 1, w: 12 },
-    { label: 'Both sides · 12"',add: 1280, sides: 2, w: 12 },
-    { label: 'Both sides · 14"',add: 1480, sides: 2, w: 14 },
+    { label: 'None (solid)',          tint: null,    price: 0 },
+    { label: 'Clear',                 tint: 'clear', price: 300 },
+    { label: 'Acid etch',             tint: 'frost', price: 400 },
+    { label: 'Black tint',            tint: 'iron',  price: 450 },
+    { label: 'Black tint · privacy',  tint: 'iron',  price: 450 },
+    { label: 'Clear border',          tint: 'clear', price: 450 },
   ],
   transoms: [
     { label: 'None',        add: 0,   h: 0 },
-    { label: 'Rectangular', add: 540, h: 14 },
-    { label: 'Arched',      add: 760, h: 18, arch: true },
-  ],
-  handles: [
-    { label: 'Tubular Pull · 48"', add: 0,   sku: 'H-TP48' },
-    { label: 'Square Lever Set',   add: 120, sku: 'H-SQL' },
-    { label: 'Modern Bar · 60"',   add: 240, sku: 'H-MB60' },
-    { label: 'Entry Set + Deadbolt', add: 180, sku: 'H-ESD' },
+    { label: 'Rectangular', add: 500, h: 14 },
+    { label: 'Arched',      add: 500, h: 18, arch: true },
   ],
   hinges: [
-    { label: 'Satin Nickel',     add: 0,  swatch: '#b9bcc0' },
-    { label: 'Matte Black',      add: 40, swatch: '#222224' },
-    { label: 'Oil-Rubbed Bronze',add: 55, swatch: '#3a2f25' },
-    { label: 'Polished Brass',   add: 60, swatch: '#b9924a' },
+    { label: 'Satin Nickel', add: 0,   swatch: '#b9bcc0' },
+    { label: 'Black',        add: 0,   swatch: '#222224' },
+    { label: 'Concealed',    add: 250, swatch: '#6f7175' },
   ],
 };
 
 /* Default selection object for a door */
 function defaultSel(door) {
   let fin = CONFIG.finishKeys.indexOf(door.finish); if (fin < 0) fin = 0;
-  return { size: 1, finish: fin, glass: 0, sidelite: 0, transom: 0, handle: 0, hinge: 0 };
+  return { config: 0, height: 0, size: 0, finish: fin, glass: 0, transom: 0, hinge: 0 };
 }
 
 /* Total configured price for a door + selection */
 function computePrice(door, s) {
-  const base = door.price * CONFIG.sizes[s.size].mult;
-  const extras = CONFIG.glass[s.glass].add + CONFIG.sidelites[s.sidelite].add
-    + CONFIG.transoms[s.transom].add + CONFIG.handles[s.handle].add + CONFIG.hinges[s.hinge].add;
-  return base + extras;
+  const c = CONFIG.configurations[s.config] || CONFIG.configurations[0];
+  const h = s.height ? 1 : 0;
+  let total = c.frame[h] + c.stain[h];
+  total += (CONFIG.sizes[s.size] || { add: 0 }).add;
+  total += (CONFIG.glass[s.glass] || { price: 0 }).price;
+  total += (CONFIG.transoms[s.transom] || { add: 0 }).add;
+  total += (CONFIG.hinges[s.hinge] || { add: 0 }).add;
+  return total;
 }
 
 /* Key spec table rows for a door */
@@ -306,24 +313,27 @@ function glassPanel(x, y, w, h, tint, uid, mullions) {
 function unitSVG(door, sel, opts) {
   opts = opts || {};
   const f = FINISHES[door.finish] || FINISHES.black;
-  const fin = sel && sel.finish != null ? FINISHES[CONFIG.finishKeys[sel.finish]] : f;
+  const finKey = sel && sel.finish != null ? CONFIG.finishKeys[sel.finish] : door.finish;
+  const fin = FINISHES[finKey] || f;
   const uid = 'u' + (_sceneSeq++);
   const st = fin.stops || ['#cfcabd', '#bdb7a8', '#a79f8e', '#8f8674'];
-  const finKey = sel && sel.finish != null ? CONFIG.finishKeys[sel.finish] : door.finish;
   const tint = finishTint(finKey);
-  const sl = CONFIG.sidelites[sel ? sel.sidelite : 0];
-  const tr = CONFIG.transoms[sel ? sel.transom : 0];
-  const gl = CONFIG.glass[sel ? sel.glass : 0];
-  const hinge = CONFIG.hinges[sel ? sel.hinge : 0];
+  const cfg = CONFIG.configurations[sel ? sel.config : 0] || CONFIG.configurations[0];
+  const tr = CONFIG.transoms[sel ? sel.transom : 0] || CONFIG.transoms[0];
+  const gl = CONFIG.glass[sel ? sel.glass : 0] || CONFIG.glass[0];
+  const hinge = CONFIG.hinges[sel ? sel.hinge : 0] || CONFIG.hinges[0];
+  const handleColor = hinge.swatch;
 
-  const leftS = sl.sides >= 1, rightS = sl.sides >= 2;
+  const dbl = !!cfg.dbl;
+  const DWd = dbl ? 320 : DW;          // door footprint width
+  const leftS = cfg.sides >= 1, rightS = cfg.sides >= 2;
   const hasSL = leftS || rightS;
   const FR = 13;                       // uniform jamb / mullion thickness
   const SG = 54;                       // sidelite glass width
   const leftPad  = leftS  ? FR + SG + FR : (hasSL ? FR : 0);
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
-  const totalW = leftPad + DW + rightPad;
+  const totalW = leftPad + DWd + rightPad;
   const trH = tr.h ? 70 : 0;
   const topY = trH ? trH + 12 : 0;
   const slabY = topY + (hasSL ? FR : 0);
@@ -332,15 +342,32 @@ function unitSVG(door, sel, opts) {
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
       <stop offset=".72" stop-color="${st[2]}"/><stop offset="1" stop-color="${st[3]}"/></linearGradient>`;
-  const grainDef = `<pattern id="grain-${uid}" width="3" height="${DH}" patternUnits="userSpaceOnUse">
-      <line x1="1" y1="0" x2="1" y2="${DH}" stroke="rgba(0,0,0,.05)" stroke-width="1"/></pattern>`;
 
-  // door slab
-  const grooves = patternSVG(door.pattern, fin.groove, fin.high);
-  const grain = fin.grain ? `<rect x="0" y="0" width="${DW}" height="${DH}" fill="url(#grain-${uid})"/>` : '';
-  // glass cut into door (centre upper third) when glass selected & not a panel-style door
-  const doorGlass = gl.tint ? glassPanel(46, 40, DW - 92, 150, gl.tint, uid, true) : '';
-  const handleColor = hinge.swatch;
+  // one door leaf: shadow + slab (tinted render or gradient) + edge + handle
+  function leaf(x, w, handleX) {
+    const cid = 'c' + uid + 'x' + Math.round(x);
+    const face = door.image
+      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
+        <g clip-path="url(#${cid})" style="isolation:isolate">
+          <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
+          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
+        </g>`
+      : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
+    return `
+      <rect x="${x + 6}" y="8" width="${w}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
+      ${face}
+      <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+      <rect x="${handleX}" y="${DH/2-30}" width="6" height="60" rx="3" fill="${handleColor}"/>
+      <rect x="${handleX+1}" y="${DH/2-29}" width="2.5" height="58" rx="2" fill="rgba(255,255,255,.3)"/>`;
+  }
+
+  let leaves;
+  if (dbl) {
+    const MULL = 6, LW = (DWd - MULL) / 2;
+    leaves = leaf(0, LW, LW - 18) + leaf(LW + MULL, LW, LW + MULL + 12);
+  } else {
+    leaves = leaf(0, DWd, DWd - 20);
+  }
 
   let frames = '';
   // transom
@@ -362,27 +389,14 @@ function unitSVG(door, sel, opts) {
 
   return `
   <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-    <defs>${faceGrad}${grainDef}${glassDefs(uid)}
+    <defs>${faceGrad}${glassDefs(uid)}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>
     ${frames}
-    <!-- door group -->
     <g transform="translate(${doorX}, ${slabY})">
-      <rect x="6" y="8" width="${DW}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
-      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DW+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
-      ${door.image
-        ? `<clipPath id="slab-${uid}"><rect x="0" y="0" width="${DW}" height="${DH}" rx="3"/></clipPath>
-      <g clip-path="url(#slab-${uid})" style="isolation:isolate">
-        <rect x="0" y="0" width="${DW}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-        <image href="${door.image}" x="0" y="0" width="${DW}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
-      </g>`
-        : `<rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>${grain}`}
-      <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
-      ${door.image ? '' : doorGlass}
-      ${door.image ? '' : (doorGlass ? '' : grooves)}
-      <rect x="${DW-20}" y="${DH/2-30}" width="6" height="60" rx="3" fill="${handleColor}"/>
-      <rect x="${DW-19}" y="${DH/2-29}" width="2.5" height="58" rx="2" fill="rgba(255,255,255,.3)"/>
+      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
+      ${leaves}
     </g>
     ${opts.bare ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
   </svg>`;
