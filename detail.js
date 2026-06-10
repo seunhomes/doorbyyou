@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   const P = window.PANES;
-  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, specsFor, defaultSel } = P;
+  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, shippingFor, specsFor, defaultSel } = P;
   const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: n % 1 ? 2 : 0 });
   const qs = new URLSearchParams(location.search);
 
@@ -40,7 +40,7 @@
     info.innerHTML = `
       <div class="eyebrow">${door.material} · ${door.style}</div>
       <h1>${door.name}</h1>
-      <div class="pdp-price">${fmt(computePrice(door, sel))}<small>Configured price · before tax · ships free</small></div>
+      <div class="pdp-price">${fmt(computePrice(door, sel))}<small>Configured price · before tax &amp; freight</small></div>
       <p class="pdp-desc">${door.desc} Finished identically inside and out, prepped for a multi-point lock and ready to drop into your opening.</p>
 
       <div class="grp">
@@ -56,8 +56,16 @@
         ${optRow(CONFIG.sizes, 'size', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}${s.add?' +'+fmt(s.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Stain colour <b>${FINISHES[fk[sel.finish]].label}</b></div>
+        <div class="lbl">Slab colour <b>${FINISHES[fk[sel.finish]].label}</b></div>
         ${optRow(fk, 'finish', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Frame colour <b>${FINISHES[fk[sel.frame]].label}</b></div>
+        ${optRow(fk, 'frame', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Painted grooves <b>${CONFIG.paintedGrooves[sel.grooves].label}</b></div>
+        ${optRow(CONFIG.paintedGrooves, 'grooves', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.add?' +'+fmt(g.add):''}</button>`)}
       </div>
       <div class="grp">
         <div class="lbl">Decorative glass <b>${CONFIG.glass[sel.glass].label}</b></div>
@@ -75,11 +83,29 @@
         <div class="lbl">Hinges <b>${CONFIG.hinges[sel.hinge].label}</b></div>
         ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
       </div>
+      <div class="grp">
+        <div class="lbl">Handle side <b>${CONFIG.handleSides[sel.handleSide].label}</b></div>
+        ${optRow(CONFIG.handleSides, 'handleSide', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Jamb size <b>${CONFIG.jambs[sel.jamb].label}</b></div>
+        ${optRow(CONFIG.jambs, 'jamb', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Brick mould <b>${CONFIG.brickmould[sel.brickmould].label}</b></div>
+        ${optRow(CONFIG.brickmould, 'brickmould', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
+      </div>
+      <div class="grp">
+        <div class="lbl">Ship to <b>${CONFIG.shipping.regions[sel.region].label}</b></div>
+        ${optRow(CONFIG.shipping.regions, 'region', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}
+      </div>
+      <div class="ship-est" style="font-size:13.5px;color:var(--ink-2);margin:-4px 0 4px;">Estimated freight to ${CONFIG.shipping.regions[sel.region].label}: <b style="color:var(--ink);">${fmt(shippingFor(sel))}</b> · added at checkout</div>
 
       <div class="pdp-cta">
         <button class="btn solid" id="addBtn">Add to cart · ${fmt(computePrice(door, sel))}</button>
         <button class="btn ghost" id="saveBtn">Save build</button>
       </div>
+      <button class="btn ghost sm" id="sampleBtn" style="margin-top:12px;width:100%;justify-content:center;">Order stain colour samples · ${fmt(CONFIG.samplePrice)} ea</button>
       <div class="build-actions" style="margin-top:12px;">
         <button class="btn ghost sm" id="shareBtn" style="flex:1;justify-content:center;">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" stroke-linecap="round"/></svg>Copy share link</button>
@@ -89,7 +115,7 @@
         See it on your home
       </button>
       <div class="ship-note">
-        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M21 6v12M3 12l4-4M3 12l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>Free US shipping</div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M21 6v12M3 12l4-4M3 12l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>Ships Canada &amp; US</div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Lifetime warranty</div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>Ships in 4–5 weeks</div>
       </div>`;
@@ -99,7 +125,7 @@
         const b = e.target.closest('[data-i]'); if (!b) return;
         const key = row.dataset.key;
         sel[key] = +b.dataset.i;
-        const visualKeys = ['config', 'finish', 'glass', 'transom', 'hinge'];
+        const visualKeys = ['config', 'finish', 'frame', 'glass', 'transom', 'hinge', 'handleSide', 'grooves', 'brickmould'];
         paintInfo();
         if (visualKeys.includes(key)) paintVisual();
         paintThumbsActive();
@@ -108,6 +134,14 @@
 
     const vb = info.querySelector('#vizBtn');
     if (vb) vb.addEventListener('click', () => P.openVisualizer(door, sel));
+
+    const smp = info.querySelector('#sampleBtn');
+    if (smp) smp.addEventListener('click', () => {
+      P.cart.add({ key: `sample-${CONFIG.finishKeys[sel.finish]}`, title: 'Stain colour sample',
+        sub: `${FINISHES[CONFIG.finishKeys[sel.finish]].label} chip · credited on a door order`,
+        price: CONFIG.samplePrice, art: { kind: 'sample' } });
+      P.cartToast('Colour sample');
+    });
 
     const ab = info.querySelector('#addBtn');
     if (ab) ab.addEventListener('click', () => {

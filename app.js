@@ -125,7 +125,7 @@
         <button class="btn solid" id="mAdd">Add to cart · ${fmt(priceNow())}</button>
         <a class="btn ghost" href="Door.html?door=${encodeURIComponent(d.name)}">Full details &amp; options</a>
       </div>
-      <div class="m-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Free US shipping · Lifetime warranty · Multi-point lock standard</div>
+      <div class="m-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Ships Canada &amp; US · Lifetime warranty · Multi-point lock standard</div>
     `;
     mInfo.querySelectorAll('.opt-row').forEach(row => row.addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]'); if (!b) return;

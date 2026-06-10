@@ -247,12 +247,45 @@ const CONFIG = {
     { label: 'Modern Bar · 60"',     add: 0, sku: 'H-MB60' },
     { label: 'Entry Set + Deadbolt', add: 0, sku: 'H-ESD' },
   ],
+  handleSides: [
+    { label: 'Right hand', side: 'right' },
+    { label: 'Left hand',  side: 'left' },
+  ],
+  jambs: [
+    { label: `4-9/16"`, add: 0 },
+    { label: `6-9/16"`, add: 0 },
+    { label: `7-9/16"`, add: 0 },
+  ],
+  brickmould: [
+    { label: 'No brick mould', add: 0, on: false },
+    { label: `Brick mould · 2"×1"`, add: 0, on: true },
+  ],
+  paintedGrooves: [
+    { label: 'Natural', add: 0, painted: false },
+    { label: 'Painted black', add: 0, painted: true },
+  ],
+  // freight estimate: region base + per-configuration surcharge (heavier units cost more)
+  shipping: {
+    regions: [
+      { key: 'ca', label: 'Canada', base: 179 },
+      { key: 'us', label: 'United States', base: 289 },
+    ],
+    configAdd: [0, 50, 80, 110, 150],   // by configuration index (single … double+2SL)
+  },
+  samplePrice: 15,   // per stain-colour sample chip (credited on a door order)
 };
 
 /* Default selection object for a door */
 function defaultSel(door) {
   let fin = CONFIG.finishKeys.indexOf(door.finish); if (fin < 0) fin = 0;
-  return { config: 0, height: 0, size: 0, finish: fin, glass: 0, transom: 0, handle: 0, hinge: 0 };
+  return { config: 0, height: 0, size: 0, finish: fin, frame: fin, glass: 0, transom: 0,
+    handle: 0, handleSide: 0, hinge: 0, jamb: 0, brickmould: 0, grooves: 0, region: 0 };
+}
+
+/* Freight estimate for a selection + destination region */
+function shippingFor(sel) {
+  const r = CONFIG.shipping.regions[sel.region] || CONFIG.shipping.regions[0];
+  return r.base + (CONFIG.shipping.configAdd[sel.config] || 0);
 }
 
 /* Total configured price for a door + selection */
@@ -265,6 +298,9 @@ function computePrice(door, s) {
   total += (CONFIG.transoms[s.transom] || { add: 0 }).add;
   total += (CONFIG.handles[s.handle] || { add: 0 }).add;
   total += (CONFIG.hinges[s.hinge] || { add: 0 }).add;
+  total += (CONFIG.jambs[s.jamb] || { add: 0 }).add;
+  total += (CONFIG.brickmould[s.brickmould] || { add: 0 }).add;
+  total += (CONFIG.paintedGrooves[s.grooves] || { add: 0 }).add;
   return total;
 }
 
@@ -331,6 +367,11 @@ function unitSVG(door, sel, opts) {
   const gl = CONFIG.glass[sel ? sel.glass : 0] || CONFIG.glass[0];
   const hinge = CONFIG.hinges[sel ? sel.hinge : 0] || CONFIG.hinges[0];
   const handleColor = hinge.swatch;
+  const frameKey = sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey;
+  const frameColor = (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
+  const groovesPainted = !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
+  const brick = !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
+  const handLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
 
   const dbl = !!cfg.dbl;
   const DWd = dbl ? 320 : DW;          // door footprint width
@@ -358,7 +399,7 @@ function unitSVG(door, sel, opts) {
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">
           <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
+          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(${groovesPainted ? 1.75 : 1.04});mix-blend-mode:luminosity"/>
         </g>`
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
@@ -374,23 +415,23 @@ function unitSVG(door, sel, opts) {
     const MULL = 6, LW = (DWd - MULL) / 2;
     leaves = leaf(0, LW, LW - 18) + leaf(LW + MULL, LW, LW + MULL + 12);
   } else {
-    leaves = leaf(0, DWd, DWd - 20);
+    leaves = leaf(0, DWd, handLeft ? 14 : DWd - 20);
   }
 
   let frames = '';
   // transom
   if (tr.h) {
     if (tr.arch) {
-      frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="#fbfaf6" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="url(#gl-${uid})" opacity=".6"/>`;
     } else {
-      frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += glassPanel(8, 8, totalW - 16, trH - 16, gl.tint || 'clear', uid, false);
     }
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
-    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="#fbfaf6" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
   if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'frost', uid, true);
   if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'frost', uid, true);
@@ -401,9 +442,10 @@ function unitSVG(door, sel, opts) {
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>
+    ${brick ? `<rect x="-14" y="-8" width="${totalW+28}" height="${totalH+16}" rx="3" fill="${frameColor}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
     ${frames}
     <g transform="translate(${doorX}, ${slabY})">
-      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
+      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${leaves}
     </g>
     ${opts.bare ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
@@ -413,5 +455,5 @@ function unitSVG(door, sel, opts) {
 window.PANES = {
   DOORS, FINISHES, CONFIG,
   doorSceneHTML, patternSVG, unitSVG,
-  defaultSel, computePrice, specsFor,
+  defaultSel, computePrice, shippingFor, specsFor,
 };

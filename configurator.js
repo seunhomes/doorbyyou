@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   const P = window.PANES;
-  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, defaultSel } = P;
+  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, shippingFor, defaultSel } = P;
   const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: n % 1 ? 2 : 0 });
 
   const qs = new URLSearchParams(location.search);
@@ -100,24 +100,38 @@
     const fk = CONFIG.finishKeys, s = st.sel;
     paneR.innerHTML = `
       <h2>Configure ${st.door.name}</h2>
-      <p class="sub">Live price updates as you build. Everything ships free with a lifetime warranty.</p>
+      <p class="sub">Live price updates as you build. Freight is added at checkout; lifetime warranty included.</p>
       <div class="grp"><div class="lbl">Configuration <b>${CONFIG.configurations[s.config].label}</b></div>
         ${optRow(CONFIG.configurations,'config',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="grp"><div class="lbl">Height <b>${CONFIG.heights[s.height].label}</b></div>
         ${optRow(CONFIG.heights,'height',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="grp"><div class="lbl">Size <b>${CONFIG.sizes[s.size].label}</b></div>
         ${optRow(CONFIG.sizes,'size',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Stain colour <b>${FINISHES[fk[s.finish]].label}</b></div>
+      <div class="grp"><div class="lbl">Slab colour <b>${FINISHES[fk[s.finish]].label}</b></div>
         ${optRow(fk,'finish',(k,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
+      <div class="grp"><div class="lbl">Frame colour <b>${FINISHES[fk[s.frame]].label}</b></div>
+        ${optRow(fk,'frame',(k,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
+      <div class="grp"><div class="lbl">Painted grooves <b>${CONFIG.paintedGrooves[s.grooves].label}</b></div>
+        ${optRow(CONFIG.paintedGrooves,'grooves',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Decorative glass <b>${CONFIG.glass[s.glass].label}</b></div>
         ${optRow(CONFIG.glass,'glass',(g,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Transom <b>${CONFIG.transoms[s.transom].label}</b></div>
         ${optRow(CONFIG.transoms,'transom',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Handle &amp; lock <b>${CONFIG.handles[s.handle].label}</b></div>
         ${optRow(CONFIG.handles,'handle',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+      <div class="grp"><div class="lbl">Handle side <b>${CONFIG.handleSides[s.handleSide].label}</b></div>
+        ${optRow(CONFIG.handleSides,'handleSide',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
+      <div class="grp"><div class="lbl">Jamb size <b>${CONFIG.jambs[s.jamb].label}</b></div>
+        ${optRow(CONFIG.jambs,'jamb',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+      <div class="grp"><div class="lbl">Brick mould <b>${CONFIG.brickmould[s.brickmould].label}</b></div>
+        ${optRow(CONFIG.brickmould,'brickmould',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Hinges <b>${CONFIG.hinges[s.hinge].label}</b></div>
         ${optRow(CONFIG.hinges,'hinge',(x,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}${x.add?' +'+fmt(x.add):''}" style="background:${x.swatch}"></button>`)}</div>
-      <button class="btn ghost sm" id="vizBtn" style="margin-top:20px;width:100%;justify-content:center;">
+      <div class="grp"><div class="lbl">Ship to <b>${CONFIG.shipping.regions[s.region].label}</b></div>
+        ${optRow(CONFIG.shipping.regions,'region',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
+      <div class="sub" style="margin:-6px 0 0;">Estimated freight to ${CONFIG.shipping.regions[s.region].label}: <b>${fmt(shippingFor(s))}</b> · added at checkout</div>
+      <button class="btn ghost sm" id="sampleBtn" style="margin-top:16px;width:100%;justify-content:center;">Order stain colour samples · ${fmt(CONFIG.samplePrice)} ea</button>
+      <button class="btn ghost sm" id="vizBtn" style="margin-top:10px;width:100%;justify-content:center;">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         See it on your home
       </button>`;
@@ -128,6 +142,13 @@
     }));
     const vb = paneR.querySelector('#vizBtn');
     if (vb) vb.addEventListener('click', () => P.openVisualizer(st.door, st.sel));
+    const smp = paneR.querySelector('#sampleBtn');
+    if (smp) smp.addEventListener('click', () => {
+      P.cart.add({ key: `sample-${fk[s.finish]}`, title: 'Stain colour sample',
+        sub: `${FINISHES[fk[s.finish]].label} chip · credited on a door order`,
+        price: CONFIG.samplePrice, art: { kind: 'sample' } });
+      P.cartToast('Colour sample');
+    });
   }
 
   function stepReview() {
@@ -137,10 +158,14 @@
       ['Configuration', CONFIG.configurations[s.config].label],
       ['Height', CONFIG.heights[s.height].label],
       ['Size', CONFIG.sizes[s.size].label],
-      ['Stain colour', FINISHES[CONFIG.finishKeys[s.finish]].label],
+      ['Slab colour', FINISHES[CONFIG.finishKeys[s.finish]].label],
+      ['Frame colour', FINISHES[CONFIG.finishKeys[s.frame]].label],
+      ['Painted grooves', CONFIG.paintedGrooves[s.grooves].label],
       ['Decorative glass', CONFIG.glass[s.glass].label],
       ['Transom', CONFIG.transoms[s.transom].label],
-      ['Handle & lock', CONFIG.handles[s.handle].label],
+      ['Handle & lock', `${CONFIG.handles[s.handle].label} · ${CONFIG.handleSides[s.handleSide].label}`],
+      ['Jamb size', CONFIG.jambs[s.jamb].label],
+      ['Brick mould', CONFIG.brickmould[s.brickmould].label],
       ['Hinges', CONFIG.hinges[s.hinge].label],
     ];
     paneR.innerHTML = `
@@ -148,11 +173,12 @@
       <p class="sub">Looks good? Add it to your cart — final measurements are confirmed before production.</p>
       <div class="summary">
         ${rows.map(([k,v]) => `<div class="srow"><span>${k}</span><span>${v}</span></div>`).join('')}
-        <div class="srow total"><span>Configured total</span><b>${fmt(computePrice(d,s))}</b></div>
+        <div class="srow"><span>Freight · ${CONFIG.shipping.regions[s.region].label}</span><span>${fmt(shippingFor(s))}</span></div>
+        <div class="srow total"><span>Total incl. freight</span><b>${fmt(computePrice(d,s) + shippingFor(s))}</b></div>
       </div>
       <p class="sub" style="margin-top:16px;display:flex;gap:8px;align-items:center;">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="1.6"><path d="M3 12h18M21 6v12M3 12l4-4M3 12l4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Free US shipping · ships in 4–5 weeks · lifetime warranty</p>
+        Ships in 4–5 weeks · lifetime warranty</p>
       <div class="build-actions">
         <button class="btn ghost sm" id="saveBuild">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg>Save build</button>
