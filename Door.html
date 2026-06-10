@@ -11,7 +11,8 @@
 <link rel="stylesheet" href="site.css" />
 <style>
   .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;padding:26px 0 70px;align-items:start;}
-  .pdp-stage{position:sticky;top:96px;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
+  .pdp-left{position:sticky;top:24px;align-self:start;}
+  .pdp-stage{background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
     border:1px solid var(--line);border-radius:4px;padding:34px;min-height:560px;display:grid;place-items:center;}
   .pdp-stage .door-svg{max-height:520px;width:100%;}
   .pdp-thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center;}
@@ -55,7 +56,10 @@
   .related{padding:64px 0 80px;}
   @media(max-width:900px){
     .pdp{grid-template-columns:1fr;gap:30px;}
-    .pdp-stage{position:static;min-height:0;}
+    .pdp-left{position:sticky;top:0;z-index:20;background:var(--bg);padding:8px 0 10px;align-self:auto;}
+    .pdp-stage{min-height:0;max-height:42vh;padding:14px;}
+    .pdp-stage .door-svg{max-height:34vh;}
+    .pdp-thumbs{margin-top:8px;}
     .band-inner{grid-template-columns:1fr;gap:40px;}
   }
 </style>
@@ -88,7 +92,7 @@
   </div>
 
   <div class="wrap pdp">
-    <div>
+    <div class="pdp-left">
       <div class="pdp-stage"><div id="visual" style="width:100%;"></div></div>
       <div class="pdp-thumbs" id="thumbs"></div>
     </div>

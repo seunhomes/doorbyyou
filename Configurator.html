@@ -25,7 +25,7 @@
   .step b{font-weight:600;letter-spacing:.02em;}
 
   .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
-  .cfg-preview{position:sticky;top:96px;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
+  .cfg-preview{position:sticky;top:24px;align-self:start;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
     border:1px solid var(--line);border-radius:4px;min-height:540px;display:grid;place-items:center;padding:32px;}
   .cfg-preview .door-svg{max-height:500px;width:100%;}
   .cfg-preview .empty{color:var(--ink-3);text-align:center;font-size:14px;}
@@ -67,7 +67,8 @@
   .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
   @media(max-width:900px){
     .cfg-body{grid-template-columns:1fr;}
-    .cfg-preview{position:static;min-height:0;order:-1;}
+    .cfg-preview{position:sticky;top:0;z-index:20;min-height:0;max-height:42vh;order:-1;padding:14px;}
+    .cfg-preview .door-svg{max-height:34vh;}
     .steps{flex-wrap:wrap;}.step{min-width:50%;}
     .model-grid{grid-template-columns:1fr 1fr;}
   }
