@@ -112,6 +112,8 @@
         ${mOptRow(fk, 'finish', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
       <div class="opt"><div class="lbl">Decorative glass <span>${CONFIG.glass[s.glass].label}</span></div>
         ${mOptRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
+      <div class="opt"><div class="lbl">Transom <span>${CONFIG.transoms[s.transom].label}</span></div>
+        ${mOptRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}</div>
 
       <div class="m-actions">
         <button class="btn solid" id="mAdd">Add to cart · ${fmt(priceNow())}</button>
@@ -124,15 +126,15 @@
       const key = row.dataset.key;
       cfg.sel[key] = +b.dataset.i;
       paintInfo();
-      if (key === 'config' || key === 'finish' || key === 'glass') paintDoor();
+      if (key === 'config' || key === 'finish' || key === 'glass' || key === 'transom') paintDoor();
     }));
     const addBtn = mInfo.querySelector('#mAdd');
     if (addBtn) addBtn.addEventListener('click', () => {
       const finKey = CONFIG.finishKeys[cfg.sel.finish];
       P_.cart.add({
-        key: `door-${d.name}-${cfg.sel.config}-${cfg.sel.height}-${finKey}-${cfg.sel.glass}`,
+        key: `door-${d.name}-${cfg.sel.config}-${cfg.sel.height}-${finKey}-${cfg.sel.glass}-${cfg.sel.transom}`,
         title: d.name,
-        sub: `${CONFIG.configurations[cfg.sel.config].label} · ${FINISHES[finKey].label}`,
+        sub: `${CONFIG.configurations[cfg.sel.config].label} · ${FINISHES[finKey].label}${cfg.sel.transom?' · transom':''}`,
         price: priceNow(),
         art: { kind: 'door', name: d.name, finish: finKey },
       });
