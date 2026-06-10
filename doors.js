@@ -399,7 +399,8 @@ function unitSVG(door, sel, opts) {
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">
           <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(${groovesPainted ? 1.75 : 1.04});mix-blend-mode:luminosity"/>
+          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
+          ${groovesPainted ? `<image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" filter="url(#grv-${uid})"/>` : ''}
         </g>`
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
@@ -439,6 +440,7 @@ function unitSVG(door, sel, opts) {
   return `
   <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>${faceGrad}${glassDefs(uid)}
+      ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="gamma" amplitude="4" exponent="5" offset="0"/></feComponentTransfer></filter>` : ''}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>

@@ -13,8 +13,8 @@
   .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;padding:26px 0 70px;align-items:start;}
   .pdp-left{position:sticky;top:24px;align-self:start;}
   .pdp-stage{background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
-    border:1px solid var(--line);border-radius:4px;padding:34px;min-height:560px;display:grid;place-items:center;}
-  .pdp-stage .door-svg{max-height:520px;width:100%;}
+    border:1px solid var(--line);border-radius:4px;padding:24px;min-height:340px;max-height:calc(100vh - 130px);overflow:hidden;display:grid;place-items:center;}
+  .pdp-stage .door-svg{width:100%;max-height:min(480px, calc(100vh - 200px));}
   .pdp-thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center;}
   .pdp-thumb{width:54px;height:54px;border-radius:50%;border:2px solid transparent;cursor:pointer;
     box-shadow:0 0 0 1px rgba(0,0,0,.18) inset;}
