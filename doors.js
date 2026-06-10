@@ -240,12 +240,19 @@ const CONFIG = {
     { label: 'Black',        add: 0,   swatch: '#222224' },
     { label: 'Concealed',    add: 250, swatch: '#6f7175' },
   ],
+  // handle & lock styles (included; not separately priced in the sheets)
+  handles: [
+    { label: 'Tubular Pull · 48"',   add: 0, sku: 'H-TP48' },
+    { label: 'Square Lever Set',     add: 0, sku: 'H-SQL' },
+    { label: 'Modern Bar · 60"',     add: 0, sku: 'H-MB60' },
+    { label: 'Entry Set + Deadbolt', add: 0, sku: 'H-ESD' },
+  ],
 };
 
 /* Default selection object for a door */
 function defaultSel(door) {
   let fin = CONFIG.finishKeys.indexOf(door.finish); if (fin < 0) fin = 0;
-  return { config: 0, height: 0, size: 0, finish: fin, glass: 0, transom: 0, hinge: 0 };
+  return { config: 0, height: 0, size: 0, finish: fin, glass: 0, transom: 0, handle: 0, hinge: 0 };
 }
 
 /* Total configured price for a door + selection */
@@ -256,6 +263,7 @@ function computePrice(door, s) {
   total += (CONFIG.sizes[s.size] || { add: 0 }).add;
   total += (CONFIG.glass[s.glass] || { price: 0 }).price;
   total += (CONFIG.transoms[s.transom] || { add: 0 }).add;
+  total += (CONFIG.handles[s.handle] || { add: 0 }).add;
   total += (CONFIG.hinges[s.hinge] || { add: 0 }).add;
   return total;
 }

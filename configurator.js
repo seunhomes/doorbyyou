@@ -113,6 +113,8 @@
         ${optRow(CONFIG.glass,'glass',(g,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Transom <b>${CONFIG.transoms[s.transom].label}</b></div>
         ${optRow(CONFIG.transoms,'transom',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+      <div class="grp"><div class="lbl">Handle &amp; lock <b>${CONFIG.handles[s.handle].label}</b></div>
+        ${optRow(CONFIG.handles,'handle',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Hinges <b>${CONFIG.hinges[s.hinge].label}</b></div>
         ${optRow(CONFIG.hinges,'hinge',(x,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}${x.add?' +'+fmt(x.add):''}" style="background:${x.swatch}"></button>`)}</div>
       <button class="btn ghost sm" id="vizBtn" style="margin-top:20px;width:100%;justify-content:center;">
@@ -138,6 +140,7 @@
       ['Stain colour', FINISHES[CONFIG.finishKeys[s.finish]].label],
       ['Decorative glass', CONFIG.glass[s.glass].label],
       ['Transom', CONFIG.transoms[s.transom].label],
+      ['Handle & lock', CONFIG.handles[s.handle].label],
       ['Hinges', CONFIG.hinges[s.hinge].label],
     ];
     paneR.innerHTML = `

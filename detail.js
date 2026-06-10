@@ -68,6 +68,10 @@
         ${optRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}
       </div>
       <div class="grp">
+        <div class="lbl">Handle &amp; lock <b>${CONFIG.handles[sel.handle].label}</b></div>
+        ${optRow(CONFIG.handles, 'handle', (h, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${h.label}${h.add?' +'+fmt(h.add):''}</button>`)}
+      </div>
+      <div class="grp">
         <div class="lbl">Hinges <b>${CONFIG.hinges[sel.hinge].label}</b></div>
         ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
       </div>

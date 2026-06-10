@@ -108,12 +108,18 @@
         ${mOptRow(CONFIG.configurations, 'config', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="opt"><div class="lbl">Height <span>${CONFIG.heights[s.height].label}</span></div>
         ${mOptRow(CONFIG.heights, 'height', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
+      <div class="opt"><div class="lbl">Size <span>${CONFIG.sizes[s.size].label}</span></div>
+        ${mOptRow(CONFIG.sizes, 'size', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="opt"><div class="lbl">Stain colour <span>${FINISHES[fk[s.finish]].label}</span></div>
         ${mOptRow(fk, 'finish', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
       <div class="opt"><div class="lbl">Decorative glass <span>${CONFIG.glass[s.glass].label}</span></div>
         ${mOptRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
       <div class="opt"><div class="lbl">Transom <span>${CONFIG.transoms[s.transom].label}</span></div>
         ${mOptRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}</div>
+      <div class="opt"><div class="lbl">Handle &amp; lock <span>${CONFIG.handles[s.handle].label}</span></div>
+        ${mOptRow(CONFIG.handles, 'handle', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+      <div class="opt"><div class="lbl">Hinges <span>${CONFIG.hinges[s.hinge].label}</span></div>
+        ${mOptRow(CONFIG.hinges, 'hinge', (x, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}${x.add?' +'+fmt(x.add):''}" style="background:${x.swatch}"></button>`)}</div>
 
       <div class="m-actions">
         <button class="btn solid" id="mAdd">Add to cart · ${fmt(priceNow())}</button>
@@ -126,7 +132,7 @@
       const key = row.dataset.key;
       cfg.sel[key] = +b.dataset.i;
       paintInfo();
-      if (key === 'config' || key === 'finish' || key === 'glass' || key === 'transom') paintDoor();
+      if (key === 'config' || key === 'finish' || key === 'glass' || key === 'transom' || key === 'hinge') paintDoor();
     }));
     const addBtn = mInfo.querySelector('#mAdd');
     if (addBtn) addBtn.addEventListener('click', () => {
