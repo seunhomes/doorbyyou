@@ -223,12 +223,12 @@ const CONFIG = {
   finishKeys: ['natural', 'golden-oak', 'cedar', 'chestnut', 'walnut-stain', 'dark-walnut', 'mahogany', 'espresso'],
   // Direct-glaze glass; price is the 0–5 sq ft rate (typical lite). Larger glazing is quoted by sq ft.
   glass: [
-    { label: 'None (solid)',          tint: null,    price: 0 },
-    { label: 'Clear',                 tint: 'clear', price: 300 },
-    { label: 'Acid etch',             tint: 'frost', price: 400 },
-    { label: 'Black tint',            tint: 'iron',  price: 450 },
-    { label: 'Black tint · privacy',  tint: 'iron',  price: 450 },
-    { label: 'Clear border',          tint: 'clear', price: 450 },
+    { label: 'None (solid)',          tint: null,      price: 0 },
+    { label: 'Clear',                 tint: 'clear',   price: 300 },
+    { label: 'Acid etch',             tint: 'etch',    price: 400 },
+    { label: 'Black tint',            tint: 'tint',    price: 450 },
+    { label: 'Black tint · privacy',  tint: 'privacy', price: 450 },
+    { label: 'Clear border',          tint: 'border',  price: 450 },
   ],
   transoms: [
     { label: 'None',        add: 0,   h: 0 },
@@ -325,29 +325,58 @@ function specsFor(door) {
    ============================================================ */
 function glassDefs(uid) {
   return `
-    <linearGradient id="gl-${uid}" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#cdd8da"/><stop offset=".5" stop-color="#aebfc4"/><stop offset="1" stop-color="#c4d0d2"/>
+    <linearGradient id="gl-${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6eef0"/><stop offset=".34" stop-color="#c3d0d3"/>
+      <stop offset=".5" stop-color="#aebfc4"/><stop offset=".78" stop-color="#bcc9cc"/><stop offset="1" stop-color="#d3dbdc"/>
+    </linearGradient>
+    <linearGradient id="gldk-${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#454f52"/><stop offset=".42" stop-color="#272d2f"/>
+      <stop offset=".6" stop-color="#1f2426"/><stop offset="1" stop-color="#343d3f"/>
     </linearGradient>`;
 }
 function glassFill(tint, uid) {
   if (!tint) return null;
-  return `url(#gl-${uid})`;
+  const dark = tint === 'tint' || tint === 'privacy' || tint === 'iron';
+  return `url(#${dark ? 'gldk' : 'gl'}-${uid})`;
 }
+/* Realistic-ish glazing: sky-reflection gradient + diagonal sheen, with
+   frosted/reeded texture for etched glass and a dark gradient for tints. */
 function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (!tint) return '';
-  let inner = '';
-  const op = tint === 'frost' ? 0.92 : tint === 'rain' ? 0.8 : 0.6;
-  inner += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#gl-${uid})" opacity="${op}"/>`;
-  // light streak
-  inner += `<polygon points="${x},${y+h*0.55} ${x+w*0.5},${y} ${x+w*0.8},${y} ${x},${y+h*0.9}" fill="rgba(255,255,255,.25)"/>`;
-  if (tint === 'rain') { for (let yy = y + 8; yy < y + h; yy += 10) inner += `<line x1="${x}" y1="${yy}" x2="${x+w}" y2="${yy}" stroke="rgba(255,255,255,.18)" stroke-width="2"/>`; }
-  if (tint === 'iron') {
-    inner += `<line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+h}" stroke="rgba(30,30,30,.6)" stroke-width="3"/>`;
-    for (let yy = y + h/4; yy < y + h; yy += h/4) inner += `<line x1="${x}" y1="${yy}" x2="${x+w}" y2="${yy}" stroke="rgba(30,30,30,.55)" stroke-width="3"/>`;
+  const dark  = tint === 'tint' || tint === 'privacy' || tint === 'iron';
+  const frost = tint === 'etch' || tint === 'frost' || tint === 'privacy';
+  let s = '';
+  // base glass
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${dark ? 'gldk' : 'gl'}-${uid})"/>`;
+  // diagonal specular sheen (skip on heavy frost so it stays soft)
+  if (!frost) {
+    s += `<polygon points="${x},${y+h*0.6} ${x+w*0.52},${y} ${x+w*0.76},${y} ${x},${y+h*0.9}" fill="rgba(255,255,255,${dark ? 0.13 : 0.24})"/>`;
+    s += `<polygon points="${x+w*0.72},${y} ${x+w*0.9},${y} ${x},${y+h} ${x},${y+h*0.94}" fill="rgba(255,255,255,${dark ? 0.05 : 0.1})"/>`;
   }
-  if (mullions) for (let yy = y + h/3; yy < y + h - 4; yy += h/3) inner += `<line x1="${x}" y1="${yy}" x2="${x+w}" y2="${yy}" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/>`;
-  inner += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>`;
-  return inner;
+  // frosted / acid-etch: translucent obscuring layer + fine reeded streaks
+  if (frost) {
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${dark ? 'rgba(64,73,76,.6)' : 'rgba(244,247,247,.82)'}"/>`;
+    for (let xx = x + 7; xx < x + w - 4; xx += 9) s += `<line x1="${xx}" y1="${y+3}" x2="${xx}" y2="${y+h-3}" stroke="rgba(255,255,255,.16)" stroke-width="2"/>`;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h*0.4}" fill="rgba(255,255,255,${dark ? 0.06 : 0.16})"/>`;
+  }
+  // clear-border: etched frame band around a clear centre
+  if (tint === 'border') {
+    const b = Math.max(8, Math.min(16, w * 0.16));
+    s += `<rect x="${x + b/2}" y="${y + b/2}" width="${w - b}" height="${h - b}" fill="none" stroke="rgba(244,247,247,.85)" stroke-width="${b}"/>`;
+  }
+  // raised muntin / grille bars
+  if (mullions) {
+    const n = Math.max(2, Math.round(h / 150));
+    for (let i = 1; i <= n; i++) {
+      const yy = y + h * i / (n + 1);
+      s += `<rect x="${x}" y="${yy-2}" width="${w}" height="4" fill="rgba(255,255,255,.42)"/>`;
+      s += `<rect x="${x}" y="${yy+2}" width="${w}" height="1.2" fill="rgba(0,0,0,.22)"/>`;
+    }
+  }
+  // glazing bead (inner highlight) + outer edge
+  s += `<rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1"/>`;
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
+  return s;
 }
 
 /* ============================================================
@@ -424,7 +453,8 @@ function unitSVG(door, sel, opts) {
   if (tr.h) {
     if (tr.arch) {
       frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="url(#gl-${uid})" opacity=".6"/>`;
+      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="${glassFill(gl.tint || 'clear', uid)}"/>`;
+      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="rgba(255,255,255,.14)"/>`;
     } else {
       frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += glassPanel(8, 8, totalW - 16, trH - 16, gl.tint || 'clear', uid, false);
@@ -434,8 +464,8 @@ function unitSVG(door, sel, opts) {
   if (hasSL) {
     frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
-  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'frost', uid, true);
-  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'frost', uid, true);
+  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'etch', uid, true);
+  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'etch', uid, true);
 
   return `
   <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
