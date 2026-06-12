@@ -13,18 +13,21 @@
 
   let state = { mat: 'all', style: 'all', sort: 'featured' };
 
-  /* swatch dots shown on each card (a few finish options) */
-  function swatchDots(d) {
+  /* swatch dots on each card — click to preview the door in that stain */
+  const cardFin = {};   // per-door chosen swatch, catalog preview only
+  function swatchDots(d, i) {
     const opts = ['natural', 'golden-oak', 'walnut-stain', 'espresso'];
-    return opts.map(k => `<span class="sw" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></span>`).join('');
+    const cur = cardFin[i] || d.finish;
+    return opts.map(k => `<button class="sw ${cur === k ? 'on' : ''}" data-fin="${k}" title="${FINISHES[k].label}" aria-label="Preview in ${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`).join('');
   }
 
   function cardHTML(d, i) {
+    const shown = cardFin[i] ? Object.assign({}, d, { finish: cardFin[i] }) : d;
     return `<article class="card" data-i="${i}">
       <div class="stage">
         <span class="badge">${d.material}</span>
         <span class="qv" title="Quick view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></span>
-        ${doorSceneHTML(d)}
+        ${doorSceneHTML(shown)}
       </div>
       <div class="info">
         <div class="top">
@@ -36,7 +39,7 @@
           <div class="from">Starting from</div>
         </div>
         <div class="desc">${d.desc}</div>
-        <div class="swatches">${swatchDots(d)}<span class="meta">${d.material === 'Steel' ? 'Steel' : 'Fiberglass'}</span></div>
+        <div class="swatches">${swatchDots(d, i)}<span class="meta">${d.material === 'Steel' ? 'Steel' : 'Fiberglass'}</span></div>
       </div>
     </article>`;
   }
@@ -123,10 +126,12 @@
 
       <div class="m-actions">
         <button class="btn solid" id="mAdd">Add to cart · ${fmt(priceNow())}</button>
-        <a class="btn ghost" href="Door.html?door=${encodeURIComponent(d.name)}">Full details &amp; options</a>
+        <a class="btn ghost" href="Door.html?door=${encodeURIComponent(d.name)}${P_.builds ? '&b=' + P_.builds.encode({ product: 'door', name: d.name, sel: s }) : ''}">Full details &amp; options</a>
       </div>
       <div class="m-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Ships Canada &amp; US · Lifetime warranty · Multi-point lock standard</div>
     `;
+    P_.optA11y(mInfo);
+    P_.optKeyboardNav(mInfo);
     mInfo.querySelectorAll('.opt-row').forEach(row => row.addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]'); if (!b) return;
       const key = row.dataset.key;
@@ -151,6 +156,8 @@
   function openModal(i) {
     const door = DOORS[i];
     cfg = { door, sel: defaultSel(door) };
+    const fi = CONFIG.finishKeys.indexOf(cardFin[i] || '');
+    if (fi >= 0) cfg.sel.finish = fi;   // carry the swatch the visitor picked on the card
     paintDoor();
     paintInfo();
     overlay.classList.add('open');
@@ -162,6 +169,14 @@
   }
 
   grid.addEventListener('click', (e) => {
+    const sw = e.target.closest('.sw');
+    if (sw) {   // retint the card in place instead of opening quick view
+      const card = sw.closest('.card');
+      const i = +card.dataset.i;
+      cardFin[i] = sw.dataset.fin;
+      card.outerHTML = cardHTML(DOORS[i], i);
+      return;
+    }
     const card = e.target.closest('.card'); if (!card) return;
     openModal(+card.dataset.i);
   });

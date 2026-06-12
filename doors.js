@@ -496,8 +496,47 @@ function unitSVG(door, sel, opts) {
   </svg>`;
 }
 
+/* ---- option-row accessibility: radio semantics + arrow-key navigation ---- */
+const OPT_LABELS = {
+  config: 'Configuration', height: 'Height', size: 'Size', finish: 'Slab colour',
+  frame: 'Frame colour', grooves: 'Painted grooves', glass: 'Decorative glass',
+  transom: 'Transom', handle: 'Handle and lock', handleSide: 'Handle side',
+  hinge: 'Hinges', jamb: 'Jamb size', brickmould: 'Brick mould', region: 'Ship to',
+};
+function optA11y(root) {
+  root.querySelectorAll('.opt-row').forEach(row => {
+    row.setAttribute('role', 'radiogroup');
+    row.setAttribute('aria-label', OPT_LABELS[row.dataset.key] || row.dataset.key);
+    row.querySelectorAll('[data-i]').forEach(b => {
+      const on = b.classList.contains('on');
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', on);
+      b.tabIndex = on ? 0 : -1;
+      if (!b.getAttribute('aria-label') && b.title) b.setAttribute('aria-label', b.title);
+    });
+  });
+}
+function optKeyboardNav(root) {
+  if (root._optNav) return;   // bind once per container — content re-renders, container persists
+  root._optNav = true;
+  root.addEventListener('keydown', (e) => {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    const row = e.target.closest && e.target.closest('.opt-row');
+    if (!row) return;
+    const btns = [...row.querySelectorAll('[data-i]')];
+    const cur = btns.indexOf(e.target);
+    if (cur < 0) return;
+    e.preventDefault();
+    const dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
+    btns[(cur + dir + btns.length) % btns.length].click();
+    const fresh = root.querySelector(`.opt-row[data-key="${row.dataset.key}"] .on`);
+    if (fresh) fresh.focus();
+  });
+}
+
 window.PANES = {
   DOORS, FINISHES, CONFIG,
   doorSceneHTML, patternSVG, unitSVG,
   defaultSel, computePrice, shippingFor, specsFor,
+  optA11y, optKeyboardNav,
 };

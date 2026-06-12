@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   const P = window.PANES;
-  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, shippingFor, specsFor, defaultSel } = P;
+  const { DOORS, FINISHES, CONFIG, unitSVG, doorSceneHTML, computePrice, shippingFor, specsFor, defaultSel, optA11y, optKeyboardNav } = P;
   const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: n % 1 ? 2 : 0 });
   const qs = new URLSearchParams(location.search);
 
@@ -45,6 +45,36 @@
   const HELP = CONFIG.help || {};
   const hintIco = (k) => HELP[k] ? `<button class="hint" type="button" data-tip="${HELP[k]}" aria-label="What is this?">?</button>` : '';
 
+  /* collapsible option sections — open state survives re-renders */
+  const secOpen = { layout: true };
+  const VAL = {
+    config: () => CONFIG.configurations[sel.config].label,
+    height: () => CONFIG.heights[sel.height].label,
+    size: () => CONFIG.sizes[sel.size].label,
+    finish: () => FINISHES[CONFIG.finishKeys[sel.finish]].label,
+    frame: () => FINISHES[CONFIG.finishKeys[sel.frame]].label,
+    grooves: () => CONFIG.paintedGrooves[sel.grooves].label,
+    glass: () => CONFIG.glass[sel.glass].label,
+    transom: () => CONFIG.transoms[sel.transom].label,
+    handle: () => CONFIG.handles[sel.handle].label,
+    handleSide: () => CONFIG.handleSides[sel.handleSide].label,
+    hinge: () => CONFIG.hinges[sel.hinge].label,
+    jamb: () => CONFIG.jambs[sel.jamb].label,
+    brickmould: () => CONFIG.brickmould[sel.brickmould].label,
+    region: () => CONFIG.shipping.regions[sel.region].label,
+  };
+  function sec(id, title, keys, inner) {
+    const open = !!secOpen[id];
+    return `<div class="osec ${open ? 'open' : ''}" data-sec="${id}">
+      <button class="osec-head" type="button" aria-expanded="${open}">
+        <span class="osec-t">${title}</span>
+        <span class="osec-sum">${open ? '' : keys.map(k => VAL[k]()).join(' · ')}</span>
+        <svg class="osec-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="osec-body">${inner}</div>
+    </div>`;
+  }
+
   // transient +$/−$ pop next to the price when an option changes it
   function popDelta(diff) {
     if (!diff) return;
@@ -65,6 +95,7 @@
       <div class="pdp-price">${fmt(computePrice(door, sel))}<small>Configured price · before tax &amp; freight</small></div>
       <p class="pdp-desc">${door.desc} Finished identically inside and out, prepped for a multi-point lock and ready to drop into your opening.</p>
 
+      ${sec('layout', 'Layout & size', ['config', 'height', 'size'], `
       <div class="grp">
         <div class="lbl"><span>Configuration${hintIco('config')}</span> <b>${CONFIG.configurations[sel.config].label}</b></div>
         ${optRow(CONFIG.configurations, 'config', (c, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${c.label}</button>`)}
@@ -77,7 +108,8 @@
         <div class="lbl">Size <b>${CONFIG.sizes[sel.size].label}</b></div>
         ${optRow(CONFIG.sizes, 'size', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}${s.add?' +'+fmt(s.add):''}</button>`)}
         <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>
-      </div>
+      </div>`)}
+      ${sec('colour', 'Colour & finish', ['finish', 'frame', 'grooves'], `
       <div class="grp">
         <div class="lbl">Slab colour <b>${FINISHES[fk[sel.finish]].label}</b></div>
         ${optRow(fk, 'finish', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}
@@ -89,7 +121,8 @@
       <div class="grp">
         <div class="lbl"><span>Painted grooves${hintIco('grooves')}</span> <b>${CONFIG.paintedGrooves[sel.grooves].label}</b></div>
         ${optRow(CONFIG.paintedGrooves, 'grooves', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.add?' +'+fmt(g.add):''}</button>`)}
-      </div>
+      </div>`)}
+      ${sec('glass', 'Glass & transom', ['glass', 'transom'], `
       <div class="grp">
         <div class="lbl"><span>Decorative glass${hintIco('glass')}</span> <b>${CONFIG.glass[sel.glass].label}</b></div>
         ${optRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}
@@ -97,19 +130,21 @@
       <div class="grp">
         <div class="lbl"><span>Transom${hintIco('transom')}</span> <b>${CONFIG.transoms[sel.transom].label}</b></div>
         ${optRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}
-      </div>
+      </div>`)}
+      ${sec('hardware', 'Hardware', ['handle', 'handleSide', 'hinge'], `
       <div class="grp">
         <div class="lbl">Handle &amp; lock <b>${CONFIG.handles[sel.handle].label}</b></div>
         ${optRow(CONFIG.handles, 'handle', (h, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${h.label}${h.add?' +'+fmt(h.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl"><span>Hinges${hintIco('hinge')}</span> <b>${CONFIG.hinges[sel.hinge].label}</b></div>
-        ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
-      </div>
-      <div class="grp">
         <div class="lbl"><span>Handle side${hintIco('handleSide')}</span> <b>${CONFIG.handleSides[sel.handleSide].label}</b></div>
         ${optRow(CONFIG.handleSides, 'handleSide', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}
       </div>
+      <div class="grp">
+        <div class="lbl"><span>Hinges${hintIco('hinge')}</span> <b>${CONFIG.hinges[sel.hinge].label}</b></div>
+        ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
+      </div>`)}
+      ${sec('install', 'Frame & install', ['jamb', 'brickmould'], `
       <div class="grp">
         <div class="lbl"><span>Jamb size${hintIco('jamb')}</span> <b>${CONFIG.jambs[sel.jamb].label}</b></div>
         ${optRow(CONFIG.jambs, 'jamb', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
@@ -117,12 +152,13 @@
       <div class="grp">
         <div class="lbl"><span>Brick mould${hintIco('brickmould')}</span> <b>${CONFIG.brickmould[sel.brickmould].label}</b></div>
         ${optRow(CONFIG.brickmould, 'brickmould', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
-      </div>
+      </div>`)}
+      ${sec('delivery', 'Delivery', ['region'], `
       <div class="grp">
         <div class="lbl">Ship to <b>${CONFIG.shipping.regions[sel.region].label}</b></div>
         ${optRow(CONFIG.shipping.regions, 'region', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}
-      </div>
-      <div class="ship-est" style="font-size:13.5px;color:var(--ink-2);margin:-4px 0 4px;">Estimated freight to ${CONFIG.shipping.regions[sel.region].label}: <b style="color:var(--ink);">${fmt(shippingFor(sel))}</b> · added at checkout</div>
+        <div class="ship-est" style="font-size:13.5px;color:var(--ink-2);margin:10px 0 4px;">Estimated freight to ${CONFIG.shipping.regions[sel.region].label}: <b style="color:var(--ink);">${fmt(shippingFor(sel))}</b> · added at checkout</div>
+      </div>`)}
 
       <div class="pdp-cta">
         <button class="btn solid" id="addBtn">Add to cart · ${fmt(computePrice(door, sel))}</button>
@@ -142,6 +178,13 @@
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Lifetime warranty</div>
         <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>Ships in 4–5 weeks</div>
       </div>`;
+
+    info.querySelectorAll('.osec-head').forEach(h => h.addEventListener('click', () => {
+      const id = h.parentElement.dataset.sec;
+      secOpen[id] = !secOpen[id];
+      paintInfo();
+    }));
+    optA11y(info);
 
     info.querySelectorAll('.opt-row').forEach(row => {
       row.addEventListener('click', (e) => {
@@ -203,7 +246,7 @@
   const thumbs = document.getElementById('thumbs');
   function paintThumbs() {
     thumbs.innerHTML = CONFIG.finishKeys.map((k, i) =>
-      `<button class="pdp-thumb ${i===sel.finish?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`).join('');
+      `<button class="pdp-thumb ${i===sel.finish?'on':''}" data-i="${i}" title="${FINISHES[k].label}" aria-label="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`).join('');
     thumbs.querySelectorAll('.pdp-thumb').forEach(t => t.addEventListener('click', () => {
       sel.finish = +t.dataset.i; paintVisual(); paintInfo(); paintThumbsActive(); syncURL();
     }));
@@ -244,5 +287,6 @@
     if (open) open.style.maxHeight = open.scrollHeight + 'px';
   }
 
+  optKeyboardNav(info);
   paintVisual(); paintInfo(); paintThumbs(); paintSpecs(); paintRelated(); initAcc();
 })();
