@@ -11,10 +11,11 @@
 <link rel="stylesheet" href="site.css" />
 <style>
   .pdp{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;padding:26px 0 70px;align-items:start;}
-  .pdp-left{position:sticky;top:24px;align-self:start;}
+  /* top offset clears the sticky site nav (~74px) so the preview never slides under it */
+  .pdp-left{position:sticky;top:90px;align-self:start;}
   .pdp-stage{background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
-    border:1px solid var(--line);border-radius:4px;padding:24px;min-height:340px;max-height:calc(100vh - 130px);overflow:hidden;display:grid;place-items:center;}
-  .pdp-stage .door-svg{width:100%;max-height:min(480px, calc(100vh - 200px));}
+    border:1px solid var(--line);border-radius:4px;padding:24px;min-height:340px;max-height:calc(100vh - 190px);overflow:hidden;display:grid;place-items:center;}
+  .pdp-stage .door-svg{width:100%;max-height:min(480px, calc(100vh - 248px));}
   .pdp-thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;justify-content:center;}
   .pdp-thumb{width:54px;height:54px;border-radius:50%;border:2px solid transparent;cursor:pointer;
     box-shadow:0 0 0 1px rgba(0,0,0,.18) inset;}
@@ -56,7 +57,7 @@
   .related{padding:64px 0 80px;}
   @media(max-width:900px){
     .pdp{grid-template-columns:1fr;gap:30px;}
-    .pdp-left{position:sticky;top:0;z-index:20;background:var(--bg);padding:8px 0 10px;align-self:auto;}
+    .pdp-left{position:sticky;top:74px;z-index:20;background:var(--bg);padding:8px 0 10px;align-self:auto;}
     .pdp-stage{min-height:0;max-height:42vh;padding:14px;}
     .pdp-stage .door-svg{max-height:34vh;}
     .pdp-thumbs{margin-top:8px;}
