@@ -229,7 +229,6 @@ const CONFIG = {
     { label: 'Black tint',            tint: 'tint',    price: 450 },
     { label: 'Black tint · privacy',  tint: 'privacy', price: 450 },
     { label: 'Clear border',          tint: 'border',  price: 450 },
-    { label: 'Prairie decorative',    tint: 'prairie', price: 740 },
   ],
   transoms: [
     { label: 'None',        add: 0,   h: 0 },
@@ -342,19 +341,8 @@ function glassFill(tint, uid) {
 }
 /* Realistic-ish glazing: sky-reflection gradient + diagonal sheen, with
    frosted/reeded texture for etched glass and a dark gradient for tints. */
-const GLASS_IMG = { clear: 'clear', etch: 'etch', tint: 'tint', privacy: 'etch', border: 'clear', prairie: 'prairie' };
 function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (!tint) return '';
-  // real photographic glass texture (clipped into the opening) when available
-  const gimg = GLASS_IMG[tint];
-  if (gimg) {
-    const cid = 'gp' + uid + 'a' + Math.round(x) + '_' + Math.round(y);
-    let r = `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2"/></clipPath>`
-      + `<image href="images/glass/${gimg}.jpg" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${cid})"/>`;
-    if (tint === 'border') r += `<rect x="${x + 7}" y="${y + 7}" width="${w - 14}" height="${h - 14}" fill="none" stroke="rgba(244,247,247,.85)" stroke-width="${Math.max(8, Math.min(16, w * 0.16))}"/>`;
-    r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
-    return r;
-  }
   const dark  = tint === 'tint' || tint === 'privacy' || tint === 'iron';
   const frost = tint === 'etch' || tint === 'frost' || tint === 'privacy';
   let s = '';
@@ -427,7 +415,7 @@ function unitSVG(door, sel, opts) {
   const trH = tr.h ? 70 : 0;
   const topY = trH ? trH + 12 : 0;
   const slabY = topY + (hasSL ? FR : 0);
-  const totalH = slabY + DH;
+  const totalH = slabY + DH + (hasSL ? FR : 0);
 
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
@@ -474,7 +462,7 @@ function unitSVG(door, sel, opts) {
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
-    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
   if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'etch', uid, true);
   if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'etch', uid, true);
