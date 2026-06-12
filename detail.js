@@ -42,6 +42,21 @@
       render(it, i, i === sel[key])).join('')}</div>`;
   }
 
+  const HELP = CONFIG.help || {};
+  const hintIco = (k) => HELP[k] ? `<button class="hint" type="button" data-tip="${HELP[k]}" aria-label="What is this?">?</button>` : '';
+
+  // transient +$/−$ pop next to the price when an option changes it
+  function popDelta(diff) {
+    if (!diff) return;
+    const el = info.querySelector('.pdp-price');
+    if (!el) return;
+    const sp = document.createElement('span');
+    sp.className = 'delta ' + (diff > 0 ? 'up' : 'down');
+    sp.textContent = (diff > 0 ? '+' : '−') + fmt(Math.abs(diff));
+    el.appendChild(sp);
+    setTimeout(() => sp.remove(), 1500);
+  }
+
   function paintInfo() {
     const fk = CONFIG.finishKeys;
     info.innerHTML = `
@@ -51,7 +66,7 @@
       <p class="pdp-desc">${door.desc} Finished identically inside and out, prepped for a multi-point lock and ready to drop into your opening.</p>
 
       <div class="grp">
-        <div class="lbl">Configuration <b>${CONFIG.configurations[sel.config].label}</b></div>
+        <div class="lbl"><span>Configuration${hintIco('config')}</span> <b>${CONFIG.configurations[sel.config].label}</b></div>
         ${optRow(CONFIG.configurations, 'config', (c, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${c.label}</button>`)}
       </div>
       <div class="grp">
@@ -61,6 +76,7 @@
       <div class="grp">
         <div class="lbl">Size <b>${CONFIG.sizes[sel.size].label}</b></div>
         ${optRow(CONFIG.sizes, 'size', (s, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${s.label}${s.add?' +'+fmt(s.add):''}</button>`)}
+        <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>
       </div>
       <div class="grp">
         <div class="lbl">Slab colour <b>${FINISHES[fk[sel.finish]].label}</b></div>
@@ -71,15 +87,15 @@
         ${optRow(fk, 'frame', (k, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Painted grooves <b>${CONFIG.paintedGrooves[sel.grooves].label}</b></div>
+        <div class="lbl"><span>Painted grooves${hintIco('grooves')}</span> <b>${CONFIG.paintedGrooves[sel.grooves].label}</b></div>
         ${optRow(CONFIG.paintedGrooves, 'grooves', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.add?' +'+fmt(g.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Decorative glass <b>${CONFIG.glass[sel.glass].label}</b></div>
+        <div class="lbl"><span>Decorative glass${hintIco('glass')}</span> <b>${CONFIG.glass[sel.glass].label}</b></div>
         ${optRow(CONFIG.glass, 'glass', (g, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Transom <b>${CONFIG.transoms[sel.transom].label}</b></div>
+        <div class="lbl"><span>Transom${hintIco('transom')}</span> <b>${CONFIG.transoms[sel.transom].label}</b></div>
         ${optRow(CONFIG.transoms, 'transom', (t, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${t.label}${t.add?' +'+fmt(t.add):''}</button>`)}
       </div>
       <div class="grp">
@@ -87,19 +103,19 @@
         ${optRow(CONFIG.handles, 'handle', (h, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${h.label}${h.add?' +'+fmt(h.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Hinges <b>${CONFIG.hinges[sel.hinge].label}</b></div>
+        <div class="lbl"><span>Hinges${hintIco('hinge')}</span> <b>${CONFIG.hinges[sel.hinge].label}</b></div>
         ${optRow(CONFIG.hinges, 'hinge', (h, i, on) => `<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${CONFIG.hinges[i].label}${h.add?' +'+fmt(h.add):''}" style="background:${h.swatch}"></button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Handle side <b>${CONFIG.handleSides[sel.handleSide].label}</b></div>
+        <div class="lbl"><span>Handle side${hintIco('handleSide')}</span> <b>${CONFIG.handleSides[sel.handleSide].label}</b></div>
         ${optRow(CONFIG.handleSides, 'handleSide', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Jamb size <b>${CONFIG.jambs[sel.jamb].label}</b></div>
+        <div class="lbl"><span>Jamb size${hintIco('jamb')}</span> <b>${CONFIG.jambs[sel.jamb].label}</b></div>
         ${optRow(CONFIG.jambs, 'jamb', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
       </div>
       <div class="grp">
-        <div class="lbl">Brick mould <b>${CONFIG.brickmould[sel.brickmould].label}</b></div>
+        <div class="lbl"><span>Brick mould${hintIco('brickmould')}</span> <b>${CONFIG.brickmould[sel.brickmould].label}</b></div>
         ${optRow(CONFIG.brickmould, 'brickmould', (x, i, on) => `<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
       </div>
       <div class="grp">
@@ -131,9 +147,12 @@
       row.addEventListener('click', (e) => {
         const b = e.target.closest('[data-i]'); if (!b) return;
         const key = row.dataset.key;
+        const before = computePrice(door, sel) + shippingFor(sel);
         sel[key] = +b.dataset.i;
+        const after = computePrice(door, sel) + shippingFor(sel);
         const visualKeys = ['config', 'finish', 'frame', 'glass', 'transom', 'hinge', 'handleSide', 'grooves', 'brickmould'];
         paintInfo();
+        popDelta(after - before);
         if (visualKeys.includes(key)) paintVisual();
         paintThumbsActive();
         syncURL();

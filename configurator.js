@@ -115,36 +115,50 @@
     return `<div class="opt-row" data-key="${key}">${items.map((it, i) => render(it, i, i === st.sel[key])).join('')}</div>`;
   }
 
+  const HELP = CONFIG.help || {};
+  const hintIco = (k) => HELP[k] ? `<button class="hint" type="button" data-tip="${HELP[k]}" aria-label="What is this?">?</button>` : '';
+
+  // transient +$/−$ pop next to the running price when an option changes it
+  function popDelta(diff) {
+    if (!diff) return;
+    const sp = document.createElement('span');
+    sp.className = 'delta ' + (diff > 0 ? 'up' : 'down');
+    sp.textContent = (diff > 0 ? '+' : '−') + fmt(Math.abs(diff));
+    priceTag.appendChild(sp);
+    setTimeout(() => sp.remove(), 1500);
+  }
+
   function stepConfigure() {
     const fk = CONFIG.finishKeys, s = st.sel;
     paneR.innerHTML = `
       <h2>Configure ${st.door.name}</h2>
       <p class="sub">Live price updates as you build. Freight is added at checkout; lifetime warranty included.</p>
-      <div class="grp"><div class="lbl">Configuration <b>${CONFIG.configurations[s.config].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Configuration${hintIco('config')}</span> <b>${CONFIG.configurations[s.config].label}</b></div>
         ${optRow(CONFIG.configurations,'config',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="grp"><div class="lbl">Height <b>${CONFIG.heights[s.height].label}</b></div>
         ${optRow(CONFIG.heights,'height',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
       <div class="grp"><div class="lbl">Size <b>${CONFIG.sizes[s.size].label}</b></div>
-        ${optRow(CONFIG.sizes,'size',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
+        ${optRow(CONFIG.sizes,'size',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}
+        <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div></div>
       <div class="grp"><div class="lbl">Slab colour <b>${FINISHES[fk[s.finish]].label}</b></div>
         ${optRow(fk,'finish',(k,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
       <div class="grp"><div class="lbl">Frame colour <b>${FINISHES[fk[s.frame]].label}</b></div>
         ${optRow(fk,'frame',(k,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`)}</div>
-      <div class="grp"><div class="lbl">Painted grooves <b>${CONFIG.paintedGrooves[s.grooves].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Painted grooves${hintIco('grooves')}</span> <b>${CONFIG.paintedGrooves[s.grooves].label}</b></div>
         ${optRow(CONFIG.paintedGrooves,'grooves',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Decorative glass <b>${CONFIG.glass[s.glass].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Decorative glass${hintIco('glass')}</span> <b>${CONFIG.glass[s.glass].label}</b></div>
         ${optRow(CONFIG.glass,'glass',(g,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${g.label}${g.price?' +'+fmt(g.price):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Transom <b>${CONFIG.transoms[s.transom].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Transom${hintIco('transom')}</span> <b>${CONFIG.transoms[s.transom].label}</b></div>
         ${optRow(CONFIG.transoms,'transom',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
       <div class="grp"><div class="lbl">Handle &amp; lock <b>${CONFIG.handles[s.handle].label}</b></div>
         ${optRow(CONFIG.handles,'handle',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Handle side <b>${CONFIG.handleSides[s.handleSide].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Handle side${hintIco('handleSide')}</span> <b>${CONFIG.handleSides[s.handleSide].label}</b></div>
         ${optRow(CONFIG.handleSides,'handleSide',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
-      <div class="grp"><div class="lbl">Jamb size <b>${CONFIG.jambs[s.jamb].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Jamb size${hintIco('jamb')}</span> <b>${CONFIG.jambs[s.jamb].label}</b></div>
         ${optRow(CONFIG.jambs,'jamb',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Brick mould <b>${CONFIG.brickmould[s.brickmould].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Brick mould${hintIco('brickmould')}</span> <b>${CONFIG.brickmould[s.brickmould].label}</b></div>
         ${optRow(CONFIG.brickmould,'brickmould',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}${x.add?' +'+fmt(x.add):''}</button>`)}</div>
-      <div class="grp"><div class="lbl">Hinges <b>${CONFIG.hinges[s.hinge].label}</b></div>
+      <div class="grp"><div class="lbl"><span>Hinges${hintIco('hinge')}</span> <b>${CONFIG.hinges[s.hinge].label}</b></div>
         ${optRow(CONFIG.hinges,'hinge',(x,i,on)=>`<button class="opt-sw ${on?'on':''}" data-i="${i}" title="${x.label}${x.add?' +'+fmt(x.add):''}" style="background:${x.swatch}"></button>`)}</div>
       <div class="grp"><div class="lbl">Ship to <b>${CONFIG.shipping.regions[s.region].label}</b></div>
         ${optRow(CONFIG.shipping.regions,'region',(x,i,on)=>`<button class="opt-btn ${on?'on':''}" data-i="${i}">${x.label}</button>`)}</div>
@@ -156,8 +170,11 @@
       </button>`;
     paneR.querySelectorAll('.opt-row').forEach(row => row.addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]'); if (!b) return;
+      const before = computePrice(st.door, st.sel) + shippingFor(st.sel);
       st.sel[row.dataset.key] = +b.dataset.i;
+      const after = computePrice(st.door, st.sel) + shippingFor(st.sel);
       stepConfigure(); paintPreview(); updateNav(); syncURL();
+      popDelta(after - before);
     }));
     const vb = paneR.querySelector('#vizBtn');
     if (vb) vb.addEventListener('click', () => P.openVisualizer(st.door, st.sel));

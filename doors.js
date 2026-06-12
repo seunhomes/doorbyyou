@@ -274,6 +274,17 @@ const CONFIG = {
   },
   samplePrice: 15,   // per stain-colour sample chip (credited on a door order)
   quoteEmail: 'quotes@doorbyyou.com',   // PLACEHOLDER — swap for the real sales inbox
+  // plain-language explainers shown as ? tooltips on the option rows
+  help: {
+    config: 'Sidelites are the narrow glass panels installed beside the door. They brighten the entry and make the unit wider.',
+    glass: 'Decorative glass goes into the sidelites and transom — the door slab itself stays solid.',
+    transom: 'A transom is the glass panel above the door that brings extra daylight into the entry. Straight or arched.',
+    grooves: 'The grooves are the recessed lines that form the door design. Keep them natural, or paint them black for extra contrast.',
+    handleSide: 'Which side the handle sits on, viewed from outside as the door swings in.',
+    jamb: 'The jamb is the frame depth, matched to your wall: 4-9/16 in. suits a standard 2×4 wall, 6-9/16 in. a 2×6 wall, 7-9/16 in. thicker insulated walls.',
+    brickmould: 'Brick mould is the exterior trim that frames the door against your siding or brick. 2 in. wide × 1 in. thick.',
+    hinge: 'Hinge finish sets the hardware tone. Concealed hinges hide all hardware when the door is closed.',
+  },
 };
 
 /* Default selection object for a door */
