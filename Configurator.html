@@ -66,6 +66,17 @@
   .summary .srow.total span:first-child{color:#cfcabd;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;align-self:center;}
   .summary .srow.total b{font-family:var(--serif);font-size:30px;font-weight:600;}
 
+  .quote-box{margin-top:26px;border:1px solid var(--line);border-radius:4px;padding:22px;background:var(--surface);}
+  .quote-box h3{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 4px;}
+  .quote-box p{font-size:13.5px;color:var(--ink-2);margin:0 0 14px;line-height:1.5;}
+  .q-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .q-grid input,.q-grid textarea{font:inherit;font-size:14px;padding:11px 13px;border:1.5px solid var(--line-2);
+    border-radius:3px;background:var(--bg);color:var(--ink);width:100%;box-sizing:border-box;}
+  .q-grid input:focus,.q-grid textarea:focus{outline:none;border-color:var(--ink-3);}
+  .q-grid textarea{grid-column:1/-1;resize:vertical;}
+  .q-grid #qPhone{grid-column:1/-1;}
+  .q-hint{font-size:12.5px;color:var(--ink-3);margin:10px 0 0;min-height:1em;}
+  @media(max-width:560px){.q-grid{grid-template-columns:1fr;}}
   .cfg-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:22px;}
   .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
   @media(max-width:900px){
@@ -88,7 +99,7 @@
       <nav class="main">
         <a href="Entry Doors.html">Entry Doors</a>
         <a href="Patio Doors.html">Patio Doors</a>
-        <a href="#">Windows</a>
+        <a href="Windows.html">Windows</a>
         <a href="Hardware.html">Hardware</a>
         <a href="Configurator.html" class="active">Configurator</a>
         <a href="About.html">About</a>
@@ -136,16 +147,16 @@
           <li><a href="Measuring Guide.html">Measuring Guide</a></li>
         </ul></div>
         <div><h5>Support</h5><ul>
-          <li><a href="Warranty.html">Warranty</a></li><li><a href="#">Shipping</a></li>
+          <li><a href="Warranty.html">Warranty</a></li><li><a href="FAQ.html">Shipping</a></li>
           <li><a href="Contact.html">Contact</a></li><li><a href="FAQ.html">FAQ</a></li>
         </ul></div>
         <div><h5>Company</h5><ul>
           <li><a href="About.html">About doorbyyou</a></li><li><a href="Reviews.html">Reviews</a></li>
-          <li><a href="#">Careers</a></li><li><a href="#">Press</a></li>
+          
         </ul></div>
       </div>
       <div class="foot-bot">
-        <span>© 2026 doorbyyou. Original demo rebuild — placeholder imagery.</span>
+        <span>&copy; 2026 doorbyyou. All rights reserved.</span>
         <span>Ships Canada &amp; US · Lifetime warranty · Lowest-price guarantee</span>
       </div>
     </div>

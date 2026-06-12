@@ -33,6 +33,25 @@
   const priceTag = document.getElementById('priceTag');
   const stepsEl = document.getElementById('steps');
 
+  // with a single material there is nothing to choose — start on Model
+  const MATERIALS = [...new Set(DOORS.map(d => d.material))];
+  const SKIP_MAT = MATERIALS.length === 1;
+  if (SKIP_MAT) {
+    st.material = MATERIALS[0];
+    if (st.step === 0) st.step = 1;
+    const m0 = stepsEl.querySelector('.step[data-s="0"]');
+    if (m0) m0.style.display = 'none';
+    stepsEl.querySelectorAll('.step').forEach((el, i) => { if (i > 0) el.querySelector('.n').textContent = i; });
+  }
+  const FIRST_STEP = SKIP_MAT ? 1 : 0;
+
+  // keep the address bar in sync with the build, so refresh / copy-URL keeps it
+  function syncURL() {
+    if (!P.builds || !st.door || st.step < 2) return;
+    const token = P.builds.encode({ product: 'door', name: st.door.name, sel: st.sel });
+    history.replaceState(null, '', '?b=' + token);
+  }
+
   function paintPreview() {
     if (!st.door) { pane.innerHTML = '<div class="empty">Choose a material and model<br>to preview your door</div>'; return; }
     pane.innerHTML = st.step >= 2 ? unitSVG(st.door, st.sel) : doorSceneHTML(st.door);
@@ -138,7 +157,7 @@
     paneR.querySelectorAll('.opt-row').forEach(row => row.addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]'); if (!b) return;
       st.sel[row.dataset.key] = +b.dataset.i;
-      stepConfigure(); paintPreview(); updateNav();
+      stepConfigure(); paintPreview(); updateNav(); syncURL();
     }));
     const vb = paneR.querySelector('#vizBtn');
     if (vb) vb.addEventListener('click', () => P.openVisualizer(st.door, st.sel));
@@ -184,6 +203,18 @@
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z" stroke-linejoin="round"/></svg>Save build</button>
         <button class="btn ghost sm" id="shareBuild">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" stroke-linecap="round"/></svg>Copy share link</button>
+      </div>
+      <div class="quote-box">
+        <h3>Not ready to order? Get a written quote.</h3>
+        <p>We'll confirm pricing, freight and lead time for this exact build — no obligation.</p>
+        <div class="q-grid">
+          <input id="qName" type="text" placeholder="Name" autocomplete="name">
+          <input id="qEmail" type="email" placeholder="Email" autocomplete="email">
+          <input id="qPhone" type="tel" placeholder="Phone · optional" autocomplete="tel">
+          <textarea id="qNotes" rows="2" placeholder="Anything we should know? Rough opening size, timeline…"></textarea>
+        </div>
+        <button class="btn solid sm" id="quoteBtn" style="width:100%;justify-content:center;">Request my quote</button>
+        <p class="q-hint" id="qHint"></p>
       </div>`;
     const build = () => ({ product: 'door', name: d.name, sel: s, price: computePrice(d, s),
       title: d.name, sub: `${CONFIG.configurations[s.config].label} · ${FINISHES[CONFIG.finishKeys[s.finish]].label}` });
@@ -198,12 +229,41 @@
       const ok = await P.builds.copy(P.builds.shareURL(build()));
       P.builds.toast(ok ? 'Share link copied to clipboard' : 'Copy failed — link in address bar');
     });
+    const qb = paneR.querySelector('#quoteBtn');
+    if (qb) qb.addEventListener('click', () => {
+      const name = paneR.querySelector('#qName').value.trim();
+      const email = paneR.querySelector('#qEmail').value.trim();
+      const phone = paneR.querySelector('#qPhone').value.trim();
+      const notes = paneR.querySelector('#qNotes').value.trim();
+      const hint = paneR.querySelector('#qHint');
+      if (!name || !/^\S+@\S+\.\S+$/.test(email)) {
+        hint.textContent = 'Please add your name and a valid email so we can reply.';
+        hint.style.color = '#a33';
+        return;
+      }
+      const body = [
+        'Quote request — ' + d.name + ' (' + d.material + ')', '',
+        ...rows.map(([k, v]) => k + ': ' + v),
+        'Freight · ' + CONFIG.shipping.regions[s.region].label + ': ' + fmt(shippingFor(s)),
+        'Total incl. freight: ' + fmt(computePrice(d, s) + shippingFor(s)), '',
+        'Build link: ' + P.builds.shareURL(build()), '',
+        'Name: ' + name,
+        'Email: ' + email,
+        phone ? 'Phone: ' + phone : '',
+        notes ? 'Notes: ' + notes : '',
+      ].filter(Boolean).join('\n');
+      location.href = 'mailto:' + CONFIG.quoteEmail
+        + '?subject=' + encodeURIComponent('Quote request — ' + d.name)
+        + '&body=' + encodeURIComponent(body);
+      hint.style.color = '';
+      hint.textContent = 'Your email app should open with the quote pre-filled — just hit send.';
+    });
   }
 
   const RENDER = [stepMaterial, stepModel, stepConfigure, stepReview];
 
   function updateNav() {
-    backBtn.style.visibility = st.step === 0 ? 'hidden' : 'visible';
+    backBtn.style.visibility = st.step === FIRST_STEP ? 'hidden' : 'visible';
     let ok = true;
     if (st.step === 0) ok = !!st.material;
     if (st.step === 1) ok = !!st.door;
@@ -214,7 +274,7 @@
 
   function render() {
     RENDER[st.step]();
-    paintSteps(); paintPreview(); updateNav();
+    paintSteps(); paintPreview(); updateNav(); syncURL();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -237,10 +297,11 @@
     if (st.step === 1 && !st.sel) st.sel = defaultSel(st.door);
     st.step++; render();
   });
-  backBtn.addEventListener('click', () => { if (st.step > 0) { st.step--; render(); } });
+  backBtn.addEventListener('click', () => { if (st.step > FIRST_STEP) { st.step--; render(); } });
   stepsEl.addEventListener('click', (e) => {
     const s = e.target.closest('.step'); if (!s) return;
     const target = +s.dataset.s;
+    if (SKIP_MAT && target === 0) return;
     if (target < st.step || (target === 1 && st.material) || (target >= 2 && st.door)) { st.step = target; render(); }
   });
 

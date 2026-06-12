@@ -22,7 +22,14 @@
   const visual = document.getElementById('visual');
   const info = document.getElementById('info');
 
-  document.title = door.name + ' | Panes';
+  // keep the address bar in sync with the build, so refresh / copy-URL keeps it
+  function syncURL() {
+    if (!P.builds) return;
+    const token = P.builds.encode({ product: 'door', name: door.name, sel });
+    history.replaceState(null, '', '?door=' + encodeURIComponent(door.name) + '&b=' + token);
+  }
+
+  document.title = door.name + ' | doorbyyou';
   document.getElementById('crumbName').textContent = door.name;
   document.getElementById('crumbMat').textContent = door.material;
 
@@ -129,6 +136,7 @@
         paintInfo();
         if (visualKeys.includes(key)) paintVisual();
         paintThumbsActive();
+        syncURL();
       });
     });
 
@@ -178,7 +186,7 @@
     thumbs.innerHTML = CONFIG.finishKeys.map((k, i) =>
       `<button class="pdp-thumb ${i===sel.finish?'on':''}" data-i="${i}" title="${FINISHES[k].label}" style="background:${FINISHES[k].swatch}"></button>`).join('');
     thumbs.querySelectorAll('.pdp-thumb').forEach(t => t.addEventListener('click', () => {
-      sel.finish = +t.dataset.i; paintVisual(); paintInfo(); paintThumbsActive();
+      sel.finish = +t.dataset.i; paintVisual(); paintInfo(); paintThumbsActive(); syncURL();
     }));
   }
   function paintThumbsActive() {

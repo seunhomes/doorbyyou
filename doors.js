@@ -261,7 +261,7 @@ const CONFIG = {
     { label: `Brick mould · 2"×1"`, add: 0, on: true },
   ],
   paintedGrooves: [
-    { label: 'Natural', add: 0, painted: false },
+    { label: 'Natural (no paint)', add: 0, painted: false },
     { label: 'Painted black', add: 0, painted: true },
   ],
   // freight estimate: region base + per-configuration surcharge (heavier units cost more)
@@ -273,6 +273,7 @@ const CONFIG = {
     configAdd: [0, 50, 80, 110, 150],   // by configuration index (single … double+2SL)
   },
   samplePrice: 15,   // per stain-colour sample chip (credited on a door order)
+  quoteEmail: 'quotes@doorbyyou.com',   // PLACEHOLDER — swap for the real sales inbox
 };
 
 /* Default selection object for a door */
@@ -415,7 +416,7 @@ function unitSVG(door, sel, opts) {
   const trH = tr.h ? 70 : 0;
   const topY = trH ? trH + 12 : 0;
   const slabY = topY + (hasSL ? FR : 0);
-  const totalH = slabY + DH + (hasSL ? FR : 0);
+  const totalH = slabY + DH;   // open threshold — no bottom rail under the slab
 
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
@@ -462,7 +463,7 @@ function unitSVG(door, sel, opts) {
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
-    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + 2 * FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
   if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'etch', uid, true);
   if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'etch', uid, true);
