@@ -252,14 +252,96 @@ const CONFIG = {
     { label: 'Left hand',  side: 'left' },
   ],
   jambs: [
-    { label: `4-9/16"`, add: 0 },
-    { label: `6-9/16"`, add: 0 },
-    { label: `7-9/16"`, add: 0 },
+    { label: `4 5/8"`, add: 0, note: 'standard 2×4 wall' },
+    { label: `6 5/8"`, add: 0, note: '2×6 wall' },
+    { label: `7 5/8"`, add: 0, note: 'thicker insulated wall' },
   ],
   brickmould: [
-    { label: 'No brick mould', add: 0, on: false },
-    { label: `Brick mould · 2"×1"`, add: 0, on: true },
+    { label: 'None', add: 0, on: false },
+    { label: `Installed · 2"×1"`, add: 0, on: true },
+    { label: 'Shipped loose', add: 0, on: false, loose: true },
   ],
+  /* ---- Guided-wizard options ---- */
+  grains: [
+    { label: 'Oak grain', key: 'oak', desc: 'Deep, pronounced oak texture — takes stain beautifully.' },
+    { label: 'Mahogany grain', key: 'mahogany', desc: 'Fine, straight grain for rich, even stain tones.' },
+    { label: 'Smooth', key: 'smooth', desc: 'Paint-grade smooth skin for solid painted colours.' },
+  ],
+  slabWidths: [
+    { label: '32"', w: 32, add: 0 },
+    { label: '34"', w: 34, add: 0 },
+    { label: '36"', w: 36, add: 0, std: true },
+    { label: '38"', w: 38, add: 150 },
+    { label: '42"', w: 42, add: 250 },
+    { label: '48"', w: 48, add: 425 },
+  ],
+  slabHeights: [
+    { label: `6'8" · 79"`, hIn: 79, std: true },
+    { label: `8'0" · 95"`, hIn: 95 },
+  ],
+  frameFinishes: [
+    { label: 'Smooth', key: 'smooth' },
+    { label: 'Wood grain', key: 'grain' },
+  ],
+  thresholds: [
+    { label: 'Mill (aluminum)', key: 'mill', swatch: '#b9bcc0' },
+    { label: 'Black', key: 'black', swatch: '#222224' },
+  ],
+  swings: [
+    { label: 'Inswing', key: 'in' },
+    { label: 'Outswing', key: 'out' },
+  ],
+  // interior face of the slab
+  interiors: [
+    { label: 'White · standard', key: 'snow-white' },
+    { label: 'Same as exterior', same: true },
+    { label: 'Custom colour', custom: true },
+  ],
+  // sidelite / transom decorative glass styles (all safety tempered as standard)
+  glassStyles: [
+    { label: 'Clear',                        tint: 'clear',        add: 0 },
+    { label: 'Sandblast',                    tint: 'etch',         add: 120 },
+    { label: 'Sandblast · 1" clear border',  tint: 'frost-border', add: 160 },
+    { label: 'Black',                        tint: 'tint',         add: 140 },
+    { label: 'Black sandblast',              tint: 'privacy',      add: 170 },
+    { label: 'Niagara',                      tint: 'niagara',      add: 190 },
+    { label: 'Granite',                      tint: 'granite',      add: 190 },
+    { label: 'Chinchilla',                   tint: 'chinchilla',   add: 190 },
+    { label: 'Monumental',                   tint: 'monumental',   add: 190 },
+    { label: 'Reeded',                       tint: 'reeded',       add: 190 },
+  ],
+  hardware: {
+    types: [
+      { label: 'Multipoint lock', key: 'mp', add: 0, desc: '3-point locking — hooks top & bottom plus centre latch. Choose pull bar, gripset or lever.' },
+      { label: 'Pull bar + ball catch', key: 'ball', add: 0, desc: 'Fixed pull bar with a ball catch (non-multipoint). Pairs with a deadbolt.' },
+      { label: 'Digital / smart lock', key: 'digital', add: 350, placeholder: true, desc: 'Keypad / smart entry. Model options coming soon — we’ll confirm on your quote.' },
+      { label: 'No hardware', key: 'none', add: 0, desc: 'Prep only · double bore. Bring your own hardware.' },
+    ],
+    mpStyles: [
+      { label: 'Pull bar', key: 'bar' },
+      { label: 'Gripset', key: 'grip' },
+      { label: 'Lever', key: 'lever' },
+    ],
+    barSizes: [
+      { label: '48"' }, { label: '60"' }, { label: '72"' },
+    ],
+    // PLACEHOLDER pull-bar styles & colours — swap for the real hardware chart
+    barColors: [
+      { label: 'Matte Black', swatch: '#222224' },
+      { label: 'Stainless', swatch: '#b9bcc0' },
+      { label: 'Bronze', swatch: '#584a3a' },
+    ],
+    tLevers: [
+      { label: 'Square' }, { label: 'Round' },
+    ],
+    dbShapes: [
+      { label: 'Square' }, { label: 'Round' },
+    ],
+    dbColors: [
+      { label: 'Black', swatch: '#222224' },
+      { label: 'Silver', swatch: '#c3c6ca' },
+    ],
+  },
   paintedGrooves: [
     { label: 'Natural (no paint)', add: 0, painted: false },
     { label: 'Painted black', add: 0, painted: true },
@@ -284,6 +366,14 @@ const CONFIG = {
     jamb: 'The jamb is the frame depth, matched to your wall: 4-9/16 in. suits a standard 2×4 wall, 6-9/16 in. a 2×6 wall, 7-9/16 in. thicker insulated walls.',
     brickmould: 'Brick mould is the exterior trim that frames the door against your siding or brick. 2 in. wide × 1 in. thick.',
     hinge: 'Hinge finish sets the hardware tone. Concealed hinges hide all hardware when the door is closed.',
+    grain: 'The texture embossed into the fibreglass skin. Wood grains are made to stain; smooth is made to paint.',
+    slab: 'The slab is the door panel itself, measured before the frame is added. Sidelite and transom glass sizes adjust automatically to the slab you pick.',
+    threshold: 'The threshold (sill) is the plate the door closes onto at the floor. Mill is a brushed-aluminum finish; black matches dark frames.',
+    frameFinish: 'The finish texture of the frame and jambs — smooth for painted frames, wood grain to match a stained slab.',
+    swing: 'Handing is always viewed from the OUTSIDE of your home. Inswing doors open into the house; outswing doors open out toward you.',
+    interior: 'The colour of the inside face of your door. White is standard; match the exterior or pick any colour.',
+    glassSafety: 'All doorbyyou glass comes standard with safety tempered glass.',
+    tlever: 'The T-lever is the interior thumb-turn that works the multipoint lock when the outside handle is a fixed pull bar.',
   },
 };
 
@@ -291,7 +381,11 @@ const CONFIG = {
 function defaultSel(door) {
   let fin = CONFIG.finishKeys.indexOf(door.finish); if (fin < 0) fin = 0;
   return { config: 0, height: 0, size: 0, finish: fin, frame: fin, glass: 0, transom: 0,
-    handle: 0, handleSide: 0, hinge: 0, jamb: 0, brickmould: 0, grooves: 0, region: 0 };
+    handle: 0, handleSide: 0, hinge: 0, jamb: 0, brickmould: 0, grooves: 0, region: 0,
+    /* guided-wizard keys */
+    grain: 0, slabW: 2, frameFinish: 1, threshold: 0, swing: 0,
+    interior: 0, interiorC: fin, glassSL: 0, glassTR: 0,
+    hw: 0, mpStyle: 0, barSize: 0, barColor: 0, tLever: 0, dbShape: 0, dbColor: 0 };
 }
 
 /* Freight estimate for a selection + destination region */
@@ -313,6 +407,11 @@ function computePrice(door, s) {
   total += (CONFIG.jambs[s.jamb] || { add: 0 }).add;
   total += (CONFIG.brickmould[s.brickmould] || { add: 0 }).add;
   total += (CONFIG.paintedGrooves[s.grooves] || { add: 0 }).add;
+  /* guided-wizard adders (absent on legacy selections) */
+  if (s.slabW != null) total += (CONFIG.slabWidths[s.slabW] || { add: 0 }).add;
+  if (s.glassSL != null && c.sides) total += ((CONFIG.glassStyles[s.glassSL] || { add: 0 }).add) * c.sides;
+  if (s.glassTR != null && s.transom) total += (CONFIG.glassStyles[s.glassTR] || { add: 0 }).add;
+  if (s.hw != null) total += (CONFIG.hardware.types[s.hw] || { add: 0 }).add;
   return total;
 }
 
@@ -356,7 +455,11 @@ function glassFill(tint, uid) {
 function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (!tint) return '';
   const dark  = tint === 'tint' || tint === 'privacy' || tint === 'iron';
-  const frost = tint === 'etch' || tint === 'frost' || tint === 'privacy';
+  const frost = tint === 'etch' || tint === 'frost' || tint === 'privacy'
+             || tint === 'granite' || tint === 'chinchilla';
+  // tiny deterministic PRNG so textures are stable across re-renders
+  let _r = (x * 7919 + y * 104729 + w * 31) % 233280;
+  const rnd = () => (_r = (_r * 9301 + 49297) % 233280) / 233280;
   let s = '';
   // base glass
   s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${dark ? 'gldk' : 'gl'}-${uid})"/>`;
@@ -375,6 +478,58 @@ function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (tint === 'border') {
     const b = Math.max(8, Math.min(16, w * 0.16));
     s += `<rect x="${x + b/2}" y="${y + b/2}" width="${w - b}" height="${h - b}" fill="none" stroke="rgba(244,247,247,.85)" stroke-width="${b}"/>`;
+  }
+  // sandblast with 1" clear border: frosted centre, clear band at the edge
+  if (tint === 'frost-border') {
+    const b = Math.max(6, Math.min(12, w * 0.12));
+    s += `<rect x="${x + b}" y="${y + b}" width="${w - 2*b}" height="${h - 2*b}" fill="rgba(244,247,247,.84)"/>`;
+    s += `<rect x="${x + b}" y="${y + b}" width="${w - 2*b}" height="${(h - 2*b) * 0.4}" fill="rgba(255,255,255,.14)"/>`;
+  }
+  // Niagara: soft cascading vertical waves
+  if (tint === 'niagara') {
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(240,246,247,.4)"/>`;
+    for (let xx = x + 6; xx < x + w - 3; xx += 8) {
+      const a = 2 + rnd() * 2;
+      s += `<path d="M${xx} ${y+2} q${a} ${h/6} 0 ${h/3} q-${a} ${h/6} 0 ${h/3} q${a} ${h/8} 0 ${h/3.2}" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.4"/>`;
+      s += `<path d="M${xx+1.6} ${y+2} q${a} ${h/6} 0 ${h/3} q-${a} ${h/6} 0 ${h/3} q${a} ${h/8} 0 ${h/3.2}" fill="none" stroke="rgba(0,0,0,.06)" stroke-width="1"/>`;
+    }
+  }
+  // Granite: heavy frost with a coarse speckled texture
+  if (tint === 'granite') {
+    const n = Math.round((w * h) / 260);
+    for (let i = 0; i < n; i++) {
+      s += `<circle cx="${x + 3 + rnd() * (w - 6)}" cy="${y + 3 + rnd() * (h - 6)}" r="${0.8 + rnd() * 1.6}" fill="rgba(0,0,0,.10)"/>`;
+      s += `<circle cx="${x + 3 + rnd() * (w - 6)}" cy="${y + 3 + rnd() * (h - 6)}" r="${0.7 + rnd() * 1.3}" fill="rgba(255,255,255,.5)"/>`;
+    }
+  }
+  // Chinchilla: fine frosted flecks in loose rows
+  if (tint === 'chinchilla') {
+    for (let yy = y + 6; yy < y + h - 4; yy += 7) {
+      for (let xx = x + 4 + (rnd() * 6); xx < x + w - 6; xx += 9) {
+        s += `<path d="M${xx} ${yy} q3 ${rnd() > .5 ? -2.4 : 2.4} 6 0" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4"/>`;
+      }
+    }
+  }
+  // Monumental: large hammered dimples on lightly obscured glass
+  if (tint === 'monumental') {
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(240,246,247,.5)"/>`;
+    const step = Math.max(14, w / 4);
+    for (let yy = y + step / 2; yy < y + h - 4; yy += step) {
+      for (let xx = x + step / 2 + ((Math.round(yy / step) % 2) * step / 2); xx < x + w - 4; xx += step) {
+        s += `<circle cx="${xx}" cy="${yy}" r="${step * 0.34}" fill="rgba(255,255,255,.28)"/>`;
+        s += `<circle cx="${xx - step*0.08}" cy="${yy - step*0.08}" r="${step * 0.2}" fill="rgba(255,255,255,.3)"/>`;
+        s += `<circle cx="${xx}" cy="${yy}" r="${step * 0.34}" fill="none" stroke="rgba(0,0,0,.07)" stroke-width="1"/>`;
+      }
+    }
+  }
+  // Reeded: bold vertical ribs
+  if (tint === 'reeded') {
+    const rw = Math.max(8, Math.min(14, w / 5));
+    for (let xx = x; xx < x + w; xx += rw) {
+      s += `<rect x="${xx}" y="${y}" width="${Math.min(rw, x + w - xx)}" height="${h}" fill="rgba(240,246,247,.28)"/>`;
+      s += `<rect x="${xx + rw*0.12}" y="${y}" width="${rw*0.3}" height="${h}" fill="rgba(255,255,255,.42)"/>`;
+      s += `<rect x="${xx + rw*0.8}" y="${y}" width="${rw*0.16}" height="${h}" fill="rgba(0,0,0,.08)"/>`;
+    }
   }
   // raised muntin / grille bars
   if (mullions) {
@@ -413,6 +568,11 @@ function unitSVG(door, sel, opts) {
   const groovesPainted = !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
   const brick = !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
   const handLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
+  // per-zone glass styles from the guided wizard (fall back to the legacy single pick)
+  const styleTint = (i) => (CONFIG.glassStyles[i] || {}).tint;
+  const slTint = sel && sel.glassSL != null ? styleTint(sel.glassSL) : (gl.tint || 'etch');
+  const trTint = sel && sel.glassTR != null ? styleTint(sel.glassTR) : (gl.tint || 'clear');
+  const thr = CONFIG.thresholds[(sel && sel.threshold != null) ? sel.threshold : 0] || CONFIG.thresholds[0];
 
   const dbl = !!cfg.dbl;
   const DWd = dbl ? 320 : DW;          // door footprint width
@@ -465,24 +625,24 @@ function unitSVG(door, sel, opts) {
   if (tr.h) {
     if (tr.arch) {
       frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="${glassFill(gl.tint || 'clear', uid)}"/>`;
+      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
       frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="rgba(255,255,255,.14)"/>`;
     } else {
       frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += glassPanel(8, 8, totalW - 16, trH - 16, gl.tint || 'clear', uid, false);
+      frames += glassPanel(8, 8, totalW - 16, trH - 16, trTint || 'clear', uid, false);
     }
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
     frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
-  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, gl.tint || 'etch', uid, true);
-  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, gl.tint || 'etch', uid, true);
+  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, slTint || 'etch', uid, true);
+  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, slTint || 'etch', uid, true);
 
   return `
   <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>${faceGrad}${glassDefs(uid)}
-      ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="gamma" amplitude="4" exponent="5" offset="0"/></feComponentTransfer></filter>` : ''}
+      ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0 0 0.25 0.8 1 1"/></feComponentTransfer></filter>` : ''}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>
@@ -492,6 +652,8 @@ function unitSVG(door, sel, opts) {
       ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${leaves}
     </g>
+    ${opts.bare ? '' : `<rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="7" rx="1.5" fill="${thr.swatch}"/>
+    <rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="2" rx="1" fill="rgba(255,255,255,.35)"/>`}
     ${opts.bare ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
   </svg>`;
 }
@@ -502,6 +664,11 @@ const OPT_LABELS = {
   frame: 'Frame colour', grooves: 'Painted grooves', glass: 'Decorative glass',
   transom: 'Transom', handle: 'Handle and lock', handleSide: 'Handle side',
   hinge: 'Hinges', jamb: 'Jamb size', brickmould: 'Brick mould', region: 'Ship to',
+  grain: 'Grain', slabW: 'Slab width', height2: 'Slab height', frameFinish: 'Frame finish',
+  threshold: 'Threshold / sill', swing: 'Swing and hinging', interior: 'Interior colour',
+  interiorC: 'Interior custom colour', glassSL: 'Sidelite glass', glassTR: 'Transom glass',
+  hw: 'Hardware package', mpStyle: 'Multipoint style', barSize: 'Pull bar size',
+  barColor: 'Pull bar colour', tLever: 'T-lever', dbShape: 'Deadbolt shape', dbColor: 'Deadbolt colour',
 };
 function optA11y(root) {
   root.querySelectorAll('.opt-row').forEach(row => {
@@ -537,6 +704,7 @@ function optKeyboardNav(root) {
 window.PANES = {
   DOORS, FINISHES, CONFIG,
   doorSceneHTML, patternSVG, unitSVG,
+  glassPanel, glassDefs, finishTint,
   defaultSel, computePrice, shippingFor, specsFor,
   optA11y, optKeyboardNav,
 };

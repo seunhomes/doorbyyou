@@ -12,17 +12,20 @@
 <style>
   .cfg-head{padding:30px 0 0;}
   .cfg-head h1{font-family:var(--serif);font-size:40px;font-weight:500;margin:8px 0 0;}
-  /* stepper */
+  /* stepper — 9 compact steps */
   .steps{display:flex;gap:0;margin:26px 0 0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);}
-  .step{flex:1;display:flex;gap:12px;align-items:center;padding:16px 20px;border-right:1px solid var(--line);
-    font-size:13px;color:var(--ink-3);position:relative;}
+  .step{flex:1;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:flex-start;
+    padding:12px 6px 10px;border:none;border-right:1px solid var(--line);background:none;cursor:pointer;
+    font:inherit;font-size:11px;color:var(--ink-3);position:relative;}
   .step:last-child{border-right:none;}
-  .step .n{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;
-    font-size:12px;font-weight:700;flex:none;}
+  .step .n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;
+    font-size:11px;font-weight:700;flex:none;}
   .step.active{color:var(--ink);}
   .step.active .n{background:var(--black);border-color:var(--black);color:#fff;}
+  .step.done{color:var(--ink-2);}
   .step.done .n{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .step b{font-weight:600;letter-spacing:.02em;}
+  .step.locked{cursor:not-allowed;opacity:.45;}
+  .step b{font-weight:600;letter-spacing:.02em;white-space:nowrap;}
 
   .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
   /* top offset clears the sticky site nav (~74px) so the preview never slides under it */
@@ -80,12 +83,88 @@
   @media(max-width:560px){.q-grid{grid-template-columns:1fr;}}
   .cfg-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:22px;}
   .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
+  .nav-hint{font-size:12.5px;color:#a06d2a;margin:10px 0 0;min-height:1em;text-align:right;}
+
+  /* ---- guided-wizard components ---- */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .cards.four{grid-template-columns:1fr 1fr;}
+  .card{border:1.5px solid var(--line-2);border-radius:4px;padding:18px;cursor:pointer;background:var(--surface);
+    transition:.15s;text-align:left;font:inherit;color:var(--ink);}
+  .card:hover{border-color:var(--ink-3);}
+  .card.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);}
+  .card h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:0 0 5px;}
+  .card p{font-size:12.5px;color:var(--ink-2);margin:0;line-height:1.5;}
+  .card .add{display:block;margin-top:8px;font-size:12px;font-style:normal;color:var(--ink-3);}
+  .card .ph{font-family:var(--sans, inherit);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:#efe7d6;color:#8a6c33;border-radius:3px;padding:2px 6px;vertical-align:middle;margin-left:6px;}
+
+  /* grain texture chips */
+  .grain-chip{display:block;width:100%;height:44px;border-radius:3px;margin-bottom:12px;border:1px solid rgba(0,0,0,.12);}
+  .grain-oak{background:repeating-linear-gradient(95deg,#c2945a 0 6px,#b07c45 6px 9px,#c99e63 9px 15px,#a9793f 15px 17px);}
+  .grain-mahogany{background:repeating-linear-gradient(92deg,#8a4a33 0 3px,#7a3f2b 3px 5px,#94553c 5px 9px,#713a27 9px 11px);}
+  .grain-smooth{background:linear-gradient(135deg,#e8e5dd 0%,#d6d2c6 55%,#cfcabd 100%);}
+
+  /* layout / transom pictogram cards */
+  .lay-card{display:flex;flex-direction:column;align-items:center;gap:7px;border:1.5px solid var(--line-2);border-radius:4px;
+    background:var(--surface);cursor:pointer;padding:10px 8px;font:inherit;font-size:12px;color:var(--ink-2);transition:.15s;flex:1;min-width:104px;}
+  .lay-card:hover{border-color:var(--ink-3);}
+  .lay-card.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);color:var(--ink);}
+  .li{width:86px;height:60px;}
+  .li-d{fill:#b98a4f;stroke:rgba(0,0,0,.25);stroke-width:1;}
+  .li-g{fill:#cfe0e4;stroke:rgba(0,0,0,.2);stroke-width:1;}
+
+  /* swing diagrams */
+  .swing-card{align-items:center;text-align:center;}
+  .swg{width:100%;max-width:170px;margin:0 auto 4px;display:block;}
+  .swg-t{font-size:9px;letter-spacing:.18em;fill:var(--ink-3);text-anchor:middle;font-weight:700;}
+  .swg-w{fill:#8d8779;}
+  .swg-c{stroke:rgba(0,0,0,.15);stroke-width:2;stroke-dasharray:3 4;}
+  .swg-arc{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:4 4;}
+  .swg-d{stroke:var(--ink);stroke-width:4;stroke-linecap:round;}
+  .swg-h{fill:var(--accent);}
+
+  /* glass tiles */
+  .gt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-top:11px;}
+  .gt-grid .opt-row{display:contents;}
+  .gt{display:flex;flex-direction:column;align-items:center;gap:5px;border:1.5px solid var(--line-2);border-radius:4px;
+    background:var(--surface);cursor:pointer;padding:10px 6px 9px;font:inherit;font-size:11.5px;font-weight:600;color:var(--ink-2);transition:.15s;}
+  .gt:hover{border-color:var(--ink-3);}
+  .gt.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);color:var(--ink);}
+  .gt-svg{width:54px;height:72px;}
+  .gt span{text-align:center;line-height:1.25;}
+  .gt em{font-style:normal;font-size:10.5px;color:var(--ink-3);}
+
+  /* misc wizard bits */
+  .req .lbl b .tbc, .tbc{font-style:italic;color:#a06d2a;font-weight:500;}
+  .sw-btn{display:inline-flex;align-items:center;gap:8px;}
+  .sw-btn .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.25);display:inline-block;}
+  .sw-btn.on .dot{border-color:rgba(255,255,255,.6);}
+  .same-chip{border-style:dashed;}
+  .opt-btn small{font-weight:400;opacity:.75;}
+  .size-note{margin-top:18px;border:1px dashed var(--line-2);border-radius:4px;padding:14px 16px;font-size:13px;
+    display:flex;flex-direction:column;gap:4px;background:var(--surface);}
+  .size-note b{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);}
+  .size-note em{font-size:11.5px;color:var(--ink-3);font-style:italic;margin-top:2px;}
+  .safety-note{margin-top:18px;display:flex;gap:9px;align-items:center;border:1px solid var(--line);border-radius:4px;
+    padding:12px 14px;font-size:13px;color:var(--ink-2);background:var(--surface);}
+  .safety-note svg{color:var(--accent);flex:none;}
+  .empty-note{border:1px dashed var(--line-2);border-radius:4px;padding:16px;font-size:13.5px;color:var(--ink-2);
+    line-height:1.55;margin:6px 0 4px;background:var(--surface);}
+  .note,.mini-note{font-size:12.5px;color:var(--ink-3);margin:12px 0 0;line-height:1.55;}
+  .mini-note{margin-top:8px;}
+  .build-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+
   @media(max-width:900px){
     .cfg-body{grid-template-columns:1fr;}
     .cfg-preview{position:sticky;top:74px;z-index:20;min-height:0;max-height:42vh;order:-1;padding:14px;}
     .cfg-preview .door-svg{max-height:34vh;}
-    .steps{flex-wrap:wrap;}.step{min-width:50%;}
+    .steps{flex-wrap:wrap;}.step{min-width:33%;border-bottom:1px solid var(--line);}
     .model-grid{grid-template-columns:1fr 1fr;}
+    .cards,.cards.four{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:560px){
+    .cards,.cards.four{grid-template-columns:1fr;}
+    .step{min-width:50%;}
   }
 </style>
 </head>
@@ -114,16 +193,11 @@
   <div class="wrap cfg-head">
     <div class="eyebrow">Design Studio</div>
     <h1>Build your door</h1>
-    <div class="steps" id="steps">
-      <div class="step" data-s="0"><span class="n">1</span><b>Material</b></div>
-      <div class="step" data-s="1"><span class="n">2</span><b>Model</b></div>
-      <div class="step" data-s="2"><span class="n">3</span><b>Configure</b></div>
-      <div class="step" data-s="3"><span class="n">4</span><b>Review</b></div>
-    </div>
+    <div class="steps" id="steps"></div>
   </div>
 
   <div class="wrap cfg-body">
-    <div class="cfg-preview"><div id="preview" style="width:100%;"><div class="empty">Choose a material and model<br>to preview your door</div></div></div>
+    <div class="cfg-preview"><div id="preview" style="width:100%;"><div class="empty">Pick a door design<br>to start your build</div></div></div>
     <div class="cfg-pane">
       <div id="pane"></div>
       <div class="cfg-nav">
