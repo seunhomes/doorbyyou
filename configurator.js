@@ -20,7 +20,7 @@
   const REVIEW = STEPS.length - 1;
 
   const qs = new URLSearchParams(location.search);
-  let st = { step: 0, door: null, sel: null, picked: {} };
+  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext' };
 
   const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
     'swing','finish','interior','interiorC','frame','glassSL','glassTR',
@@ -106,9 +106,43 @@
   }
 
   /* ---------- preview ---------- */
+  // inches → display fraction in eighths, e.g. 37.5 → 37-1/2"
+  function inFrac(v) {
+    const w = Math.floor(v), f = Math.round((v - w) * 8);
+    if (f === 0) return w + '"';
+    if (f === 8) return (w + 1) + '"';
+    const d = f % 2 ? [f, 8] : f % 4 ? [f / 2, 4] : [f / 4, 2];
+    return w + '-' + d[0] + '/' + d[1] + '"';
+  }
+  // unit / rough-opening measurements from the current selection
+  function computeDims() {
+    const s = sel(), cfg = CONFIG.configurations[s.config];
+    const slabW = CONFIG.slabWidths[s.slabW].w, slabH = CONFIG.slabHeights[s.height].hIn;
+    const doorW = cfg.dbl ? slabW * 2 + 2.25 : slabW + 1.5;      // slab(s) + frame
+    const slW = 14.75;                                            // sidelite incl. frame
+    const w = doorW + cfg.sides * slW;
+    const h = slabH + 3.375 + (s.transom ? (CONFIG.transoms[s.transom].arch ? 20 : 16) : 0);
+    return { w: inFrac(w), roW: inFrac(w + 1), h: inFrac(h), roH: inFrac(h + 0.5),
+      door: inFrac(doorW), sl: inFrac(slW) };
+  }
   function paintPreview() {
     if (!st.door) { pane.innerHTML = '<div class="empty">Pick a door design<br>to start your build</div>'; return; }
-    pane.innerHTML = st.step === 0 ? doorSceneHTML(st.door) : unitSVG(st.door, st.sel);
+    if (st.step === 0) { pane.innerHTML = doorSceneHTML(st.door); return; }
+    const s = sel();
+    const sized = st.picked.slabW && st.picked.height;
+    const bits = [st.door.name];
+    if (sized) bits.push(`${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
+    if (st.picked.swing) bits.push(`${s.handleSide === 0 ? 'Left' : 'Right'} hand hinge`, CONFIG.swings[s.swing].label);
+    pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view }) + `
+      <div class="pv-cap"><span>Live preview · ${st.view === 'int' ? 'interior' : 'exterior'} view</span><b>${bits.join(' · ')}</b></div>
+      <div class="pv-toggle" role="group" aria-label="Preview side">
+        <button type="button" class="${st.view !== 'int' ? 'on' : ''}" data-v="ext">Exterior</button>
+        <button type="button" class="${st.view === 'int' ? 'on' : ''}" data-v="int">Interior</button>
+      </div>`;
+    pane.querySelectorAll('.pv-toggle button').forEach(b => b.addEventListener('click', () => {
+      st.view = b.dataset.v;
+      paintPreview();
+    }));
   }
 
   function paintSteps() {

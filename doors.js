@@ -557,17 +557,27 @@ function unitSVG(door, sel, opts) {
   const fin = FINISHES[finKey] || f;
   const uid = 'u' + (_sceneSeq++);
   const st = fin.stops || ['#cfcabd', '#bdb7a8', '#a79f8e', '#8f8674'];
-  const tint = finishTint(finKey);
   const cfg = CONFIG.configurations[sel ? sel.config : 0] || CONFIG.configurations[0];
   const tr = CONFIG.transoms[sel ? sel.transom : 0] || CONFIG.transoms[0];
   const gl = CONFIG.glass[sel ? sel.glass : 0] || CONFIG.glass[0];
   const hinge = CONFIG.hinges[sel ? sel.hinge : 0] || CONFIG.hinges[0];
   const handleColor = hinge.swatch;
-  const frameKey = sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey;
+  /* interior view: interior colour on slab + frame, handle mirrored,
+     no exterior-only extras (brickmould, painted grooves) */
+  const interiorView = opts.view === 'int';
+  const io = CONFIG.interiors[(sel && sel.interior != null) ? sel.interior : 0] || {};
+  const intKey = io.same ? finKey
+    : io.custom ? CONFIG.finishKeys[(sel && sel.interiorC != null) ? sel.interiorC : 0]
+    : (io.key || 'snow-white');
+  const dispKey = interiorView ? intKey : finKey;
+  const tint = finishTint(dispKey);
+  const frameKey = interiorView ? intKey
+    : (sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey);
   const frameColor = (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
-  const groovesPainted = !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
-  const brick = !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
-  const handLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
+  const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
+  const brick = !interiorView && !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
+  const extHandLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
+  const handLeft = interiorView ? !extHandLeft : extHandLeft;
   // per-zone glass styles from the guided wizard (fall back to the legacy single pick)
   const styleTint = (i) => (CONFIG.glassStyles[i] || {}).tint;
   const slTint = sel && sel.glassSL != null ? styleTint(sel.glassSL) : (gl.tint || 'etch');
@@ -639,8 +649,42 @@ function unitSVG(door, sel, opts) {
   if (leftS)  frames += glassPanel(FR, slabY, SG, DH, slTint || 'etch', uid, true);
   if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, slTint || 'etch', uid, true);
 
+  /* dimension callouts (configurator live preview)
+     opts.dims = {w, roW, h, roH, door?, sl?} display strings */
+  let dims = '', vy = trH ? -24 : -14, vw = totalW + 40, vh = totalH + 34;
+  if (opts.dims) {
+    const D = opts.dims;
+    const fx0 = hasSL ? 0 : doorX - 12, fx1 = hasSL ? totalW : doorX + DWd + 12;
+    const fy0 = trH ? (tr.arch ? -18 : 0) : slabY - 6, fy1 = totalH + 5;
+    const dc = '#6f6a5e', rc = '#7d97a5';
+    const tick = (x, y, vert) => vert
+      ? `<line x1="${x - 4}" y1="${y}" x2="${x + 4}" y2="${y}"/>`
+      : `<line x1="${x}" y1="${y - 4}" x2="${x}" y2="${y + 4}"/>`;
+    const txt = (col) => `fill="${col}" font-size="9.5" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" letter-spacing=".1em"`;
+    const hdim = (y, x0, x1, label, col) => `<g stroke="${col}" stroke-width="1">
+        <line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}"/>${tick(x0, y)}${tick(x1, y)}
+      </g><text x="${(x0 + x1) / 2}" y="${y - 4}" ${txt(col)}>${label}</text>`;
+    const vdim = (x, label, col) => `<g stroke="${col}" stroke-width="1">
+        <line x1="${x}" y1="${fy0}" x2="${x}" y2="${fy1}"/>${tick(x, fy0, 1)}${tick(x, fy1, 1)}
+      </g><text transform="translate(${x - 5},${(fy0 + fy1) / 2}) rotate(-90)" ${txt(col)}>${label}</text>`;
+    // segment tier: sidelite · door · sidelite widths (only when sidelites exist)
+    let y = fy0 - 14;
+    if (hasSL && D.door) {
+      if (leftS)  dims += hdim(y, 0, doorX, D.sl, dc);
+      dims += hdim(y, doorX, doorX + DWd, D.door, dc);
+      if (rightS) dims += hdim(y, doorX + DWd, totalW, D.sl, dc);
+      y -= 18;
+    }
+    dims += hdim(y, fx0, fx1, D.w, dc);
+    dims += hdim(y - 18, fx0, fx1, 'R.O. ' + D.roW, rc);
+    dims += vdim(fx1 + 16, D.h, dc) + vdim(fx1 + 34, 'R.O. ' + D.roH, rc);
+    const top = y - 32 - 14;
+    if (top < vy) { vh += vy - top; vy = top; }
+    vw += 44;
+  }
   return `
-  <svg class="door-svg unit" viewBox="-20 ${trH ? -24 : -14} ${totalW + 40} ${totalH + 34}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="door-svg unit" viewBox="-20 ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    ${dims}
     <defs>${faceGrad}${glassDefs(uid)}
       ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0 0 0.25 0.8 1 1"/></feComponentTransfer></filter>` : ''}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
