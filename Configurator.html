@@ -53,6 +53,13 @@
   .pv-toggle button{font:inherit;font-size:12.5px;font-weight:600;color:var(--ink-2);background:none;border:none;
     border-radius:99px;padding:7px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
   .pv-toggle button.on{background:var(--black);color:#fff;}
+  /* option pane scrolls inside itself — the page stays put while you pick */
+  .cfg-pane{position:sticky;top:150px;height:calc(100vh - 166px);min-height:380px;display:flex;flex-direction:column;}
+  .cfg-pane > #pane{flex:1 1 0;min-height:0;overflow-y:auto;padding-right:10px;overscroll-behavior:contain;}
+  .cfg-pane > #pane::-webkit-scrollbar{width:9px;}
+  .cfg-pane > #pane::-webkit-scrollbar-track{background:transparent;}
+  .cfg-pane > #pane::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:99px;}
+  .cfg-pane > #pane::-webkit-scrollbar-thumb:hover{background:var(--ink-3);}
   .cfg-pane h2{font-family:var(--serif);font-size:30px;font-weight:600;margin:0 0 4px;}
   .cfg-pane .sub{color:var(--ink-2);font-size:14px;margin:0 0 22px;}
 
@@ -64,8 +71,7 @@
   .mat-card p{font-size:13px;color:var(--ink-2);margin:0 0 14px;line-height:1.5;}
   .mat-card .from{font-size:12px;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase;}
 
-  .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;overflow:auto;padding:2px;
-    max-height:max(320px, calc(100vh - 400px));}
+  .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:2px;}
   .model{border:1.5px solid var(--line);border-radius:4px;cursor:pointer;overflow:hidden;background:var(--surface);transition:.15s;}
   .model:hover{border-color:var(--ink-3);}
   .model.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);}
@@ -99,9 +105,9 @@
   .q-grid #qPhone{grid-column:1/-1;}
   .q-hint{font-size:12.5px;color:var(--ink-3);margin:10px 0 0;min-height:1em;}
   @media(max-width:560px){.q-grid{grid-template-columns:1fr;}}
-  /* action bar pins to the viewport bottom so Continue is always reachable */
-  .cfg-nav{position:sticky;bottom:0;z-index:30;background:var(--bg);display:flex;flex-wrap:wrap;justify-content:space-between;
-    gap:12px;margin-top:24px;border-top:1px solid var(--line);padding:14px 0 16px;}
+  /* action bar sits at the foot of the fixed-height pane — always in view */
+  .cfg-nav{flex:none;display:flex;flex-wrap:wrap;justify-content:space-between;
+    gap:12px;margin-top:14px;border-top:1px solid var(--line);padding:14px 0 2px;}
   .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
   .nav-hint{font-size:12.5px;color:#a06d2a;margin:0;min-height:0;text-align:right;flex-basis:100%;}
   .nav-hint:empty{display:none;}
@@ -194,6 +200,8 @@
     .sticky-inner{flex-direction:column;gap:8px;}
     .head-price{flex-direction:row;align-items:baseline;gap:8px;justify-content:flex-end;}
     .cfg-preview{position:sticky;top:74px;z-index:20;height:auto;min-height:0;max-height:42vh;order:-1;padding:14px;}
+    .cfg-pane{position:static;height:auto;min-height:0;display:block;}
+    .cfg-pane > #pane{overflow:visible;padding-right:0;}
     .cfg-preview > div{height:auto;display:block;}
     .cfg-preview .door-svg{max-height:34vh;}
     .cfg-preview .door-tint > img,.cfg-preview img.door-photo{max-height:34vh;}

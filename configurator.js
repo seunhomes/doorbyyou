@@ -753,6 +753,7 @@
   function render() {
     RENDER[st.step]();
     paintSteps(); paintPreview(); updateNav(); syncURL();
+    paneR.scrollTop = 0;   // each step starts at the top of the pane's own scroll
     // land at the pinned-stepper position, not the page top — keeps the compact
     // layout once the customer is in the flow instead of re-showing the title
     const strip = stepsEl.closest('.cfg-sticky');
