@@ -344,6 +344,24 @@ const CONFIG = {
     { label: 'Natural (no paint)', add: 0, painted: false },
     { label: 'Painted black', add: 0, painted: true },
   ],
+  trim: {
+    options: [
+      { label: 'No interior trim', key: 'none', add: 0, desc: 'Jamb only — your installer or existing casing finishes the interior side.' },
+      { label: 'Interior trim / casing', key: 'trim', add: 0, desc: 'Factory-matched casing installed around the interior of the opening.' },
+    ],
+    // trim finish adders are ESTIMATES — confirm against the price sheets
+    finishes: [
+      { label: 'Painted', add: 250, desc: 'Painted to match the interior colour.' },
+      { label: 'Stained', add: 350, desc: 'Stained to match your slab stain tone.' },
+    ],
+    // PLACEHOLDER styles & sizes — swap for the real trim chart
+    styles: [
+      { label: 'Modern flat' }, { label: 'Colonial' }, { label: 'Craftsman' },
+    ],
+    sizes: [
+      { label: '2-3/4"' }, { label: '3-1/2"' }, { label: '4-1/4"' },
+    ],
+  },
   // freight estimate: region base + per-configuration surcharge (heavier units cost more)
   shipping: {
     regions: [
@@ -413,6 +431,7 @@ function computePrice(door, s) {
   if (s.glassSL != null && c.sides) total += ((CONFIG.glassStyles[s.glassSL] || { add: 0 }).add) * c.sides;
   if (s.glassTR != null && s.transom) total += (CONFIG.glassStyles[s.glassTR] || { add: 0 }).add;
   if (s.hw != null) total += (CONFIG.hardware.types[s.hw] || { add: 0 }).add;
+  if (s.trim === 1 && s.trimFinish != null) total += (CONFIG.trim.finishes[s.trimFinish] || { add: 0 }).add;
   return total;
 }
 
@@ -789,6 +808,7 @@ const OPT_LABELS = {
   interiorC: 'Interior custom colour', glassSL: 'Sidelite glass', glassTR: 'Transom glass',
   hw: 'Hardware package', mpStyle: 'Multipoint style', barSize: 'Pull bar size',
   barColor: 'Pull bar colour', tLever: 'T-lever', dbShape: 'Deadbolt shape', dbColor: 'Deadbolt colour',
+  trim: 'Interior trim', trimFinish: 'Trim finish', trimStyle: 'Trim style', trimSize: 'Trim size',
 };
 function optA11y(root) {
   root.querySelectorAll('.opt-row').forEach(row => {

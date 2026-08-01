@@ -15,7 +15,7 @@
 
   const STEPS = [
     { t: 'Design' }, { t: 'Grain' }, { t: 'Layout' }, { t: 'Frame' }, { t: 'Swing' },
-    { t: 'Colour' }, { t: 'Glass' }, { t: 'Hardware' }, { t: 'Your Home' }, { t: 'Review' },
+    { t: 'Colour' }, { t: 'Glass' }, { t: 'Hardware' }, { t: 'Trim' }, { t: 'Your Home' }, { t: 'Review' },
   ];
   const REVIEW = STEPS.length - 1;
   const HOME = REVIEW - 1;   // optional photo step — never blocks Continue
@@ -26,7 +26,8 @@
 
   const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
     'swing','finish','interior','interiorC','frame','glassSL','glassTR',
-    'hw','mpStyle','barSize','barColor','tLever','dbShape','dbColor'];
+    'hw','mpStyle','barSize','barColor','tLever','dbShape','dbColor',
+    'trim','trimFinish','trimStyle','trimSize'];
   const pickAll = () => { ALL_KEYS.forEach(k => st.picked[k] = true); };
 
   // deep-link: ?door=Name preselects the design
@@ -102,6 +103,9 @@
                 if (mpKey() === 'bar') { req('barSize', 'pull bar size'); req('barColor', 'pull bar colour'); req('tLever', 't-lever style'); }
               }
               if (hwKey() === 'ball') { req('barSize', 'pull bar size'); req('barColor', 'pull bar colour'); req('dbShape', 'deadbolt shape'); req('dbColor', 'deadbolt colour'); }
+              break;
+      case 8: req('trim', 'trim or no trim');
+              if (s.trim === 1) { req('trimFinish', 'painted or stained'); req('trimStyle', 'a trim style'); req('trimSize', 'a casing width'); }
               break;
     }
     return need;
@@ -254,6 +258,10 @@
       case 'tLever': return HW.tLevers[s.tLever].label;
       case 'dbShape': return HW.dbShapes[s.dbShape].label;
       case 'dbColor': return HW.dbColors[s.dbColor].label;
+      case 'trim': return CONFIG.trim.options[s.trim || 0].label;
+      case 'trimFinish': return CONFIG.trim.finishes[s.trimFinish].label;
+      case 'trimStyle': return CONFIG.trim.styles[s.trimStyle].label;
+      case 'trimSize': return CONFIG.trim.sizes[s.trimSize].label;
     }
     return '';
   }
@@ -601,13 +609,38 @@
     if (sidesN()) rows.push(['Sidelite glass', valLabel('glassSL') + ' · tempered']);
     if (s.transom) rows.push(['Transom glass', valLabel('glassTR') + ' · tempered']);
     rows.push(['Hardware', hardwareSummary()]);
+    rows.push(['Interior trim', s.trim === 1
+      ? `${valLabel('trimStyle')} · ${valLabel('trimSize')} · ${valLabel('trimFinish')}`
+      : 'None']);
     return rows;
+  }
+
+  function stepTrim() {
+    const s = sel(), T = CONFIG.trim;
+    const hasTrim = st.picked.trim && s.trim === 1;
+    paneR.innerHTML = `
+      <h2>Step 9 · Interior trim</h2>
+      <p class="sub">Casing that finishes the interior side of the opening. Skip it if your installer is handling trim.</p>
+      <div class="cards" data-key="trim">
+        ${T.options.map((o, i) => `<button type="button" class="card ${st.picked.trim && s.trim === i ? 'on' : ''}" data-i="${i}">
+          <h3>${o.label}</h3><p>${o.desc}</p>
+        </button>`).join('')}
+      </div>
+      ${hasTrim ? grp('trimFinish', 'Trim finish <small>· adders are estimates</small>', btns('trimFinish', T.finishes, priced)) : ''}
+      ${hasTrim && st.picked.trimFinish ? grp('trimStyle', 'Style <span class="ph">placeholder range</span>', btns('trimStyle', T.styles)) : ''}
+      ${hasTrim && st.picked.trimFinish ? grp('trimSize', 'Casing width <span class="ph">placeholder range</span>', btns('trimSize', T.sizes)) : ''}
+      ${hasTrim ? `<p class="note">Style and casing-width options are placeholders — exact trim profiles and pricing are confirmed on your quote.</p>` : ''}`;
+    bindRows();
+    bindCards('trim', () => {
+      // switching between trim / no trim resets the sub-choices
+      ['trimFinish', 'trimStyle', 'trimSize'].forEach(k => delete st.picked[k]);
+    });
   }
 
   function stepHome() {
     const has = !!st.home.url;
     paneR.innerHTML = `
-      <h2>Step 9 · See it on your home</h2>
+      <h2>Step 10 · See it on your home</h2>
       <p class="sub">Optional. Upload a photo of your entrance and place your ${st.door.name} right on it. The photo stays on this device — it's never uploaded anywhere.</p>
       ${has ? `
         <div class="grp"><div class="lbl">Door size on photo</div>
@@ -775,7 +808,7 @@
     }));
   }
 
-  const RENDER = [stepDesign, stepGrain, stepLayout, stepFrame, stepSwing, stepColour, stepGlass, stepHardware, stepHome, stepReview];
+  const RENDER = [stepDesign, stepGrain, stepLayout, stepFrame, stepSwing, stepColour, stepGlass, stepHardware, stepTrim, stepHome, stepReview];
 
   function updateNav() {
     backBtn.style.visibility = st.step === 0 ? 'hidden' : 'visible';
