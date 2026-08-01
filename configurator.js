@@ -45,6 +45,8 @@
   const nextBtn = document.getElementById('next');
   const priceTag = document.getElementById('priceTag');
   const stepsEl = document.getElementById('steps');
+  const headPrice = document.getElementById('headPrice');
+  const headPriceVal = document.getElementById('headPriceVal');
 
   /* ---------- helpers over the data ---------- */
   const sel = () => st.sel;
@@ -199,6 +201,24 @@
       case 'dbColor': return HW.dbColors[s.dbColor].label;
     }
     return '';
+  }
+
+  // header running total counts up/down to its new value instead of snapping
+  let hpShown = 0, hpRaf = null;
+  function rollHeadPrice(target) {
+    if (target === hpShown) return;
+    if (hpRaf) cancelAnimationFrame(hpRaf);
+    // rAF pauses in hidden tabs — land on the final value instead of going stale
+    if (document.hidden) { hpShown = target; headPriceVal.textContent = fmt(target); return; }
+    const from = hpShown, t0 = performance.now(), DUR = 450;
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / DUR);
+      const ease = 1 - Math.pow(1 - p, 3);
+      hpShown = Math.round(from + (target - from) * ease);
+      headPriceVal.textContent = fmt(hpShown);
+      if (p < 1) hpRaf = requestAnimationFrame(tick);
+    };
+    hpRaf = requestAnimationFrame(tick);
   }
 
   // transient +$/−$ pop next to the running price when an option changes it
@@ -623,7 +643,10 @@
     const missing = missingFor(st.step);
     nextBtn.disabled = missing.length > 0;
     nextBtn.textContent = st.step === REVIEW ? 'Add to cart' : 'Continue';
-    priceTag.textContent = (st.step >= 1 && st.door) ? fmt(computePrice(st.door, st.sel)) : '';
+    const showPrice = st.step >= 1 && st.door;
+    priceTag.textContent = showPrice ? fmt(computePrice(st.door, st.sel)) : '';
+    headPrice.hidden = !showPrice;
+    if (showPrice) rollHeadPrice(computePrice(st.door, st.sel));
     let hint = document.getElementById('navHint');
     if (!hint) {
       hint = document.createElement('p');

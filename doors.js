@@ -182,8 +182,6 @@ function doorSceneHTML(d, opts = {}) {
     <!-- frame / casing -->
     <rect x="-34" y="-10" width="${DW+68}" height="${DH+24}" rx="3" fill="rgba(0,0,0,.05)"/>
     <rect x="-20" y="-4" width="${DW+40}" height="${DH+12}" rx="2" fill="#fbfaf6" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
-    <!-- slab shadow -->
-    <rect x="6" y="8" width="${DW}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
     <!-- slab face -->
     <rect x="0" y="0" width="${DW}" height="${DH}" rx="3" fill="url(#face-${uid})"/>
     ${grain}
@@ -595,7 +593,7 @@ function unitSVG(door, sel, opts) {
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
   const trH = tr.h ? 70 : 0;
-  const topY = trH ? trH + 12 : 0;
+  const topY = trH;   // transom mulls directly onto the frame below — no air gap
   const slabY = topY + (hasSL ? FR : 0);
   const totalH = slabY + DH;   // open threshold — no bottom rail under the slab
 
@@ -603,7 +601,7 @@ function unitSVG(door, sel, opts) {
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
       <stop offset=".72" stop-color="${st[2]}"/><stop offset="1" stop-color="${st[3]}"/></linearGradient>`;
 
-  // one door leaf: shadow + slab (tinted render or gradient) + edge + handle
+  // one door leaf: slab (tinted render or gradient) + edge + handle
   function leaf(x, w, handleX) {
     const cid = 'c' + uid + 'x' + Math.round(x);
     const face = door.image
@@ -615,7 +613,6 @@ function unitSVG(door, sel, opts) {
         </g>`
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
-      <rect x="${x + 6}" y="8" width="${w}" height="${DH}" rx="3" fill="rgba(0,0,0,.16)"/>
       ${face}
       <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
       <rect x="${handleX}" y="${DH/2-30}" width="6" height="60" rx="3" fill="${handleColor}"/>

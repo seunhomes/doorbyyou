@@ -12,6 +12,10 @@
 <style>
   .cfg-head{padding:30px 0 0;}
   .cfg-head h1{font-family:var(--serif);font-size:40px;font-weight:500;margin:8px 0 0;}
+  .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+  .head-price{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding-bottom:4px;}
+  .head-price span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
+  .head-price b{font-family:var(--serif);font-size:32px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;}
   /* stepper — 9 compact steps */
   .steps{display:flex;gap:0;margin:26px 0 0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);}
   .step{flex:1;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:flex-start;
@@ -28,13 +32,16 @@
   .step b{font-weight:600;letter-spacing:.02em;white-space:nowrap;}
 
   .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
-  /* top offset clears the sticky site nav (~74px) so the preview never slides under it */
+  /* top offset clears the sticky site nav (~74px); fixed height fills the viewport
+     below it so the preview column runs the same height as the option pane */
   .cfg-preview{position:sticky;top:90px;align-self:start;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
-    border:1px solid var(--line);border-radius:4px;min-height:320px;max-height:calc(100vh - 106px);overflow:hidden;display:grid;place-items:center;padding:24px;text-align:center;}
-  .cfg-preview .door-svg{width:100%;max-height:min(500px, calc(100vh - 165px));}
+    border:1px solid var(--line);border-radius:4px;height:calc(100vh - 106px);min-height:420px;overflow:hidden;padding:24px;text-align:center;}
+  .cfg-preview > div{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}
+  .cfg-preview .door-svg{width:100%;flex:1 1 0;min-height:0;max-height:none;filter:none;}
   /* image-based door (doorSceneHTML) — size by height, keep aspect, don't stretch/crop */
-  .cfg-preview .door-svg.door-tint{width:auto;max-width:100%;}
-  .cfg-preview .door-tint > img{width:auto;height:auto;max-width:100%;max-height:min(500px, calc(100vh - 165px));}
+  .cfg-preview .door-svg.door-tint{width:auto;max-width:100%;flex:0 1 auto;box-shadow:none;}
+  .cfg-preview .door-tint > img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 158px);}
+  .cfg-preview img.door-photo{width:auto;flex:0 1 auto;max-width:100%;max-height:calc(100vh - 158px);box-shadow:none;}
   .cfg-preview .empty{color:var(--ink-3);text-align:center;font-size:14px;}
   /* preview caption + exterior/interior toggle */
   .pv-cap{margin-top:10px;display:flex;flex-direction:column;gap:3px;}
@@ -164,8 +171,10 @@
 
   @media(max-width:900px){
     .cfg-body{grid-template-columns:1fr;}
-    .cfg-preview{position:sticky;top:74px;z-index:20;min-height:0;max-height:42vh;order:-1;padding:14px;}
+    .cfg-preview{position:sticky;top:74px;z-index:20;height:auto;min-height:0;max-height:42vh;order:-1;padding:14px;}
+    .cfg-preview > div{height:auto;display:block;}
     .cfg-preview .door-svg{max-height:34vh;}
+    .cfg-preview .door-tint > img,.cfg-preview img.door-photo{max-height:34vh;}
     .steps{flex-wrap:wrap;}.step{min-width:33%;border-bottom:1px solid var(--line);}
     .model-grid{grid-template-columns:1fr 1fr;}
     .cards,.cards.four{grid-template-columns:1fr 1fr;}
@@ -199,8 +208,16 @@
   </header>
 
   <div class="wrap cfg-head">
-    <div class="eyebrow">Design Studio</div>
-    <h1>Build your door</h1>
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Design Studio</div>
+        <h1>Build your door</h1>
+      </div>
+      <div class="head-price" id="headPrice" hidden>
+        <span>Current build</span>
+        <b id="headPriceVal">$0</b>
+      </div>
+    </div>
     <div class="steps" id="steps"></div>
   </div>
 
