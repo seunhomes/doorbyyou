@@ -15,12 +15,14 @@
 
   const STEPS = [
     { t: 'Design' }, { t: 'Grain' }, { t: 'Layout' }, { t: 'Frame' }, { t: 'Swing' },
-    { t: 'Colour' }, { t: 'Glass' }, { t: 'Hardware' }, { t: 'Review' },
+    { t: 'Colour' }, { t: 'Glass' }, { t: 'Hardware' }, { t: 'Your Home' }, { t: 'Review' },
   ];
   const REVIEW = STEPS.length - 1;
+  const HOME = REVIEW - 1;   // optional photo step — never blocks Continue
 
   const qs = new URLSearchParams(location.search);
-  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext' };
+  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext',
+    home: { url: null, x: 0.5, y: 0.62, scale: 0.42 } };   // photo composite (kept on-device only)
 
   const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
     'swing','finish','interior','interiorC','frame','glassSL','glassTR',
@@ -127,9 +129,51 @@
     return { w: inFrac(w), roW: inFrac(w + 1), h: inFrac(h), roH: inFrac(h + 0.5),
       door: inFrac(doorW), sl: inFrac(slW) };
   }
+  /* home-photo composite: uploaded photo + draggable, scalable door overlay */
+  function placeHomeDoor() {
+    const stage = pane.querySelector('.hv-stage'), ov = pane.querySelector('.hv-door');
+    if (!stage || !ov) return;
+    const r = stage.getBoundingClientRect();
+    ov.style.height = (r.height * st.home.scale * 1.18) + 'px';
+    ov.style.left = (st.home.x * r.width) + 'px';
+    ov.style.top = (st.home.y * r.height) + 'px';
+  }
+  function paintHomePreview() {
+    pane.innerHTML = `
+      <div class="hv-stage">
+        <img src="${st.home.url}" alt="Your home">
+        <div class="hv-door">${unitSVG(st.door, st.sel, { bare: true })}</div>
+      </div>
+      <div class="pv-cap"><span>Your home · ${st.door.name}</span><b>Drag the door into place · size slider on the right</b></div>`;
+    pane.querySelector('.hv-stage img').addEventListener('load', placeHomeDoor);
+    requestAnimationFrame(placeHomeDoor);
+    const ov = pane.querySelector('.hv-door');
+    ov.addEventListener('pointerdown', (e) => {
+      const r = pane.querySelector('.hv-stage').getBoundingClientRect();
+      const d = { sx: e.clientX, sy: e.clientY, px: st.home.x, py: st.home.y, r };
+      ov.setPointerCapture(e.pointerId);
+      ov.classList.add('dragging');
+      const move = (ev) => {
+        st.home.x = Math.min(1, Math.max(0, d.px + (ev.clientX - d.sx) / d.r.width));
+        st.home.y = Math.min(1, Math.max(0, d.py + (ev.clientY - d.sy) / d.r.height));
+        placeHomeDoor();
+      };
+      const up = () => {
+        ov.classList.remove('dragging');
+        ov.removeEventListener('pointermove', move);
+        ov.removeEventListener('pointerup', up);
+        ov.removeEventListener('pointercancel', up);
+      };
+      ov.addEventListener('pointermove', move);
+      ov.addEventListener('pointerup', up);
+      ov.addEventListener('pointercancel', up);
+    });
+  }
+
   function paintPreview() {
     if (!st.door) { pane.innerHTML = '<div class="empty">Pick a door design<br>to start your build</div>'; return; }
     if (st.step === 0) { pane.innerHTML = doorSceneHTML(st.door); return; }
+    if (st.step === HOME && st.home.url) { paintHomePreview(); return; }
     const s = sel();
     const sized = st.picked.slabW && st.picked.height;
     const bits = [st.door.name];
@@ -515,6 +559,56 @@
     return rows;
   }
 
+  function stepHome() {
+    const has = !!st.home.url;
+    paneR.innerHTML = `
+      <h2>Step 9 · See it on your home</h2>
+      <p class="sub">Optional. Upload a photo of your entrance and place your ${st.door.name} right on it. The photo stays on this device — it's never uploaded anywhere.</p>
+      ${has ? `
+        <div class="grp"><div class="lbl">Door size on photo</div>
+          <input type="range" id="hvSize" min="18" max="86" value="${Math.round(st.home.scale * 100)}" style="width:100%;">
+        </div>
+        <div class="build-actions">
+          <button class="btn ghost sm" id="hvChange" type="button">Change photo</button>
+          <button class="btn ghost sm" id="hvReset" type="button">Reset position</button>
+          <button class="btn ghost sm" id="hvRemove" type="button">Remove photo</button>
+        </div>
+        <p class="note">Drag the door on the photo to line it up with your opening, then use the slider to match its size.</p>`
+      : `
+        <div class="hv-drop" id="hvDrop">
+          <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M3 17l5-4 4 3 3-2 6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Drop a photo of your home's entrance here</p>
+          <button class="btn solid sm" id="hvPick" type="button">Choose photo</button>
+          <span>Tip: a straight-on shot of your doorway works best</span>
+        </div>
+        <p class="note">This step is optional — hit Continue to go straight to your review.</p>`}
+      <input type="file" id="hvFile" accept="image/*" hidden>`;
+    const fileIn = paneR.querySelector('#hvFile');
+    const loadPhoto = (f) => {
+      if (!f || !f.type.startsWith('image/')) return;
+      if (st.home.url) URL.revokeObjectURL(st.home.url);
+      st.home.url = URL.createObjectURL(f);
+      st.home.x = 0.5; st.home.y = 0.62;
+      render();
+    };
+    fileIn.addEventListener('change', (e) => loadPhoto(e.target.files && e.target.files[0]));
+    const on = (id, ev, fn) => { const el = paneR.querySelector(id); if (el) el.addEventListener(ev, fn); };
+    on('#hvPick', 'click', () => fileIn.click());
+    on('#hvChange', 'click', () => fileIn.click());
+    on('#hvReset', 'click', () => { st.home.x = 0.5; st.home.y = 0.62; placeHomeDoor(); });
+    on('#hvRemove', 'click', () => { URL.revokeObjectURL(st.home.url); st.home.url = null; render(); });
+    on('#hvSize', 'input', () => { st.home.scale = +paneR.querySelector('#hvSize').value / 100; placeHomeDoor(); });
+    const drop = paneR.querySelector('#hvDrop');
+    if (drop) {
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault(); drop.classList.remove('over');
+        loadPhoto(e.dataTransfer.files && e.dataTransfer.files[0]);
+      });
+    }
+  }
+
   function stepReview() {
     const s = st.sel, d = st.door;
     const rows = reviewRows();
@@ -570,7 +664,7 @@
       P.builds.toast(ok ? 'Share link copied to clipboard' : 'Copy failed — link in address bar');
     });
     const vb = paneR.querySelector('#vizBtn');
-    if (vb) vb.addEventListener('click', () => P.openVisualizer(st.door, st.sel));
+    if (vb) vb.addEventListener('click', () => { st.step = HOME; render(); });
     const smp = paneR.querySelector('#sampleBtn');
     if (smp) smp.addEventListener('click', () => {
       const key = CONFIG.finishKeys[s.finish];
@@ -636,7 +730,7 @@
     }));
   }
 
-  const RENDER = [stepDesign, stepGrain, stepLayout, stepFrame, stepSwing, stepColour, stepGlass, stepHardware, stepReview];
+  const RENDER = [stepDesign, stepGrain, stepLayout, stepFrame, stepSwing, stepColour, stepGlass, stepHardware, stepHome, stepReview];
 
   function updateNav() {
     backBtn.style.visibility = st.step === 0 ? 'hidden' : 'visible';

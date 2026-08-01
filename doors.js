@@ -601,6 +601,79 @@ function unitSVG(door, sel, opts) {
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
       <stop offset=".72" stop-color="${st[2]}"/><stop offset="1" stop-color="${st[3]}"/></linearGradient>`;
 
+  /* ---- hardware, drawn to scale from the wizard selection ----
+     exterior: pull bar (48/60/72"), gripset, lever, keypad, or prep-only bores
+     interior: T-lever / lever + thumbturn, matching the chosen set */
+  const HWC = CONFIG.hardware;
+  const hwType = (HWC.types[sel && sel.hw != null ? sel.hw : 0] || {}).key || 'mp';
+  const mpStyle = (HWC.mpStyles[sel && sel.mpStyle != null ? sel.mpStyle : 0] || {}).key || 'bar';
+  const slabHIn = (CONFIG.slabHeights[(sel && sel.height != null) ? sel.height : 0] || {}).hIn || 80;
+  const inch = DH / slabHIn;
+  const barIn = [48, 60, 72][sel && sel.barSize != null ? sel.barSize : 0] || 48;
+  const barCol = (HWC.barColors[sel && sel.barColor != null ? sel.barColor : 0] || {}).swatch || '#222224';
+  const dbSquare = (sel && sel.dbShape != null ? sel.dbShape : 0) === 0;
+  const dbCol = (HWC.dbColors[sel && sel.dbColor != null ? sel.dbColor : 0] || {}).swatch || '#222224';
+  const tSquare = (sel && sel.tLever != null ? sel.tLever : 0) === 0;
+  function hardware(hx, lx, lw) {
+    const cx = hx + 3;                                  // hardware centerline
+    const dir = cx < lx + lw / 2 ? 1 : -1;              // lever arm points into the door
+    const edge = `stroke="rgba(0,0,0,.25)" stroke-width="1"`;
+    const rose = (cy, col, square, r) => square
+      ? `<rect x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" rx="2.5" fill="${col}" ${edge}/>`
+      : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" ${edge}/>`;
+    const keyway = (cy, ox = 0) => `<circle cx="${cx + ox}" cy="${cy}" r="4.5" fill="rgba(0,0,0,.38)"/>
+      <rect x="${cx + ox - 1}" y="${cy - 3}" width="2" height="6" rx="1" fill="rgba(255,255,255,.5)"/>`;
+    const thumbturn = (cy, col, square) => rose(cy, col, square, 9) +
+      `<rect x="${cx - 2.5}" y="${cy - 7}" width="5" height="14" rx="2.5" fill="rgba(255,255,255,.35)"/>`;
+    const lever = (cy, col) => rose(cy, col, false, 11) +
+      `<rect x="${dir > 0 ? cx - 3 : cx - 33 + 3}" y="${cy - 3.5}" width="33" height="7" rx="3.5" fill="${col}" ${edge}/>`;
+    const bar = (col) => {
+      const L = barIn * inch, y0 = DH / 2 - L / 2;
+      return `<circle cx="${cx}" cy="${y0 + L * .12}" r="4.5" fill="rgba(0,0,0,.3)"/>
+        <circle cx="${cx}" cy="${y0 + L * .88}" r="4.5" fill="rgba(0,0,0,.3)"/>
+        <rect x="${cx - 3.5}" y="${y0}" width="7" height="${L}" rx="3.5" fill="${col}" ${edge}/>
+        <rect x="${cx - 2.2}" y="${y0 + 1.5}" width="2.6" height="${L - 3}" rx="1.3" fill="rgba(255,255,255,.28)"/>`;
+    };
+    const barTopY = () => DH / 2 - (barIn * inch) / 2;
+    if (hwType === 'none') {
+      // prep only — double bore
+      return `<circle cx="${cx}" cy="${DH / 2 - 40}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>
+        <circle cx="${cx}" cy="${DH / 2}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>`;
+    }
+    if (interiorView) {
+      if (hwType === 'ball') return bar(barCol) + thumbturn(Math.max(34, barTopY() - 16), dbCol, dbSquare);
+      if (hwType === 'mp' && mpStyle === 'bar') {
+        // T-lever drives the multipoint from inside
+        return thumbturn(DH / 2 - 46, barCol, tSquare) + rose(DH / 2, barCol, tSquare, 10) +
+          `<rect x="${cx - 13}" y="${DH / 2 - 13}" width="26" height="6" rx="3" fill="${barCol}" ${edge}/>
+           <rect x="${cx - 3}" y="${DH / 2 - 10}" width="6" height="24" rx="3" fill="${barCol}" ${edge}/>`;
+      }
+      if (hwType === 'digital') return `<rect x="${cx - 9}" y="${DH / 2 - 62}" width="18" height="40" rx="4" fill="#2a2a2c" ${edge}/>` +
+        thumbturn(DH / 2 - 52, '#3a3a3d', false) + lever(DH / 2, handleColor);
+      return thumbturn(DH / 2 - 46, handleColor, dbSquare) + lever(DH / 2, handleColor);
+    }
+    if (hwType === 'ball') return bar(barCol) + rose(Math.max(34, barTopY() - 16), dbCol, dbSquare, 10) + keyway(Math.max(34, barTopY() - 16));
+    if (hwType === 'digital') {
+      const ky = DH / 2 - 60;
+      const dots = [0, 1, 2].map(r => [0, 1, 2].map(c =>
+        `<circle cx="${cx - 5 + c * 5}" cy="${ky + 8 + r * 6}" r="1.3" fill="rgba(255,255,255,.75)"/>`).join('')).join('');
+      return `<rect x="${cx - 10}" y="${ky}" width="20" height="34" rx="4" fill="#2a2a2c" ${edge}/>${dots}
+        <rect x="${cx - 6}" y="${ky + 26}" width="12" height="3.5" rx="1.75" fill="rgba(255,255,255,.3)"/>` +
+        lever(DH / 2, handleColor);
+    }
+    if (mpStyle === 'grip') {
+      // handleset: backplate, thumb-latch grip, keyed cylinder up top
+      return `<rect x="${cx - 5.5}" y="${DH / 2 - 66}" width="11" height="118" rx="5" fill="${handleColor}" ${edge}/>` +
+        keyway(DH / 2 - 56) +
+        `<ellipse cx="${cx}" cy="${DH / 2 - 44}" rx="8" ry="4" fill="${handleColor}" ${edge}/>
+         <path d="M ${cx} ${DH / 2 - 40} Q ${cx + dir * 17} ${DH / 2} ${cx} ${DH / 2 + 42}" fill="none" stroke="${handleColor}" stroke-width="7.5" stroke-linecap="round"/>
+         <path d="M ${cx} ${DH / 2 - 40} Q ${cx + dir * 17} ${DH / 2} ${cx} ${DH / 2 + 42}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.5" stroke-linecap="round"/>`;
+    }
+    if (mpStyle === 'lever') return rose(DH / 2 - 34, handleColor, false, 8) + keyway(DH / 2 - 34) + lever(DH / 2, handleColor);
+    // multipoint pull bar + keyed cylinder beside it
+    return bar(barCol) + `<circle cx="${cx + dir * 15}" cy="${DH / 2}" r="7" fill="${barCol}" ${edge}/>` + keyway(DH / 2, dir * 15);
+  }
+
   // one door leaf: slab (tinted render or gradient) + edge + handle
   function leaf(x, w, handleX) {
     const cid = 'c' + uid + 'x' + Math.round(x);
@@ -615,8 +688,7 @@ function unitSVG(door, sel, opts) {
     return `
       ${face}
       <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
-      <rect x="${handleX}" y="${DH/2-30}" width="6" height="60" rx="3" fill="${handleColor}"/>
-      <rect x="${handleX+1}" y="${DH/2-29}" width="2.5" height="58" rx="2" fill="rgba(255,255,255,.3)"/>`;
+      ${hardware(handleX, x, w)}`;
   }
 
   let leaves;
@@ -653,31 +725,34 @@ function unitSVG(door, sel, opts) {
     const D = opts.dims;
     const fx0 = hasSL ? 0 : doorX - 12, fx1 = hasSL ? totalW : doorX + DWd + 12;
     const fy0 = trH ? (tr.arch ? -18 : 0) : slabY - 6, fy1 = totalH + 5;
-    const dc = '#6f6a5e', rc = '#7d97a5';
+    const dc = '#443f35', rc = '#3d6274';
     const tick = (x, y, vert) => vert
-      ? `<line x1="${x - 4}" y1="${y}" x2="${x + 4}" y2="${y}"/>`
-      : `<line x1="${x}" y1="${y - 4}" x2="${x}" y2="${y + 4}"/>`;
-    const txt = (col) => `fill="${col}" font-size="9.5" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" letter-spacing=".1em"`;
-    const hdim = (y, x0, x1, label, col) => `<g stroke="${col}" stroke-width="1">
+      ? `<line x1="${x - 5}" y1="${y}" x2="${x + 5}" y2="${y}"/>`
+      : `<line x1="${x}" y1="${y - 5}" x2="${x}" y2="${y + 5}"/>`;
+    // halo stroke behind the glyphs keeps labels readable over lines and ticks
+    const txt = (col) => `fill="${col}" font-size="14" font-weight="600" text-anchor="middle"
+      font-family="ui-monospace,SFMono-Regular,Menlo,monospace" letter-spacing=".04em"
+      stroke="#f1ece2" stroke-width="4" paint-order="stroke" stroke-linejoin="round"`;
+    const hdim = (y, x0, x1, label, col) => `<g stroke="${col}" stroke-width="1.3">
         <line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}"/>${tick(x0, y)}${tick(x1, y)}
-      </g><text x="${(x0 + x1) / 2}" y="${y - 4}" ${txt(col)}>${label}</text>`;
-    const vdim = (x, label, col) => `<g stroke="${col}" stroke-width="1">
+      </g><text x="${(x0 + x1) / 2}" y="${y - 6}" ${txt(col)}>${label}</text>`;
+    const vdim = (x, label, col) => `<g stroke="${col}" stroke-width="1.3">
         <line x1="${x}" y1="${fy0}" x2="${x}" y2="${fy1}"/>${tick(x, fy0, 1)}${tick(x, fy1, 1)}
-      </g><text transform="translate(${x - 5},${(fy0 + fy1) / 2}) rotate(-90)" ${txt(col)}>${label}</text>`;
+      </g><text transform="translate(${x - 6},${(fy0 + fy1) / 2}) rotate(-90)" ${txt(col)}>${label}</text>`;
     // segment tier: sidelite · door · sidelite widths (only when sidelites exist)
-    let y = fy0 - 14;
+    let y = fy0 - 16;
     if (hasSL && D.door) {
       if (leftS)  dims += hdim(y, 0, doorX, D.sl, dc);
       dims += hdim(y, doorX, doorX + DWd, D.door, dc);
       if (rightS) dims += hdim(y, doorX + DWd, totalW, D.sl, dc);
-      y -= 18;
+      y -= 25;
     }
     dims += hdim(y, fx0, fx1, D.w, dc);
-    dims += hdim(y - 18, fx0, fx1, 'R.O. ' + D.roW, rc);
-    dims += vdim(fx1 + 16, D.h, dc) + vdim(fx1 + 34, 'R.O. ' + D.roH, rc);
-    const top = y - 32 - 14;
+    dims += hdim(y - 25, fx0, fx1, 'R.O. ' + D.roW, rc);
+    dims += vdim(fx1 + 19, D.h, dc) + vdim(fx1 + 44, 'R.O. ' + D.roH, rc);
+    const top = y - 25 - 22;
     if (top < vy) { vh += vy - top; vy = top; }
-    vw += 44;
+    vw += 60;
   }
   return `
   <svg class="door-svg unit" viewBox="-20 ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
