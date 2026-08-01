@@ -745,7 +745,7 @@
     if (!hint) {
       hint = document.createElement('p');
       hint.id = 'navHint'; hint.className = 'nav-hint';
-      nextBtn.closest('.cfg-nav').insertAdjacentElement('afterend', hint);
+      nextBtn.closest('.cfg-nav').appendChild(hint);   // lives inside the sticky action bar
     }
     hint.textContent = missing.length ? 'Still to choose: ' + missing.join(', ') : '';
   }
@@ -753,7 +753,11 @@
   function render() {
     RENDER[st.step]();
     paintSteps(); paintPreview(); updateNav(); syncURL();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // land at the pinned-stepper position, not the page top — keeps the compact
+    // layout once the customer is in the flow instead of re-showing the title
+    const strip = stepsEl.closest('.cfg-sticky');
+    const stripY = strip ? Math.max(0, strip.offsetTop - 76) : 0;
+    window.scrollTo({ top: Math.min(window.scrollY, stripY), behavior: 'smooth' });
   }
 
   nextBtn.addEventListener('click', () => {

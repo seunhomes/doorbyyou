@@ -10,20 +10,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="site.css" />
 <style>
-  .cfg-head{padding:30px 0 0;}
-  .cfg-head h1{font-family:var(--serif);font-size:40px;font-weight:500;margin:8px 0 0;}
-  .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;}
-  .head-price{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding-bottom:4px;}
-  .head-price span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);font-weight:700;}
-  .head-price b{font-family:var(--serif);font-size:32px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;}
-  /* stepper — 9 compact steps */
-  .steps{display:flex;gap:0;margin:26px 0 0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);}
-  .step{flex:1;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:flex-start;
-    padding:12px 6px 10px;border:none;border-right:1px solid var(--line);background:none;cursor:pointer;
-    font:inherit;font-size:11px;color:var(--ink-3);position:relative;}
+  .cfg-head{padding:18px 0 12px;}
+  .cfg-head h1{font-family:var(--serif);font-size:30px;font-weight:500;margin:6px 0 0;}
+  /* sticky strip: stepper + running price stay visible while the panes scroll */
+  .cfg-sticky{position:sticky;top:74px;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;}
+  .sticky-inner{display:flex;align-items:stretch;gap:16px;}
+  .head-price{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:1px;padding:0 2px;}
+  .head-price span{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;white-space:nowrap;}
+  .head-price b{font-family:var(--serif);font-size:23px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;}
+  /* stepper — compact steps */
+  .steps{flex:1;display:flex;gap:0;margin:0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);}
+  .step{flex:1;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:flex-start;
+    padding:8px 5px 7px;border:none;border-right:1px solid var(--line);background:none;cursor:pointer;
+    font:inherit;font-size:10.5px;color:var(--ink-3);position:relative;}
   .step:last-child{border-right:none;}
-  .step .n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;
-    font-size:11px;font-weight:700;flex:none;}
+  .step .n{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;
+    font-size:10.5px;font-weight:700;flex:none;}
   .step.active{color:var(--ink);}
   .step.active .n{background:var(--black);border-color:var(--black);color:#fff;}
   .step.done{color:var(--ink-2);}
@@ -31,17 +33,17 @@
   .step.locked{cursor:not-allowed;opacity:.45;}
   .step b{font-weight:600;letter-spacing:.02em;white-space:nowrap;}
 
-  .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:34px 0 60px;align-items:start;}
-  /* top offset clears the sticky site nav (~74px); fixed height fills the viewport
-     below it so the preview column runs the same height as the option pane */
-  .cfg-preview{position:sticky;top:90px;align-self:start;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
-    border:1px solid var(--line);border-radius:4px;height:calc(100vh - 106px);min-height:420px;overflow:hidden;padding:24px;text-align:center;}
+  .cfg-body{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:22px 0 40px;align-items:start;}
+  /* top offset clears the sticky nav (74px) + sticky stepper strip (~72px);
+     fixed height fills the viewport below so the preview matches the option pane */
+  .cfg-preview{position:sticky;top:150px;align-self:start;background:linear-gradient(180deg,#f1ece2 0%,#e6dfcf 100%);
+    border:1px solid var(--line);border-radius:4px;height:calc(100vh - 166px);min-height:380px;overflow:hidden;padding:20px;text-align:center;}
   .cfg-preview > div{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}
   .cfg-preview .door-svg{width:100%;flex:1 1 0;min-height:0;max-height:none;filter:none;}
   /* image-based door (doorSceneHTML) — size by height, keep aspect, don't stretch/crop */
   .cfg-preview .door-svg.door-tint{width:auto;max-width:100%;flex:0 1 auto;box-shadow:none;}
-  .cfg-preview .door-tint > img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 158px);}
-  .cfg-preview img.door-photo{width:auto;flex:0 1 auto;max-width:100%;max-height:calc(100vh - 158px);box-shadow:none;}
+  .cfg-preview .door-tint > img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 218px);}
+  .cfg-preview img.door-photo{width:auto;flex:0 1 auto;max-width:100%;max-height:calc(100vh - 218px);box-shadow:none;}
   .cfg-preview .empty{color:var(--ink-3);text-align:center;font-size:14px;}
   /* preview caption + exterior/interior toggle */
   .pv-cap{margin-top:10px;display:flex;flex-direction:column;gap:3px;}
@@ -62,7 +64,8 @@
   .mat-card p{font-size:13px;color:var(--ink-2);margin:0 0 14px;line-height:1.5;}
   .mat-card .from{font-size:12px;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase;}
 
-  .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-height:560px;overflow:auto;padding:2px;}
+  .model-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;overflow:auto;padding:2px;
+    max-height:max(320px, calc(100vh - 400px));}
   .model{border:1.5px solid var(--line);border-radius:4px;cursor:pointer;overflow:hidden;background:var(--surface);transition:.15s;}
   .model:hover{border-color:var(--ink-3);}
   .model.on{border-color:var(--black);box-shadow:0 0 0 1px var(--black);}
@@ -96,9 +99,12 @@
   .q-grid #qPhone{grid-column:1/-1;}
   .q-hint{font-size:12.5px;color:var(--ink-3);margin:10px 0 0;min-height:1em;}
   @media(max-width:560px){.q-grid{grid-template-columns:1fr;}}
-  .cfg-nav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;border-top:1px solid var(--line);padding-top:22px;}
+  /* action bar pins to the viewport bottom so Continue is always reachable */
+  .cfg-nav{position:sticky;bottom:0;z-index:30;background:var(--bg);display:flex;flex-wrap:wrap;justify-content:space-between;
+    gap:12px;margin-top:24px;border-top:1px solid var(--line);padding:14px 0 16px;}
   .price-tag{font-family:var(--serif);font-size:26px;font-weight:600;margin-left:auto;align-self:center;}
-  .nav-hint{font-size:12.5px;color:#a06d2a;margin:10px 0 0;min-height:1em;text-align:right;}
+  .nav-hint{font-size:12.5px;color:#a06d2a;margin:0;min-height:0;text-align:right;flex-basis:100%;}
+  .nav-hint:empty{display:none;}
 
   /* ---- guided-wizard components ---- */
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -167,7 +173,7 @@
     line-height:1.55;margin:6px 0 4px;background:var(--surface);}
   /* step 9 — your-home photo composite */
   .hv-stage{position:relative;display:inline-block;max-width:100%;min-height:0;border-radius:4px;overflow:hidden;}
-  .hv-stage img{display:block;max-width:100%;max-height:calc(100vh - 230px);width:auto;height:auto;}
+  .hv-stage img{display:block;max-width:100%;max-height:calc(100vh - 280px);width:auto;height:auto;}
   .cfg-preview .hv-door{position:absolute;transform:translate(-50%,-50%);cursor:grab;touch-action:none;}
   .cfg-preview .hv-door.dragging{cursor:grabbing;}
   .cfg-preview .hv-door .door-svg{width:auto;height:100%;flex:none;max-height:none;display:block;
@@ -184,6 +190,9 @@
 
   @media(max-width:900px){
     .cfg-body{grid-template-columns:1fr;}
+    .cfg-sticky{position:static;padding:6px 0;}
+    .sticky-inner{flex-direction:column;gap:8px;}
+    .head-price{flex-direction:row;align-items:baseline;gap:8px;justify-content:flex-end;}
     .cfg-preview{position:sticky;top:74px;z-index:20;height:auto;min-height:0;max-height:42vh;order:-1;padding:14px;}
     .cfg-preview > div{height:auto;display:block;}
     .cfg-preview .door-svg{max-height:34vh;}
@@ -223,17 +232,17 @@
   </header>
 
   <div class="wrap cfg-head">
-    <div class="head-row">
-      <div>
-        <div class="eyebrow">Design Studio</div>
-        <h1>Build your door</h1>
-      </div>
+    <div class="eyebrow">Design Studio</div>
+    <h1>Build your door</h1>
+  </div>
+  <div class="cfg-sticky">
+    <div class="wrap sticky-inner">
+      <div class="steps" id="steps"></div>
       <div class="head-price" id="headPrice" hidden>
         <span>Current build</span>
         <b id="headPriceVal">$0</b>
       </div>
     </div>
-    <div class="steps" id="steps"></div>
   </div>
 
   <div class="wrap cfg-body">
