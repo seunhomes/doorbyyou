@@ -590,7 +590,16 @@ function unitSVG(door, sel, opts) {
     : io.custom ? CONFIG.finishKeys[(sel && sel.interiorC != null) ? sel.interiorC : 0]
     : (io.key || 'snow-white');
   const dispKey = interiorView ? intKey : finKey;
-  const tint = finishTint(dispKey);
+  let tint = finishTint(dispKey);
+  /* grain treatment on the slab render: oak = pronounced texture, mahogany =
+     finer grain with a warmer cast on stains, smooth = flattened paint-grade */
+  const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
+  const grainContrast = gk === 'smooth' ? 0.5 : gk === 'mahogany' ? 0.95 : 1.12;
+  if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
+    const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
+    tint = { color: '#' + ((1 << 24) + (mix((n >> 16) & 255, 122) << 16) + (mix((n >> 8) & 255, 63) << 8)
+      + mix(n & 255, 43)).toString(16).slice(1), lvl: tint.lvl };
+  }
   const frameKey = interiorView ? intKey
     : (sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey);
   const frameColor = (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
@@ -704,7 +713,7 @@ function unitSVG(door, sel, opts) {
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">
           <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(1.04);mix-blend-mode:luminosity"/>
+          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(${grainContrast});mix-blend-mode:luminosity"/>
           ${groovesPainted ? `<image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" filter="url(#grv-${uid})"/>` : ''}
         </g>`
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
