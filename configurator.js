@@ -62,6 +62,11 @@
     .map((k, i) => ({ k, i }))
     .filter(o => gr === 'smooth' ? FINISHES[o.k].palette : FINISHES[o.k].stain)
     .map(o => o.i);
+  // custom slab size: cw/ch inches on sel when customSize is on
+  const CW_MIN = 28, CW_MAX = 48, CH_MIN = 76, CH_MAX = 108;
+  const customOK = () => { const s = sel(); return !!(s.customSize && s.cw >= CW_MIN && s.cw <= CW_MAX && s.ch >= CH_MIN && s.ch <= CH_MAX); };
+  const effSlabW = () => customOK() ? sel().cw : CONFIG.slabWidths[sel().slabW].w;
+  const effSlabH = () => customOK() ? sel().ch : CONFIG.slabHeights[sel().height].hIn;
 
   function pick(key, idx) {
     st.sel[key] = idx;
@@ -78,7 +83,11 @@
       case 0: if (!st.door) need.push('a door design'); break;
       case 1: req('grain', 'a grain'); break;
       case 2: req('config', 'a layout'); req('transom', 'a transom choice');
-              req('slabW', 'slab width'); req('height', 'slab height'); break;
+              if (s.customSize) {
+                if (!(s.cw >= CW_MIN && s.cw <= CW_MAX)) need.push(`a custom width (${CW_MIN}–${CW_MAX}")`);
+                if (!(s.ch >= CH_MIN && s.ch <= CH_MAX)) need.push(`a custom height (${CH_MIN}–${CH_MAX}")`);
+              } else { req('slabW', 'slab width'); req('height', 'slab height'); }
+              break;
       case 3: req('frameFinish', 'frame finish'); req('brickmould', 'brickmould');
               req('threshold', 'threshold / sill'); req('jamb', 'jamb size'); break;
       case 4: req('swing', 'swing & hinging'); break;
@@ -121,7 +130,7 @@
   // unit / rough-opening measurements from the current selection
   function computeDims() {
     const s = sel(), cfg = CONFIG.configurations[s.config];
-    const slabW = CONFIG.slabWidths[s.slabW].w, slabH = CONFIG.slabHeights[s.height].hIn;
+    const slabW = effSlabW(), slabH = effSlabH();
     const doorW = cfg.dbl ? slabW * 2 + 2.25 : slabW + 1.5;      // slab(s) + frame
     const slW = 14.75;                                            // sidelite incl. frame
     const w = doorW + cfg.sides * slW;
@@ -175,9 +184,11 @@
     if (st.step === 0) { pane.innerHTML = doorSceneHTML(st.door); return; }
     if (st.step === HOME && st.home.url) { paintHomePreview(); return; }
     const s = sel();
-    const sized = st.picked.slabW && st.picked.height;
+    const sized = customOK() || (!s.customSize && st.picked.slabW && st.picked.height);
     const bits = [st.door.name];
-    if (sized) bits.push(`${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
+    if (sized) bits.push(customOK()
+      ? `Custom ${inFrac(s.cw)} × ${inFrac(s.ch)}`
+      : `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
     if (st.picked.swing) bits.push(`${s.handleSide === 0 ? 'Left' : 'Right'} hand hinge`, CONFIG.swings[s.swing].label);
     pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view }) + `
       <div class="pv-cap"><span>Live preview · ${st.view === 'int' ? 'interior' : 'exterior'} view</span><b>${bits.join(' · ')}</b></div>
@@ -223,8 +234,8 @@
       case 'grain': return CONFIG.grains[s.grain].label;
       case 'config': return CONFIG.configurations[s.config].label;
       case 'transom': return CONFIG.transoms[s.transom].label;
-      case 'slabW': return CONFIG.slabWidths[s.slabW].label;
-      case 'height': return CONFIG.slabHeights[s.height].label;
+      case 'slabW': return customOK() ? `Custom ${inFrac(s.cw)}` : CONFIG.slabWidths[s.slabW].label;
+      case 'height': return customOK() ? `Custom ${inFrac(s.ch)}` : CONFIG.slabHeights[s.height].label;
       case 'frameFinish': return CONFIG.frameFinishes[s.frameFinish].label;
       case 'brickmould': return CONFIG.brickmould[s.brickmould].label;
       case 'threshold': return CONFIG.thresholds[s.threshold].label;
@@ -376,10 +387,11 @@
 
   function stepLayout() {
     const s = sel();
-    const wIn = CONFIG.slabWidths[s.slabW].w, hIn = CONFIG.slabHeights[s.height].hIn;
+    const wIn = effSlabW(), hIn = effSlabH();
     const sl = sidesN();
     const slGlassH = hIn - 15;
     const unitW = wIn * (CONFIG.configurations[s.config].dbl ? 2 : 1) + sl * 14 + 6;
+    const cust = !!s.customSize;
     paneR.innerHTML = `
       <h2>Step 3 · Layout &amp; size</h2>
       <p class="sub">Choose how the unit is configured, then size the door slab. Glass sizes adjust to the slab automatically.</p>
@@ -389,6 +401,16 @@
         `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${transomIcon(t)}<span>${t.label}${t.add ? ' +' + fmt(t.add) : ''}</span></button>`), 'transom')}
       ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths, (x) => (x.std ? ' · standard' : '') + priced(x)), 'slab')}
       ${grp('height', 'Slab height', btns('height', CONFIG.slabHeights, (x) => x.std ? ' · standard' : ''), 'slab')}
+      <div class="grp">
+        <div class="lbl">Custom size <b>${customOK() ? `${inFrac(s.cw)} × ${inFrac(s.ch)}` : cust ? '<span class="tbc">enter both sizes</span>' : ''}</b></div>
+        <button type="button" class="opt-btn ${cust ? 'on' : ''}" id="customToggle">${cust ? 'Using a custom size — tap for standard sizes' : 'Need a size not listed? Enter a custom size'}</button>
+        ${cust ? `
+        <div class="custom-size">
+          <label>Width <input type="number" id="cwIn" min="${CW_MIN}" max="${CW_MAX}" step="0.125" value="${s.cw || ''}" placeholder="e.g. 37"> in</label>
+          <label>Height <input type="number" id="chIn" min="${CH_MIN}" max="${CH_MAX}" step="0.125" value="${s.ch || ''}" placeholder="e.g. 84"> in</label>
+        </div>
+        <p class="mini-note">Width ${CW_MIN}–${CW_MAX}" · height ${CH_MIN}–${CH_MAX}", in ⅛" steps. Custom sizes are priced as the nearest standard size — the final price is confirmed on your quote.</p>` : ''}
+      </div>
       <div class="size-note">
         <b>Your glass sizes</b>
         <span>Slab: ${wIn}" × ${hIn}"</span>
@@ -397,7 +419,24 @@
         <em>Approximate — exact glass sizes are confirmed on your shop drawing.</em>
       </div>
       <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>`;
-    bindRows();
+    // picking a preset switches custom off; the toggle flips modes
+    bindRows({ slabW: () => { st.sel.customSize = false; }, height: () => { st.sel.customSize = false; } });
+    paneR.querySelector('#customToggle').addEventListener('click', () => {
+      const before = price();
+      st.sel.customSize = !st.sel.customSize;
+      afterChange(before);
+    });
+    // live preview/price while typing — no pane re-render, so focus survives
+    ['cwIn', 'chIn'].forEach((id) => {
+      const el = paneR.querySelector('#' + id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        const v = parseFloat(el.value);
+        st.sel[id === 'cwIn' ? 'cw' : 'ch'] = isNaN(v) ? null : Math.round(v * 8) / 8;
+        paintPreview(); paintSteps(); updateNav(); syncURL();
+      });
+      el.addEventListener('change', () => render());   // blur/enter refreshes labels + glass note
+    });
   }
 
   function stepFrame() {
@@ -460,7 +499,11 @@
         + ((interior.custom && st.picked.interior) ? swRow('interiorC', fk.map((_, i) => i), s.interiorC, st.picked.interiorC) : ''), 'interior')}
       ${grp('frame', 'Frame colour',
         `<div class="opt-row" data-key="frameSame"><button type="button" class="opt-btn same-chip ${s.frameSame ? 'on' : ''}" data-i="0">Same as slab</button></div>`
-        + swRow('frame', fk.map((_, i) => i), s.frame, st.picked.frame && !s.frameSame))}`;
+        + swRow('frame', fk.map((_, i) => i), s.frame, st.picked.frame && !s.frameSame))}
+      <div class="safety-note">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.5c3.5 3.9 6 7.2 6 10.2a6 6 0 01-12 0c0-3 2.5-6.3 6-10.2z" stroke-linejoin="round"/></svg>
+        Screen colours are approximate — real stain varies with grain and light. Order a ${fmt(CONFIG.samplePrice)} sample chip at Review; it's credited on your door order.
+      </div>`;
     bindRows({
       finish: () => {}, grooves: () => {}, interiorC: () => {},
       interior: () => { if (!(CONFIG.interiors[sel().interior] || {}).custom) delete st.picked.interiorC; },
@@ -543,7 +586,9 @@
       ['Grain', valLabel('grain')],
       ['Layout', valLabel('config')],
       ['Transom', valLabel('transom')],
-      ['Slab size', `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].label}`],
+      ['Slab size', customOK()
+        ? `Custom · ${inFrac(s.cw)} × ${inFrac(s.ch)} (priced as nearest standard)`
+        : `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].label}`],
       ['Frame', `${valLabel('frameFinish')} · jamb ${valLabel('jamb')}`],
       ['Brickmould', valLabel('brickmould')],
       ['Threshold / sill', valLabel('threshold')],

@@ -395,7 +395,9 @@ function shippingFor(sel) {
 /* Total configured price for a door + selection */
 function computePrice(door, s) {
   const c = CONFIG.configurations[s.config] || CONFIG.configurations[0];
-  const h = s.height ? 1 : 0;
+  // custom sizes price as the nearest standard build-up (final on quote)
+  const custom = !!(s.customSize && s.cw && s.ch);
+  const h = custom ? (s.ch > 82 ? 1 : 0) : (s.height ? 1 : 0);
   let total = c.frame[h] + c.stain[h];
   total += (CONFIG.sizes[s.size] || { add: 0 }).add;
   total += (CONFIG.glass[s.glass] || { price: 0 }).price;
@@ -406,7 +408,8 @@ function computePrice(door, s) {
   total += (CONFIG.brickmould[s.brickmould] || { add: 0 }).add;
   total += (CONFIG.paintedGrooves[s.grooves] || { add: 0 }).add;
   /* guided-wizard adders (absent on legacy selections) */
-  if (s.slabW != null) total += (CONFIG.slabWidths[s.slabW] || { add: 0 }).add;
+  if (custom) total += (CONFIG.slabWidths.find(x => x.w >= s.cw) || CONFIG.slabWidths[CONFIG.slabWidths.length - 1]).add;
+  else if (s.slabW != null) total += (CONFIG.slabWidths[s.slabW] || { add: 0 }).add;
   if (s.glassSL != null && c.sides) total += ((CONFIG.glassStyles[s.glassSL] || { add: 0 }).add) * c.sides;
   if (s.glassTR != null && s.transom) total += (CONFIG.glassStyles[s.glassTR] || { add: 0 }).add;
   if (s.hw != null) total += (CONFIG.hardware.types[s.hw] || { add: 0 }).add;
@@ -607,7 +610,8 @@ function unitSVG(door, sel, opts) {
   const HWC = CONFIG.hardware;
   const hwType = (HWC.types[sel && sel.hw != null ? sel.hw : 0] || {}).key || 'mp';
   const mpStyle = (HWC.mpStyles[sel && sel.mpStyle != null ? sel.mpStyle : 0] || {}).key || 'bar';
-  const slabHIn = (CONFIG.slabHeights[(sel && sel.height != null) ? sel.height : 0] || {}).hIn || 80;
+  const slabHIn = (sel && sel.customSize && sel.ch) ? sel.ch
+    : (CONFIG.slabHeights[(sel && sel.height != null) ? sel.height : 0] || {}).hIn || 80;
   const inch = DH / slabHIn;
   const barIn = [48, 60, 72][sel && sel.barSize != null ? sel.barSize : 0] || 48;
   const barCol = (HWC.barColors[sel && sel.barColor != null ? sel.barColor : 0] || {}).swatch || '#222224';
