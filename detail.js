@@ -266,7 +266,7 @@
     const rel = DOORS.filter(d => d.name !== door.name && d.material === door.material).slice(0, 4);
     const pool = rel.length >= 4 ? rel : DOORS.filter(d => d.name !== door.name).slice(0, 4);
     document.getElementById('related').innerHTML = pool.map(d => `
-      <a class="card" href="Door.html?door=${encodeURIComponent(d.name)}">
+      <a class="card" href="Configurator.html?door=${encodeURIComponent(d.name)}">
         <div class="stage"><span class="badge">${d.material}</span>${doorSceneHTML(d)}</div>
         <div class="info"><div class="top"><div class="name">${d.name}</div><div class="price">${fmt(computePrice(d, defaultSel(d)))}</div></div>
         <div class="from">${d.style} · Starting from</div></div>

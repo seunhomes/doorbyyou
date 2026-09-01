@@ -64,23 +64,23 @@ function finishTint(key) {
 /* ---- The catalog: doorbyyou woodgrain entry-door designs (oak finish renders) ---- */
 const DOORS = [
   { name: 'Chevron',       material: 'Fiberglass', style: 'Contemporary', price: 2454, pattern: 'chevron',     finish: 'golden-oak', image: 'images/doors/chevron.jpg',       desc: 'Bold mirrored chevron grooves across a warm oak woodgrain slab.' },
-  { name: 'Chevron Boxed', material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'chevron',     finish: 'golden-oak', image: 'images/doors/chevron-boxed.jpg', desc: 'Chevron pattern framed within a clean boxed border for added structure.' },
-  { name: 'Herringbone',   material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringbone', finish: 'golden-oak', image: 'images/doors/herringbone.jpg',   desc: 'Classic herringbone groovework in a rich oak woodgrain.' },
-  { name: 'Parquet',       material: 'Fiberglass', style: 'Traditional',  price: 2999, pattern: 'herringbone', finish: 'golden-oak', image: 'images/doors/parquet.jpg',       desc: 'Interlocking parquet blocks for a tailored, heritage look.' },
-  { name: 'Envelope',      material: 'Fiberglass', style: 'Modern',       price: 2607, pattern: 'abstract',    finish: 'golden-oak', image: 'images/doors/envelope.jpg',      desc: 'Crossed diagonals fold the slab into a striking envelope motif.' },
-  { name: 'Arrow',         material: 'Fiberglass', style: 'Modern',       price: 2454, pattern: 'chevron',     finish: 'golden-oak', image: 'images/doors/arrow.jpg',         desc: 'Directional arrow grooves give this oak door confident movement.' },
-  { name: 'Two Way',       material: 'Fiberglass', style: 'Contemporary', price: 2556, pattern: 'chevron',     finish: 'golden-oak', image: 'images/doors/two-way.jpg',       desc: 'Opposing groove fields meet at a crisp two-way centre line.' },
-  { name: 'Mosaic',        material: 'Fiberglass', style: 'Contemporary', price: 3100, pattern: 'grid',        finish: 'golden-oak', image: 'images/doors/mosaic.jpg',        desc: 'A composed grid of grooved tiles for a refined mosaic face.' },
-  { name: 'Address',       material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'hVaried',     finish: 'golden-oak', image: 'images/doors/address.jpg',       desc: 'Personalised house-number engraving above a stepped groove field.' },
-  { name: 'Craft',         material: 'Fiberglass', style: 'Traditional',  price: 2862, pattern: 'sixPanel',    finish: 'golden-oak', image: 'images/doors/craft.jpg',         desc: 'Craftsman-inspired panelled composition in warm oak.' },
-  { name: 'Duo',           material: 'Fiberglass', style: 'Modern',       price: 2301, pattern: 'twoPanel',    finish: 'golden-oak', image: 'images/doors/duo.jpg',           desc: 'Two clean panels split the slab for a balanced modern look.' },
-  { name: 'Plank',         material: 'Fiberglass', style: 'Modern',       price: 2250, pattern: 'plank',       finish: 'golden-oak', image: 'images/doors/plank.jpg',         desc: 'Vertical plank grooves for a clean, contemporary entrance.' },
-  { name: 'Busy Plank',    material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'plank',       finish: 'golden-oak', image: 'images/doors/busy-plank.jpg',    desc: 'Densely spaced plank grooves add rhythm and fine detail.' },
-  { name: 'Full Step',     material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'hChannel',    finish: 'golden-oak', image: 'images/doors/full-step.jpg',     desc: 'Full-width stepped channels march down the oak slab.' },
-  { name: 'Half Step',     material: 'Fiberglass', style: 'Contemporary', price: 2352, pattern: 'hVaried',     finish: 'golden-oak', image: 'images/doors/half-step.jpg',     desc: 'Offset half-step grooves for a quietly dynamic surface.' },
-  { name: 'Odd',           material: 'Fiberglass', style: 'Modern',       price: 2352, pattern: 'abstract',    finish: 'golden-oak', image: 'images/doors/odd.jpg',           desc: 'An off-beat asymmetric groove layout for a design-forward entry.' },
-  { name: 'Mild',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'golden-oak', image: 'images/doors/mild.jpg',          desc: 'Understated horizontal lines for a soft, minimal statement.' },
-  { name: 'Even',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'hLines',      finish: 'golden-oak', image: 'images/doors/even.jpg',          desc: 'Evenly spaced horizontal grooves — calm, linear and modern.' },
+  { name: 'Chevron Boxed', material: 'Fiberglass', style: 'Contemporary', price: 2505, pattern: 'chevronBoxed',     finish: 'golden-oak', image: 'images/doors/chevron-boxed.jpg', desc: 'Chevron pattern framed within a clean boxed border for added structure.' },
+  { name: 'Herringbone',   material: 'Fiberglass', style: 'Traditional',  price: 2913, pattern: 'herringboneNest', finish: 'golden-oak', image: 'images/doors/herringbone.jpg',   desc: 'Classic herringbone groovework in a rich oak woodgrain.' },
+  { name: 'Parquet',       material: 'Fiberglass', style: 'Traditional',  price: 2999, pattern: 'parquet45', finish: 'golden-oak', image: 'images/doors/parquet.jpg',       desc: 'Interlocking parquet blocks for a tailored, heritage look.' },
+  { name: 'Envelope',      material: 'Fiberglass', style: 'Modern',       price: 2607, pattern: 'envelopeT',    finish: 'golden-oak', image: 'images/doors/envelope.jpg',      desc: 'Crossed diagonals fold the slab into a striking envelope motif.' },
+  { name: 'Arrow',         material: 'Fiberglass', style: 'Modern',       price: 2454, pattern: 'arrowT',     finish: 'golden-oak', image: 'images/doors/arrow.jpg',         desc: 'Directional arrow grooves give this oak door confident movement.' },
+  { name: 'Two Way',       material: 'Fiberglass', style: 'Contemporary', price: 2556, pattern: 'twoWayT',     finish: 'golden-oak', image: 'images/doors/two-way.jpg',       desc: 'Opposing groove fields meet at a crisp two-way centre line.' },
+  { name: 'Mosaic',        material: 'Fiberglass', style: 'Contemporary', price: 3100, pattern: 'mosaicT',        finish: 'golden-oak', image: 'images/doors/mosaic.jpg',        desc: 'A composed grid of grooved tiles for a refined mosaic face.' },
+  { name: 'Address',       material: 'Fiberglass', style: 'Traditional',  price: 3600, pattern: 'addressT',     finish: 'golden-oak', image: 'images/doors/address.jpg',       desc: 'Personalised house-number engraving above a stepped groove field.' },
+  { name: 'Craft',         material: 'Fiberglass', style: 'Traditional',  price: 2862, pattern: 'craftLines',    finish: 'golden-oak', image: 'images/doors/craft.jpg',         desc: 'Craftsman-inspired panelled composition in warm oak.' },
+  { name: 'Duo',           material: 'Fiberglass', style: 'Modern',       price: 2301, pattern: 'duoT',    finish: 'golden-oak', image: 'images/doors/duo.jpg',           desc: 'Two clean panels split the slab for a balanced modern look.' },
+  { name: 'Plank',         material: 'Fiberglass', style: 'Modern',       price: 2250, pattern: 'plankT',       finish: 'golden-oak', image: 'images/doors/plank.jpg',         desc: 'Vertical plank grooves for a clean, contemporary entrance.' },
+  { name: 'Busy Plank',    material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'busyPlank',       finish: 'golden-oak', image: 'images/doors/busy-plank.jpg',    desc: 'Densely spaced plank grooves add rhythm and fine detail.' },
+  { name: 'Full Step',     material: 'Fiberglass', style: 'Contemporary', price: 2403, pattern: 'fullStep',    finish: 'golden-oak', image: 'images/doors/full-step.jpg',     desc: 'Full-width stepped channels march down the oak slab.' },
+  { name: 'Half Step',     material: 'Fiberglass', style: 'Contemporary', price: 2352, pattern: 'halfStep',     finish: 'golden-oak', image: 'images/doors/half-step.jpg',     desc: 'Offset half-step grooves for a quietly dynamic surface.' },
+  { name: 'Odd',           material: 'Fiberglass', style: 'Modern',       price: 2352, pattern: 'oddT',    finish: 'golden-oak', image: 'images/doors/odd.jpg',           desc: 'An off-beat asymmetric groove layout for a design-forward entry.' },
+  { name: 'Mild',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'mildT',      finish: 'golden-oak', image: 'images/doors/mild.jpg',          desc: 'Understated horizontal lines for a soft, minimal statement.' },
+  { name: 'Even',          material: 'Fiberglass', style: 'Modern',       price: 2199, pattern: 'evenT',      finish: 'golden-oak', image: 'images/doors/even.jpg',          desc: 'Evenly spaced horizontal grooves — calm, linear and modern.' },
 ];
 
 /* ============================================================
@@ -134,6 +134,94 @@ function patternSVG(pattern, g, hi) {
         s += `<path d="M0 ${y+46} L${DW/2} ${y} L${DW} ${y+46}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
       return s;
     }
+    /* ---- patterns traced from the product photos, one per design ---- */
+    case 'chevronBoxed': {  // border box + spine + chevrons inside
+      const bx0 = 42, bx1 = 162, by0 = 44, by1 = 424, bcx = (bx0 + bx1) / 2;
+      let s = `<rect x="${bx0}" y="${by0}" width="${bx1 - bx0}" height="${by1 - by0}" fill="none" stroke="${g}" stroke-width="4"/>`
+        + grooveLines([[bcx, by0, bcx, by1]], g, 4);
+      for (let y = by0; y + 44 <= by1; y += 54)
+        s += `<path d="M${bx0} ${y + 44} L${bcx} ${y} L${bx1} ${y + 44}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
+      return s;
+    }
+    case 'herringboneNest': {  // nested 45° down-pointing Vs + corner rays
+      let s = '';
+      for (let vy = 215; vy <= 455; vy += 30) {
+        const tl = Math.min(90, vy), tr = Math.min(110, vy);
+        s += `<path d="M${90 - tl} ${vy - tl} L90 ${vy} L${90 + tr} ${vy - tr}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
+      }
+      [55, 110, 165].forEach(k => { s += grooveLines([[k, 0, 0, k]], g, 4); });
+      [45, 105, 165].forEach(k => { s += grooveLines([[DW - k, 0, DW, k]], g, 4); });
+      return s;
+    }
+    case 'parquet45': {  // 45° chevron rows, apex left of centre, edge-to-edge
+      let s = '';
+      for (let y = -40; y < DH; y += 48) {
+        const tl = Math.min(110, DH - y + 40), tr = Math.min(90, DH - y + 40);
+        s += `<path d="M${110 - tl} ${y + tl} L110 ${y} L${110 + tr} ${y + tr}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
+      }
+      return s;
+    }
+    case 'envelopeT': return grooveLines([
+      [200, 20, 3, 231], [3, 231, 200, 437], [0, 13, 100, 118], [200, 470, 118, 385],
+      [31, 50, 31, 440], [67, 110, 67, 382],
+      [98, 335, 98, 470], [131, 365, 131, 470], [167, 403, 167, 470],
+    ], g, 4);
+    case 'arrowT': {  // nested left-vertex arrowheads + corner feathering
+      let s = '';
+      [44, 84, 120, 156].forEach(vx => {
+        s += `<path d="M200 ${235 - (200 - vx)} L${vx} 235 L200 ${235 + (200 - vx)}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
+      });
+      [40, 80, 120, 160, 200].forEach(k => { s += grooveLines([[0, k, k, 0]], g, 4); });
+      [40, 80, 120, 160, 200].forEach(k => { s += grooveLines([[0, DH - k, k, DH]], g, 4); });
+      return s;
+    }
+    case 'twoWayT': {  // steep divider, horizontals right, 45° diagonals left
+      let s = grooveLines([[2, 0, 185, DH]], g, 4);
+      const divX = (y) => 2 + 183 * y / DH;
+      for (let y = 24; y < DH; y += 24) s += grooveLines([[divX(y) + 5, y, DW, y]], g, 4);
+      for (let e = 30; e < DH + 170; e += 32) {
+        const xi = (2 + 0.389 * e) / 1.389, yi = e - xi;
+        const p = e <= DH ? [0, e] : [e - DH, DH];
+        if (p[0] < xi) s += grooveLines([[p[0], p[1], xi, yi]], g, 4);
+      }
+      return s;
+    }
+    case 'mosaicT': return grooveLines([
+      [69, 0, 69, 70], [0, 70, 200, 70], [150, 70, 150, 148], [0, 148, 150, 148],
+      [69, 148, 69, 381], [69, 274, 200, 274], [69, 311, 200, 311],
+      [0, 381, 137, 381], [137, 381, 137, 470],
+    ], g, 4);
+    case 'addressT': {  // engraved address + graduated line fan
+      let s = `<text x="104" y="48" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="600" font-size="24" fill="${g}">123</text>`
+        + `<text x="104" y="82" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="600" font-size="21" fill="${g}">Main St.</text>`;
+      for (let i = 0; i < 32; i++) {
+        const y = 32 + i * 13.4, len = 10 + Math.pow(i / 31, 1.15) * 190;
+        s += grooveLines([[0, y, len, y]], g, 3);
+      }
+      return s;
+    }
+    case 'craftLines': return grooveLines([
+      [0, 109, 167, 0], [21, 48, 200, 300], [175, 13, 25, 470],
+      [200, 209, 83, 470], [0, 281, 96, 470], [0, 340, 55, 470], [200, 361, 125, 470],
+    ], g, 4);
+    case 'duoT': return grooveLines([[42, 0, 42, DH], [50, 0, 50, DH]], g, 4);
+    case 'plankT': return grooveLines([25, 50, 75, 100, 125, 150, 175].map(x => [x, 0, x, DH]), g, 4);
+    case 'busyPlank': { const a = []; for (let x = 6; x <= 150; x += 4.8) a.push([x, 0, x, DH]); return grooveLines(a, g, 2.5); }
+    case 'fullStep': return grooveLines([
+      [42, 0, 42, DH], [162, 0, 162, DH],
+      [42, 94, 162, 94], [42, 187, 162, 187], [42, 281, 162, 281], [42, 374, 162, 374],
+    ], g, 4);
+    case 'halfStep': return grooveLines([
+      [162, 0, 162, DH],
+      [0, 94, 200, 94], [0, 187, 200, 187], [0, 281, 200, 281], [0, 374, 200, 374],
+    ], g, 4);
+    case 'oddT': return grooveLines(
+      [13, 33, 60, 70, 94, 104, 120, 172, 182, 192, 202, 242, 253, 271, 288, 300, 330, 362, 376, 400, 422, 432, 444]
+        .map(y => [0, y, DW, y]), g, 2.5);
+    case 'mildT': return grooveLines([
+      [160, 0, 160, 409], [0, 44, 146, 44], [0, 85, 200, 85], [160, 381, 200, 381], [0, 420, 144, 420],
+    ], g, 4);
+    case 'evenT': { const a = []; for (let y = 36; y <= 434; y += 36.2) a.push([0, y, DW, y]); return grooveLines(a, g, 4); }
     case 'herringbone':{ let s=''; for(let y=50;y<bot;y+=46){ s+=`<path d="M${P} ${y} L${DW/2} ${y-22} L${R} ${y}" fill="none" stroke="${g}" stroke-width="3"/>`; } return s; }
     case 'organic':    return [70,130,195,260,325,385].map((y,i)=>
                           `<path d="M${P} ${y} C70 ${y-14},130 ${y+14},${R} ${y - (i%2?8:-8)}" fill="none" stroke="${g}" stroke-width="3.5"/>`).join('');
@@ -731,11 +819,12 @@ function unitSVG(door, sel, opts) {
     const slim = (svg) => svg.replace(/stroke-width="4"/g, 'stroke-width="2.2"').replace(/stroke-width="3"/g, 'stroke-width="1.8"');
     const face = smoothSkin
       // paint-grade smooth skin: flat colour, the design's grooves routed in — no wood
-      ? `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>
-        <g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
+      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
+        <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>
+        <g clip-path="url(#${cid})"><g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
           <g transform="translate(0,1.7)">${slim(patternSVG(door.pattern, smoothHigh, 'rgba(0,0,0,0)'))}</g>
           ${slim(patternSVG(door.pattern, smoothGroove, 'rgba(0,0,0,0)'))}
-        </g>`
+        </g></g>`
       : door.image
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">

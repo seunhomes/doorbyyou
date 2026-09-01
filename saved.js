@@ -37,7 +37,7 @@
   function detailHref(b) {
     const code = builds.encode(b);
     if (b.product === 'window') return 'Windows Configurator.html?b=' + code;
-    return 'Door.html?b=' + code;
+    return 'Configurator.html?b=' + code;
   }
 
   function render() {

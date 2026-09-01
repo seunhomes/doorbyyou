@@ -126,7 +126,7 @@
 
       <div class="m-actions">
         <button class="btn solid" id="mAdd">Add to cart · ${fmt(priceNow())}</button>
-        <a class="btn ghost" href="Door.html?door=${encodeURIComponent(d.name)}${P_.builds ? '&b=' + P_.builds.encode({ product: 'door', name: d.name, sel: s }) : ''}">Full details &amp; options</a>
+        <a class="btn ghost" href="Configurator.html?door=${encodeURIComponent(d.name)}">Build this door</a>
       </div>
       <div class="m-foot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke-linejoin="round"/></svg>Ships Canada &amp; US · Lifetime warranty · Multi-point lock standard</div>
     `;
@@ -178,7 +178,8 @@
       return;
     }
     const card = e.target.closest('.card'); if (!card) return;
-    openModal(+card.dataset.i);
+    if (e.target.closest('.qv')) { openModal(+card.dataset.i); return; }   // quick-view eye keeps the modal
+    location.href = 'Configurator.html?door=' + encodeURIComponent(DOORS[+card.dataset.i].name);
   });
 
   /* hero mini door */
