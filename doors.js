@@ -822,7 +822,7 @@ function unitSVG(door, sel, opts) {
     </g>
     ${opts.bare ? '' : `<rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="7" rx="1.5" fill="${thr.swatch}"/>
     <rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="2" rx="1" fill="rgba(255,255,255,.35)"/>`}
-    ${(opts.bare || opts.noFloor) ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
+    ${opts.bare ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
   </svg>`;
 }
 

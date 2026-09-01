@@ -21,7 +21,7 @@
   const HOME = REVIEW - 1;   // optional photo step — never blocks Continue
 
   const qs = new URLSearchParams(location.search);
-  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext', scene: 'life',
+  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext',
     home: { url: null, x: 0.5, y: 0.62, scale: 0.42 } };   // photo composite (kept on-device only)
 
   const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
@@ -199,47 +199,14 @@
       ? `Custom ${inFrac(s.cw)} × ${inFrac(s.ch)}`
       : `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
     if (st.picked.swing) bits.push(`${s.handleSide === 0 ? 'Left' : 'Right'} hand hinge`, CONFIG.swings[s.swing].label);
-    const ext = st.view !== 'int';
-    const life = ext && st.scene !== 'studio';
-    const toggles = `
+    pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view, noHandle: !st.picked.hw }) + `
+      <div class="pv-cap"><span>Live preview · ${st.view === 'int' ? 'interior' : 'exterior'} view</span><b>${bits.join(' · ')}</b></div>
       <div class="pv-toggle" role="group" aria-label="Preview side">
-        <button type="button" class="${ext ? 'on' : ''}" data-v="ext">Exterior</button>
-        <button type="button" class="${!ext ? 'on' : ''}" data-v="int">Interior</button>
-      </div>` + (ext ? `
-      <div class="pv-toggle" role="group" aria-label="Backdrop">
-        <button type="button" class="${life ? 'on' : ''}" data-s="life">On the house</button>
-        <button type="button" class="${!life ? 'on' : ''}" data-s="studio">Studio · sizes</button>
-      </div>` : '');
-    if (life) {
-      /* scene calibration, measured off scene-entry.jpg: alcove centre x 50.6%,
-         floor line 78% down, opening height 51.46% of the image ≙ a 114" opening —
-         so real unit heights map to scale, and wide units step back to fit */
-      const u = unitInches();
-      const svgMarkup = unitSVG(st.door, st.sel, { noFloor: true, noHandle: !st.picked.hw });
-      let hPct = Math.min(51, 51.46 * u.h / 114);
-      // wide units step back so they fit the alcove width (0.455 of the scene);
-      // width is derived from the svg viewBox — no layout measurement needed
-      const vb = (svgMarkup.match(/viewBox="([^"]+)"/) || [])[1];
-      if (vb) {
-        const p = vb.trim().split(/\s+/).map(Number);
-        const wFrac = (hPct / 100) * (1607 / 1200) * (p[2] / p[3]);
-        if (wFrac > 0.455) hPct = hPct * 0.455 / wFrac;
-      }
-      pane.innerHTML = `
-        <div class="ls-stage">
-          <img src="images/scene-entry.jpg" alt="Your door on a modern entry">
-          <div class="ls-door" style="left:50.6%;bottom:22%;height:${hPct.toFixed(2)}%">
-            ${svgMarkup}
-          </div>
-        </div>
-        <div class="pv-cap"><span>Live preview · on the house</span><b>${bits.join(' · ')}</b></div>` + toggles;
-    } else {
-      pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view, noHandle: !st.picked.hw }) + `
-        <div class="pv-cap"><span>Live preview · ${ext ? 'studio' : 'interior'} view</span><b>${bits.join(' · ')}</b></div>` + toggles;
-    }
+        <button type="button" class="${st.view !== 'int' ? 'on' : ''}" data-v="ext">Exterior</button>
+        <button type="button" class="${st.view === 'int' ? 'on' : ''}" data-v="int">Interior</button>
+      </div>`;
     pane.querySelectorAll('.pv-toggle button').forEach(b => b.addEventListener('click', () => {
-      if (b.dataset.v) st.view = b.dataset.v;
-      if (b.dataset.s) st.scene = b.dataset.s;
+      st.view = b.dataset.v;
       paintPreview();
     }));
   }
