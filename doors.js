@@ -626,7 +626,7 @@ function glassPanel(x, y, w, h, tint, uid, mullions, noPlant) {
   // a wide/tileable crop for transoms and thumbnails)
   const art = {
     niagara: { sl: ['images/glass/niagara-sl.jpg?v=2', 'none'], wide: ['images/glass/niagara-tr.jpg?v=3', 'xMidYMid slice'] },
-    etch:    { sl: ['images/glass/sandblast-sl.jpg', 'none'], wide: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] },
+    etch:    { sl: ['images/glass/sandblast-sl.jpg', 'none'], wide: ['images/glass/sandblast-tr.jpg?v=2', 'xMidYMid slice'] },
   }[tint];
   if (art) {
     const pick = h >= w * 2 ? art.sl : art.wide;
@@ -642,7 +642,7 @@ function glassPanel(x, y, w, h, tint, uid, mullions, noPlant) {
     return `${prelude}
       <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#glcl-${uid})" fill-opacity="0.3"/>
       <clipPath id="${cid}"><rect x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}"/></clipPath>
-      <g clip-path="url(#${cid})"><image href="images/glass/sandblast-tr.jpg" x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" preserveAspectRatio="xMidYMid slice" opacity="0.9"/></g>
+      <g clip-path="url(#${cid})"><image href="images/glass/sandblast-tr.jpg?v=2" x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" preserveAspectRatio="xMidYMid slice" opacity="0.9"/></g>
       <rect x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/>
       <rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1"/>
       <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
@@ -982,7 +982,7 @@ function unitSVG(door, sel, opts) {
       // true semi-circle transom: half-circle spanning the framed width
       frames += `<path d="M${tx0} ${trH} A ${trW/2} ${trH} 0 0 1 ${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       const trSemiArt = { niagara: ['images/glass/niagara-semi.jpg?v=2', 'none'],
-        etch: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] }[trTint || 'clear'];
+        etch: ['images/glass/sandblast-tr.jpg?v=2', 'xMidYMid slice'] }[trTint || 'clear'];
       if (trSemiArt) {
         frames += `<clipPath id="trg-${uid}"><path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z"/></clipPath>
           <g clip-path="url(#trg-${uid})"><image href="${trSemiArt[0]}" x="${tx0 + 12}" y="11" width="${trW - 24}" height="${trH - 11}" preserveAspectRatio="${trSemiArt[1]}"/></g>`;
@@ -994,7 +994,7 @@ function unitSVG(door, sel, opts) {
       // segmental: shallow-rise curved top over a low rectangle
       frames += `<path d="M${tx0} ${trH} L${tx0} 42 Q${tx0 + trW/2} -12 ${tx0 + trW} 42 L${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       const trSegArt = { niagara: ['images/glass/niagara-tr.jpg?v=3', 'none'],
-        etch: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] }[trTint || 'clear'];
+        etch: ['images/glass/sandblast-tr.jpg?v=2', 'xMidYMid slice'] }[trTint || 'clear'];
       if (trSegArt) {
         frames += `<clipPath id="trg-${uid}"><path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z"/></clipPath>
           <g clip-path="url(#trg-${uid})"><image href="${trSegArt[0]}" x="${tx0 + 10}" y="12" width="${trW - 20}" height="${trH - 20}" preserveAspectRatio="${trSegArt[1]}"/></g>`;
