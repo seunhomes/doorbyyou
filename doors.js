@@ -712,9 +712,9 @@ function unitSVG(door, sel, opts) {
   const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
   /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55); each skin
      corrects its own measured mean to that baseline so every stain's mid-tone
-     lands exactly on its swatch (skin-mahogany.jpg measures 0.565 mean) */
-  const skinLevel = gk === 'mahogany' ? 0.974 : 0.656;
-  const skinContrast = gk === 'mahogany' ? 1.0 : 1.12;
+     lands exactly on its swatch (mahogany 0.483 gamma-normalized, oak 0.577) */
+  const skinLevel = gk === 'mahogany' ? 1.138 : 0.953;
+  const skinContrast = gk === 'mahogany' ? 1.0 : 1.05;
   // opts.noGrain: skin not chosen yet — render a neutral unfinished slab
   const isStainShown = !opts.noGrain && !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
