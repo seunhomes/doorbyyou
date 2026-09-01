@@ -24,7 +24,7 @@
   let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext',
     home: { url: null, x: 0.5, y: 0.62, scale: 0.42 } };   // photo composite (kept on-device only)
 
-  const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
+  const ALL_KEYS = ['grain','config','slSide','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
     'swing','finish','interior','interiorC','frame','glassSL','glassTR',
     'hw','mpStyle','barSize','barColor','tLever','dbShape','dbColor',
     'trim','trimFinish','trimStyle','trimSize'];
@@ -84,7 +84,9 @@
     switch (i) {
       case 0: if (!st.door) need.push('a door design'); break;
       case 1: req('grain', 'a grain'); break;
-      case 2: req('config', 'a layout'); req('transom', 'a transom choice');
+      case 2: req('config', 'a layout');
+              if (sidesN() === 1) req('slSide', 'which side the sidelite goes');
+              req('transom', 'a transom choice');
               if (s.customSize) {
                 if (!(s.cw >= CW_MIN && s.cw <= CW_MAX)) need.push(`a custom width (${CW_MIN}–${CW_MAX}")`);
                 if (!(s.ch >= CH_MIN && s.ch <= CH_MAX)) need.push(`a custom height (${CH_MIN}–${CH_MAX}")`);
@@ -243,7 +245,9 @@
     const s = sel();
     switch (key) {
       case 'grain': return CONFIG.grains[s.grain].label;
-      case 'config': return CONFIG.configurations[s.config].label;
+      case 'config': return CONFIG.configurations[s.config].label
+        + (sidesN() === 1 && st.picked.slSide ? ` · sidelite ${s.slSide === 1 ? 'right' : 'left'}` : '');
+      case 'slSide': return CONFIG.slSides[s.slSide || 0].label;
       case 'transom': return CONFIG.transoms[s.transom].label;
       case 'slabW': return customOK() ? `Custom ${inFrac(s.cw)}` : CONFIG.slabWidths[s.slabW].label;
       case 'height': return customOK() ? `Custom ${inFrac(s.ch)}` : CONFIG.slabHeights[s.height].label;
@@ -315,11 +319,12 @@
     if (sl >= 2) { x += gap; parts += `<rect x="${x}" y="14" width="${sw}" height="48" rx="1.5" class="li-g"/>`; }
     return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${parts}</svg>`;
   }
+  // just the glass shape, centred — None stays empty
   function transomIcon(tr) {
     const glass = tr.h ? (tr.arch
-      ? `<path d="M22 24 Q52 6 82 24 L82 26 L22 26 Z" class="li-g"/>`
-      : `<rect x="22" y="12" width="60" height="12" rx="1.5" class="li-g"/>`) : '';
-    return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${glass}<rect x="34" y="${tr.h ? 30 : 12}" width="36" height="${tr.h ? 38 : 52}" rx="1.5" class="li-d"/></svg>`;
+      ? `<path d="M16 44 Q52 14 88 44 L88 48 L16 48 Z" class="li-g"/>`
+      : `<rect x="16" y="28" width="72" height="18" rx="2" class="li-g"/>`) : '';
+    return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${glass}</svg>`;
   }
   // swing diagram: top view, viewed from outside (arc drawn into the swing space)
   function swingSVG(outswing, hingeLeft) {
@@ -422,6 +427,9 @@
       <p class="sub">Choose how the unit is configured, then size the door slab. Glass sizes adjust to the slab automatically.</p>
       ${grp('config', 'Layout', row('config', CONFIG.configurations, (c, i, on) =>
         `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${layoutIcon(c)}<span>${c.label}</span></button>`), 'config')}
+      ${(st.picked.config && sidesN() === 1)
+        ? grp('slSide', 'Sidelite side · viewed from outside', btns('slSide', CONFIG.slSides))
+        : ''}
       ${grp('transom', 'Transom', row('transom', CONFIG.transoms, (t, i, on) =>
         `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${transomIcon(t)}<span>${t.label}${t.add ? ' +' + fmt(t.add) : ''}</span></button>`), 'transom')}
       ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths, (x) => (x.std ? ' · standard' : '') + priced(x)), 'slab')}
@@ -445,7 +453,8 @@
       </div>
       <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>`;
     // picking a preset switches custom off; the toggle flips modes
-    bindRows({ slabW: () => { st.sel.customSize = false; }, height: () => { st.sel.customSize = false; } });
+    bindRows({ slabW: () => { st.sel.customSize = false; }, height: () => { st.sel.customSize = false; },
+      config: () => { if (sidesN() !== 1) delete st.picked.slSide; } });
     paneR.querySelector('#customToggle').addEventListener('click', () => {
       const before = price();
       st.sel.customSize = !st.sel.customSize;

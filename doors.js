@@ -391,6 +391,11 @@ const CONFIG = {
     { label: `6'8" · 79"`, hIn: 79, std: true },
     { label: `8'0" · 95"`, hIn: 95 },
   ],
+  // which side a single sidelite sits on, viewed from outside
+  slSides: [
+    { label: 'Left of the door' },
+    { label: 'Right of the door' },
+  ],
   frameFinishes: [
     { label: 'Smooth', key: 'smooth' },
     { label: 'Wood grain', key: 'grain' },
@@ -761,7 +766,11 @@ function unitSVG(door, sel, opts) {
 
   const dbl = !!cfg.dbl;
   const DWd = dbl ? 320 : DW;          // door footprint width
-  const leftS = cfg.sides >= 1, rightS = cfg.sides >= 2;
+  // a single sidelite sits left or right per sel.slSide (mirrored in interior view)
+  const oneSL = cfg.sides === 1;
+  const slRightExt = oneSL && sel && sel.slSide === 1;
+  const slRight = interiorView ? oneSL && !slRightExt : slRightExt;
+  const leftS = cfg.sides >= 2 || (oneSL && !slRight), rightS = cfg.sides >= 2 || (oneSL && slRight);
   const hasSL = leftS || rightS;
   const FR = 13;                       // uniform jamb / mullion thickness
   const SG = 54;                       // sidelite glass width
@@ -975,7 +984,7 @@ const OPT_LABELS = {
   frame: 'Frame colour', grooves: 'Painted grooves', glass: 'Decorative glass',
   transom: 'Transom', handle: 'Handle and lock', handleSide: 'Handle side',
   hinge: 'Hinges', jamb: 'Jamb size', brickmould: 'Brick mould', region: 'Ship to',
-  grain: 'Grain', slabW: 'Slab width', height2: 'Slab height', frameFinish: 'Frame finish',
+  grain: 'Grain', slabW: 'Slab width', height2: 'Slab height', frameFinish: 'Frame finish', slSide: 'Sidelite side',
   threshold: 'Threshold / sill', swing: 'Swing and hinging', interior: 'Interior colour',
   interiorC: 'Interior custom colour', glassSL: 'Sidelite glass', glassTR: 'Transom glass',
   hw: 'Hardware package', mpStyle: 'Multipoint style', barSize: 'Pull bar size',
