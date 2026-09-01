@@ -72,7 +72,8 @@
   function pick(key, idx) {
     st.sel[key] = idx;
     st.picked[key] = true;
-    if (key === 'finish' && st.sel.frameSame) st.sel.frame = idx;
+    // frame follows the slab colour until it's explicitly chosen (or Same-as-slab is on)
+    if (key === 'finish' && (st.sel.frameSame || !st.picked.frame)) st.sel.frame = idx;
   }
 
   /* ---------- completion / validation ---------- */
