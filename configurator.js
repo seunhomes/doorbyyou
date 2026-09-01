@@ -143,7 +143,7 @@
     const w = doorW + cfg.sides * slW;
     // shop-confirmed: overall frame height = slab + 2-3/4" (81-3/4" / 97-3/4")
     const h = slabH + 2.75 + (s.transom
-      ? (CONFIG.transoms[s.transom].arch ? w / 2 : CONFIG.transoms[s.transom].seg ? 18 : 16) : 0);
+      ? (CONFIG.transoms[s.transom].arch ? Math.min(w / 2, 30) : CONFIG.transoms[s.transom].seg ? 18 : 16) : 0);
     return { w: w, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
@@ -463,7 +463,7 @@
       const doorW = W - cfg.sides * 14.75;
       st.sel.customSize = true;
       st.sel.cw = Math.round((cfg.dbl ? (doorW - 2.25) / 2 : doorW - 1.5) * 8) / 8;
-      st.sel.ch = Math.round((H - 2.75 - (sel().transom ? (tr.arch ? W / 2 : tr.seg ? 18 : 16) : 0)) * 8) / 8;
+      st.sel.ch = Math.round((H - 2.75 - (sel().transom ? (tr.arch ? Math.min(W / 2, 30) : tr.seg ? 18 : 16) : 0)) * 8) / 8;
       paintPreview(); paintSteps(); updateNav(); syncURL();
     };
     ['ofW', 'ofH'].forEach((id) => {

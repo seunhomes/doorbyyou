@@ -788,10 +788,12 @@ function unitSVG(door, sel, opts) {
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
-  // transom spans the full framed width — no-sidelite units carry their own 12u frame
-  const trW = hasSL ? totalW : totalW + 24, tx0 = hasSL ? 0 : -12;
-  // semi-circle transom is a true half-circle: its height is half that width
-  const trH = tr.h ? (tr.arch ? Math.round(trW / 2) : Math.round(16 * PPI)) : 0;
+  // transom spans to the outermost frame line: brickmould edge when installed,
+  // else the unit's own frame (no-sidelite units carry a 12u frame of their own)
+  const trExt = brick ? 14 : (hasSL ? 0 : 12);
+  const trW = totalW + trExt * 2, tx0 = -trExt;
+  // semi-circle: true half-circle up to a 30" rise, then a capped ellipse on wide units
+  const trH = tr.h ? (tr.arch ? Math.min(Math.round(trW / 2), Math.round(30 * PPI)) : Math.round(16 * PPI)) : 0;
   const topY = trH;   // transom mulls directly onto the frame below — no air gap
   const slabY = topY + (hasSL ? FR : 0);
   const totalH = slabY + DHu;   // open threshold — no bottom rail under the slab
@@ -983,7 +985,7 @@ function unitSVG(door, sel, opts) {
         <image href="${skinHref}" width="${totalW + 48}" height="${totalH + 60}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${(parseFloat(fTint.lvl) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/></g>
       </pattern>` : ''}
     </defs>
-    ${brick ? `<rect x="-14" y="-8" width="${totalW+28}" height="${totalH+16}" rx="3" fill="${frameFill}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
+    ${brick ? `<rect x="-14" y="${trH && (tr.arch || tr.seg) ? trH - 4 : -8}" width="${totalW+28}" height="${(trH && (tr.arch || tr.seg) ? totalH - trH + 4 : totalH) + 16}" rx="3" fill="${frameFill}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
     ${frames}
     <g transform="translate(${doorX}, ${slabY})">
       ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DHu+10}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
