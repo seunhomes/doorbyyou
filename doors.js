@@ -44,7 +44,7 @@ const FINISHES = {
   'chestnut':     { label: 'Chestnut',    swatch: '#8B5A2B', stain: true },
   'walnut-stain': { label: 'Walnut',      swatch: '#6B4423', stain: true },
   'dark-walnut':  { label: 'Dark Walnut', swatch: '#4A2F1B', stain: true },
-  'mahogany':     { label: 'Mahogany',    swatch: '#6E3B2A', stain: true },
+  'mahogany':     { label: 'Mahogany',    swatch: '#6B2B24', stain: true },
   'espresso':     { label: 'Espresso',    swatch: '#3A2A1E', stain: true },
 };
 

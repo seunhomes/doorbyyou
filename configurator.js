@@ -397,6 +397,15 @@
         if (st.sel.frameSame || !st.picked.frame) st.sel.frame = allowed[0];
         delete st.picked.finish;
       }
+      // each grain opens in its signature tone until a colour is chosen
+      if (!st.picked.finish) {
+        const sig = grainKey() === 'mahogany' ? CONFIG.finishKeys.indexOf('mahogany')
+          : grainKey() === 'oak' ? CONFIG.finishKeys.indexOf('golden-oak') : -1;
+        if (sig >= 0 && allowed.includes(sig)) {
+          sel().finish = sig;
+          if (st.sel.frameSame || !st.picked.frame) st.sel.frame = sig;
+        }
+      }
     });
   }
 
