@@ -712,10 +712,11 @@ function unitSVG(door, sel, opts) {
   const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
   /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55); each skin
      corrects its own measured mean to that baseline so every stain's mid-tone
-     lands exactly on its swatch (mahogany asset is gamma-normalized to 0.515) */
-  const skinLevel = gk === 'mahogany' ? 1.07 : 0.656;
+     lands exactly on its swatch (skin-mahogany.jpg measures 0.565 mean) */
+  const skinLevel = gk === 'mahogany' ? 0.974 : 0.656;
   const skinContrast = gk === 'mahogany' ? 1.0 : 1.12;
-  const isStainShown = !!(FINISHES[dispKey] || {}).stain;
+  // opts.noGrain: skin not chosen yet — render a neutral unfinished slab
+  const isStainShown = !opts.noGrain && !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
     const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
     tint = { color: '#' + ((1 << 24) + (mix((n >> 16) & 255, 122) << 16) + (mix((n >> 8) & 255, 63) << 8)
@@ -725,7 +726,8 @@ function unitSVG(door, sel, opts) {
     : (sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey);
   /* when the frame colour matches the slab, render it in the slab's actual
      displayed tone (tint + grain cast, or the paint) so they read as one unit */
-  const frameColor = (!interiorView && frameKey === finKey)
+  const frameColor = opts.noGrain ? '#cfc8b8'
+    : (!interiorView && frameKey === finKey)
     ? (gk === 'smooth' ? ((FINISHES[dispKey] || {}).swatch || '#ECEAE1')
       : (tint ? tint.color : (FINISHES[frameKey] || {}).swatch || '#fbfaf6'))
     : (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
@@ -737,11 +739,11 @@ function unitSVG(door, sel, opts) {
     fTint = { color: '#' + ((1 << 24) + (mx((n2 >> 16) & 255, 122) << 16) + (mx((n2 >> 8) & 255, 63) << 8)
       + mx(n2 & 255, 43)).toString(16).slice(1), lvl: fTint.lvl };
   }
-  const frameWood = gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
+  const frameWood = !opts.noGrain && gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
   const frameFill = frameWood ? `url(#ftex-${uid})` : frameColor;
   const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
   // smooth skin: true paint colour + groove/highlight tones scaled to its lightness
-  const paintHex = (FINISHES[dispKey] || {}).swatch || '#ECEAE1';
+  const paintHex = opts.noGrain ? '#DED8CB' : ((FINISHES[dispKey] || {}).swatch || '#ECEAE1');
   const pn = parseInt(paintHex.slice(1), 16);
   const paintLuma = (0.299 * (pn >> 16 & 255) + 0.587 * (pn >> 8 & 255) + 0.114 * (pn & 255)) / 255;
   const smoothGroove = groovesPainted ? 'rgba(0,0,0,.82)' : paintLuma > 0.55 ? 'rgba(0,0,0,.30)' : 'rgba(0,0,0,.48)';
