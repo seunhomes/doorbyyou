@@ -705,13 +705,12 @@ function unitSVG(door, sel, opts) {
     : (io.key || 'snow-white');
   const dispKey = interiorView ? intKey : finKey;
   let tint = finishTint(dispKey);
-  /* grain treatment on the slab render: oak = the photo as shot (it IS oak),
-     mahogany = cathedral figure suppressed + fine straight striping + warmer
-     cast, smooth = flat painted skin with the grooves drawn as routed lines */
+  /* grain treatment: each woodgrain has its own skin texture (tinted by the
+     stain) with the design's traced grooves drawn on top; a painted colour
+     (smooth grain, painted interiors) renders as a flat skin + grooves */
   const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
-  const smoothSkin = gk === 'smooth';
-  const mahogSkin = gk === 'mahogany' && !!door.image;
-  const grainContrast = mahogSkin ? 0.88 : 1.04;
+  const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
+  const isStainShown = !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
     const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
     tint = { color: '#' + ((1 << 24) + (mix((n >> 16) & 255, 122) << 16) + (mix((n >> 8) & 255, 63) << 8)
@@ -837,24 +836,27 @@ function unitSVG(door, sel, opts) {
   // one door leaf: slab (tinted render or gradient) + edge + handle
   function leaf(x, w, handleX) {
     const cid = 'c' + uid + 'x' + Math.round(x);
-    // routed-groove look on paint: slim strokes, light chamfer glint under a dark line
+    // routed grooves: slim dark line with a light chamfer glint beneath, both
+    // passes clipped to the slab; painted-grooves mode inks the dark pass solid
     const slim = (svg) => svg.replace(/stroke-width="4"/g, 'stroke-width="2.2"').replace(/stroke-width="3"/g, 'stroke-width="1.8"');
-    const face = smoothSkin
-      // paint-grade smooth skin: flat colour, the design's grooves routed in — no wood
-      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
-        <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>
-        <g clip-path="url(#${cid})"><g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
-          <g transform="translate(0,1.7)">${slim(patternSVG(door.pattern, smoothHigh, 'rgba(0,0,0,0)'))}</g>
-          ${slim(patternSVG(door.pattern, smoothGroove, 'rgba(0,0,0,0)'))}
-        </g></g>`
-      : door.image
-      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
-        <g clip-path="url(#${cid})" style="isolation:isolate">
-          <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-          <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(${grainContrast});mix-blend-mode:luminosity"/>
-          ${mahogSkin ? `<rect x="${x}" y="0" width="${w}" height="${DH}" filter="url(#mg-${uid})" style="mix-blend-mode:multiply;opacity:.4"/>` : ''}
-          ${groovesPainted ? `<image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" filter="url(#grv-${uid})"/>` : ''}
-        </g>`
+    const gCol = isStainShown
+      ? (groovesPainted ? 'rgba(0,0,0,.85)' : 'rgba(38,16,5,.55)')
+      : smoothGroove;
+    const hCol = isStainShown ? 'rgba(255,236,210,.26)' : smoothHigh;
+    const grooveLayer = `<g clip-path="url(#${cid})"><g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
+        <g transform="translate(0,1.7)">${slim(patternSVG(door.pattern, hCol, 'rgba(0,0,0,0)'))}</g>
+        ${slim(patternSVG(door.pattern, gCol, 'rgba(0,0,0,0)'))}
+      </g></g>`;
+    const face = door.image
+      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>` + (
+        !isStainShown
+        // painted skin (smooth grain, painted interiors): flat colour + grooves
+        ? `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>` + grooveLayer
+        // stained woodgrain: the grain's skin texture tinted by the stain + grooves
+        : `<g clip-path="url(#${cid})" style="isolation:isolate">
+            <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
+            <image href="${skinHref}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1});mix-blend-mode:luminosity"/>
+          </g>` + grooveLayer)
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
       ${face}
@@ -929,8 +931,6 @@ function unitSVG(door, sel, opts) {
   <svg class="door-svg unit" viewBox="-20 ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     ${dims}
     <defs>${faceGrad}${glassDefs(uid)}
-      ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0 0 0.25 0.8 1 1"/></feComponentTransfer></filter>` : ''}
-      ${mahogSkin ? `<filter id="mg-${uid}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.7 0.006" numOctaves="2" seed="4"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .8 .8 .8 0 -1"/></filter>` : ''}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>
