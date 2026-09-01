@@ -141,7 +141,7 @@
     const doorW = cfg.dbl ? slabW * 2 + 2.25 : slabW + 1.5;      // slab(s) + frame
     const slW = 14.75;                                            // sidelite incl. frame
     const w = doorW + cfg.sides * slW;
-    const h = slabH + 3.375 + (s.transom ? (CONFIG.transoms[s.transom].arch ? 20 : 16) : 0);
+    const h = slabH + 3.375 + (s.transom ? (CONFIG.transoms[s.transom].arch ? w / 2 : 16) : 0);
     return { w: w, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
@@ -321,7 +321,7 @@
   // just the glass shape, centred — None stays empty
   function transomIcon(tr) {
     const glass = tr.h ? (tr.arch
-      ? `<path d="M16 50 A 36 28 0 0 1 88 50 Z" class="li-g"/>`
+      ? `<path d="M16 54 A 36 36 0 0 1 88 54 Z" class="li-g"/>`
       : `<rect x="16" y="28" width="72" height="18" rx="2" class="li-g"/>`) : '';
     return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${glass}</svg>`;
   }

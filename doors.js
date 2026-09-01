@@ -787,7 +787,8 @@ function unitSVG(door, sel, opts) {
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
-  const trH = tr.h ? Math.round((tr.arch ? 20 : 16) * PPI) : 0;
+  // semi-circle transom is a true half-circle: its height is half the unit width
+  const trH = tr.h ? (tr.arch ? Math.round(totalW / 2) : Math.round(16 * PPI)) : 0;
   const topY = trH;   // transom mulls directly onto the frame below — no air gap
   const slabY = topY + (hasSL ? FR : 0);
   const totalH = slabY + DHu;   // open threshold — no bottom rail under the slab
