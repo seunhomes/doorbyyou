@@ -128,8 +128,12 @@ function patternSVG(pattern, g, hi) {
     case 'abstract':   return grooveLines([[P,110,140,110],[110,110,110,260],[60,260,R,260],[150,260,150,bot],[P,360,150,360]], g, 4);
     case 'mixGroove':  return V([70, 100]) + H([250, 290, 330, 370]);
     case 'grid':       return V([66, 110, 154]) + H([130, 215, 300, 385]);
-    case 'chevron':    return [70,140,210,280,350].map(y =>
-                          `<path d="M${P} ${y} L${DW/2} ${y-26} L${R} ${y}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`).join('');
+    case 'chevron': {  // traced from the real slab: centre spine + 8 edge-to-edge Vs at ~24°
+      let s = `<line x1="${DW/2}" y1="0" x2="${DW/2}" y2="${DH}" stroke="${g}" stroke-width="4"/>`;
+      for (let y = 2; y < DH + 46; y += 59)
+        s += `<path d="M0 ${y+46} L${DW/2} ${y} L${DW} ${y+46}" fill="none" stroke="${g}" stroke-width="4" stroke-linejoin="round"/>`;
+      return s;
+    }
     case 'herringbone':{ let s=''; for(let y=50;y<bot;y+=46){ s+=`<path d="M${P} ${y} L${DW/2} ${y-22} L${R} ${y}" fill="none" stroke="${g}" stroke-width="3"/>`; } return s; }
     case 'organic':    return [70,130,195,260,325,385].map((y,i)=>
                           `<path d="M${P} ${y} C70 ${y-14},130 ${y+14},${R} ${y - (i%2?8:-8)}" fill="none" stroke="${g}" stroke-width="3.5"/>`).join('');
