@@ -616,8 +616,8 @@ function unitSVG(door, sel, opts) {
   const paintHex = (FINISHES[dispKey] || {}).swatch || '#ECEAE1';
   const pn = parseInt(paintHex.slice(1), 16);
   const paintLuma = (0.299 * (pn >> 16 & 255) + 0.587 * (pn >> 8 & 255) + 0.114 * (pn & 255)) / 255;
-  const smoothGroove = groovesPainted ? 'rgba(0,0,0,.82)' : paintLuma > 0.55 ? 'rgba(0,0,0,.20)' : 'rgba(0,0,0,.42)';
-  const smoothHigh = paintLuma > 0.55 ? 'rgba(255,255,255,.65)' : 'rgba(255,255,255,.18)';
+  const smoothGroove = groovesPainted ? 'rgba(0,0,0,.82)' : paintLuma > 0.55 ? 'rgba(0,0,0,.30)' : 'rgba(0,0,0,.48)';
+  const smoothHigh = paintLuma > 0.55 ? 'rgba(255,255,255,.8)' : 'rgba(255,255,255,.25)';
   const brick = !interiorView && !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
   const extHandLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
   const handLeft = interiorView ? !extHandLeft : extHandLeft;
@@ -723,10 +723,15 @@ function unitSVG(door, sel, opts) {
   // one door leaf: slab (tinted render or gradient) + edge + handle
   function leaf(x, w, handleX) {
     const cid = 'c' + uid + 'x' + Math.round(x);
+    // routed-groove look on paint: slim strokes, light chamfer glint under a dark line
+    const slim = (svg) => svg.replace(/stroke-width="4"/g, 'stroke-width="2.2"').replace(/stroke-width="3"/g, 'stroke-width="1.8"');
     const face = smoothSkin
       // paint-grade smooth skin: flat colour, the design's grooves routed in — no wood
       ? `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>
-        <g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">${patternSVG(door.pattern, smoothGroove, smoothHigh)}</g>`
+        <g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
+          <g transform="translate(0,1.7)">${slim(patternSVG(door.pattern, smoothHigh, 'rgba(0,0,0,0)'))}</g>
+          ${slim(patternSVG(door.pattern, smoothGroove, 'rgba(0,0,0,0)'))}
+        </g>`
       : door.image
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">

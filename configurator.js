@@ -392,7 +392,8 @@
       const allowed = finishIdxFor(grainKey());
       if (!allowed.includes(sel().finish)) {
         sel().finish = allowed[0];
-        if (st.sel.frameSame) st.sel.frame = allowed[0];
+        // frame follows the new default unless the customer chose one explicitly
+        if (st.sel.frameSame || !st.picked.frame) st.sel.frame = allowed[0];
         delete st.picked.finish;
       }
     });
