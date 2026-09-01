@@ -594,6 +594,20 @@ function glassFill(tint, uid) {
    frosted/reeded texture for etched glass and a dark gradient for tints. */
 function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (!tint) return '';
+  // real product art for styles that have it (tall panel art for sidelites,
+  // a wide/tileable crop for transoms and thumbnails)
+  const art = {
+    niagara: { sl: ['images/glass/niagara-sl.jpg', 'none'], wide: ['images/glass/niagara-tr.jpg', 'xMidYMid slice'] },
+    etch:    { sl: ['images/glass/sandblast-sl.jpg', 'none'], wide: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] },
+  }[tint];
+  if (art) {
+    const pick = h >= w * 2 ? art.sl : art.wide;
+    const cid = `ng-${uid}-${Math.round(x)}-${Math.round(y)}`;
+    return `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>
+      <g clip-path="url(#${cid})"><image href="${pick[0]}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${pick[1]}"/></g>
+      <rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1"/>
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
+  }
   const dark  = tint === 'tint' || tint === 'privacy' || tint === 'iron';
   const frost = tint === 'etch' || tint === 'frost' || tint === 'privacy'
              || tint === 'granite' || tint === 'chinchilla';
@@ -925,13 +939,27 @@ function unitSVG(door, sel, opts) {
     if (tr.arch) {
       // true semi-circle transom: half-circle spanning the framed width
       frames += `<path d="M${tx0} ${trH} A ${trW/2} ${trH} 0 0 1 ${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
-      frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="rgba(255,255,255,.14)"/>`;
+      const trSemiArt = { niagara: ['images/glass/niagara-semi.jpg', 'none'],
+        etch: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] }[trTint || 'clear'];
+      if (trSemiArt) {
+        frames += `<clipPath id="trg-${uid}"><path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z"/></clipPath>
+          <g clip-path="url(#trg-${uid})"><image href="${trSemiArt[0]}" x="${tx0 + 12}" y="11" width="${trW - 24}" height="${trH - 11}" preserveAspectRatio="${trSemiArt[1]}"/></g>`;
+      } else {
+        frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
+        frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="rgba(255,255,255,.14)"/>`;
+      }
     } else if (tr.seg) {
       // segmental: shallow-rise curved top over a low rectangle
       frames += `<path d="M${tx0} ${trH} L${tx0} 42 Q${tx0 + trW/2} -12 ${tx0 + trW} 42 L${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
-      frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="rgba(255,255,255,.14)"/>`;
+      const trSegArt = { niagara: ['images/glass/niagara-tr.jpg', 'none'],
+        etch: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] }[trTint || 'clear'];
+      if (trSegArt) {
+        frames += `<clipPath id="trg-${uid}"><path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z"/></clipPath>
+          <g clip-path="url(#trg-${uid})"><image href="${trSegArt[0]}" x="${tx0 + 10}" y="12" width="${trW - 20}" height="${trH - 20}" preserveAspectRatio="${trSegArt[1]}"/></g>`;
+      } else {
+        frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
+        frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="rgba(255,255,255,.14)"/>`;
+      }
     } else {
       frames += `<rect x="${tx0}" y="0" width="${trW}" height="${trH}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += glassPanel(tx0 + 8, 8, trW - 16, trH - 16, trTint || 'clear', uid, false);
