@@ -346,6 +346,7 @@ const CONFIG = {
     { label: 'None',        add: 0,   h: 0 },
     { label: 'Rectangular', add: 500, h: 14 },
     { label: 'Semi-circle', add: 500, h: 18, arch: true },
+    { label: 'Segmental',   add: 500, h: 16, seg: true },
   ],
   hinges: [
     { label: 'Satin Nickel', add: 0,   swatch: '#b9bcc0' },
@@ -388,8 +389,8 @@ const CONFIG = {
     { label: '48"', w: 48, add: 425 },
   ],
   slabHeights: [
-    { label: `6'8" · 79"`, hIn: 79, std: true },
-    { label: `8'0" · 95"`, hIn: 95 },
+    { label: '79"', hIn: 79 },
+    { label: '95"', hIn: 95 },
   ],
   // which side a single sidelite sits on, viewed from outside
   slSides: [
@@ -787,8 +788,10 @@ function unitSVG(door, sel, opts) {
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
-  // semi-circle transom is a true half-circle: its height is half the unit width
-  const trH = tr.h ? (tr.arch ? Math.round(totalW / 2) : Math.round(16 * PPI)) : 0;
+  // transom spans the full framed width — no-sidelite units carry their own 12u frame
+  const trW = hasSL ? totalW : totalW + 24, tx0 = hasSL ? 0 : -12;
+  // semi-circle transom is a true half-circle: its height is half that width
+  const trH = tr.h ? (tr.arch ? Math.round(trW / 2) : Math.round(16 * PPI)) : 0;
   const topY = trH;   // transom mulls directly onto the frame below — no air gap
   const slabY = topY + (hasSL ? FR : 0);
   const totalH = slabY + DHu;   // open threshold — no bottom rail under the slab
@@ -912,13 +915,18 @@ function unitSVG(door, sel, opts) {
   // transom
   if (tr.h) {
     if (tr.arch) {
-      // true semi-circle transom: half-ellipse spanning the unit width
-      frames += `<path d="M0 ${trH} A ${totalW/2} ${trH} 0 0 1 ${totalW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M12 ${trH} A ${totalW/2 - 12} ${trH - 11} 0 0 1 ${totalW - 12} ${trH} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
-      frames += `<path d="M12 ${trH} A ${totalW/2 - 12} ${trH - 11} 0 0 1 ${totalW - 12} ${trH} Z" fill="rgba(255,255,255,.14)"/>`;
+      // true semi-circle transom: half-circle spanning the framed width
+      frames += `<path d="M${tx0} ${trH} A ${trW/2} ${trH} 0 0 1 ${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
+      frames += `<path d="M${tx0 + 12} ${trH} A ${trW/2 - 12} ${trH - 11} 0 0 1 ${tx0 + trW - 12} ${trH} Z" fill="rgba(255,255,255,.14)"/>`;
+    } else if (tr.seg) {
+      // segmental: shallow-rise curved top over a low rectangle
+      frames += `<path d="M${tx0} ${trH} L${tx0} 42 Q${tx0 + trW/2} -12 ${tx0 + trW} 42 L${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
+      frames += `<path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z" fill="rgba(255,255,255,.14)"/>`;
     } else {
-      frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += glassPanel(8, 8, totalW - 16, trH - 16, trTint || 'clear', uid, false);
+      frames += `<rect x="${tx0}" y="0" width="${trW}" height="${trH}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += glassPanel(tx0 + 8, 8, trW - 16, trH - 16, trTint || 'clear', uid, false);
     }
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width

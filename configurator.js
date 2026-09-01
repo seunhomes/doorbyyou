@@ -88,8 +88,8 @@
               if (sidesN() === 1) req('slSide', 'which side the sidelite goes');
               req('transom', 'a transom choice');
               if (s.customSize) {
-                if (!(s.cw >= CW_MIN && s.cw <= CW_MAX)) need.push(`a custom width (${CW_MIN}–${CW_MAX}")`);
-                if (!(s.ch >= CH_MIN && s.ch <= CH_MAX)) need.push(`a custom height (${CH_MIN}–${CH_MAX}")`);
+                if (!(s.cw >= CW_MIN && s.cw <= CW_MAX) || !(s.ch >= CH_MIN && s.ch <= CH_MAX))
+                  need.push('an overall frame size this layout can be built at');
               } else { req('slabW', 'slab width'); req('height', 'slab height'); }
               break;
       case 3: req('frameFinish', 'frame finish'); req('brickmould', 'brickmould');
@@ -141,7 +141,9 @@
     const doorW = cfg.dbl ? slabW * 2 + 2.25 : slabW + 1.5;      // slab(s) + frame
     const slW = 14.75;                                            // sidelite incl. frame
     const w = doorW + cfg.sides * slW;
-    const h = slabH + 3.375 + (s.transom ? (CONFIG.transoms[s.transom].arch ? w / 2 : 16) : 0);
+    // shop-confirmed: overall frame height = slab + 2-3/4" (81-3/4" / 97-3/4")
+    const h = slabH + 2.75 + (s.transom
+      ? (CONFIG.transoms[s.transom].arch ? w / 2 : CONFIG.transoms[s.transom].seg ? 18 : 16) : 0);
     return { w: w, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
@@ -322,6 +324,8 @@
   function transomIcon(tr) {
     const glass = tr.h ? (tr.arch
       ? `<path d="M16 54 A 36 36 0 0 1 88 54 Z" class="li-g"/>`
+      : tr.seg
+      ? `<path d="M16 50 L16 34 Q52 16 88 34 L88 50 Z" class="li-g"/>`
       : `<rect x="16" y="28" width="72" height="18" rx="2" class="li-g"/>`) : '';
     return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${glass}</svg>`;
   }
@@ -420,7 +424,6 @@
     const sl = sidesN();
     const slGlassH = hIn - 15;
     const unitW = wIn * (CONFIG.configurations[s.config].dbl ? 2 : 1) + sl * 14 + 6;
-    const cust = !!s.customSize;
     paneR.innerHTML = `
       <h2>Step 3 · Layout &amp; size</h2>
       <p class="sub">Choose how the unit is configured, then size the door slab. Glass sizes adjust to the slab automatically.</p>
@@ -431,17 +434,15 @@
         : ''}
       ${grp('transom', 'Transom', row('transom', CONFIG.transoms, (t, i, on) =>
         `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${transomIcon(t)}<span>${t.label}</span></button>`), 'transom')}
-      ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths, (x) => x.std ? ' · standard' : ''), 'slab')}
-      ${grp('height', 'Slab height', btns('height', CONFIG.slabHeights, (x) => x.std ? ' · standard' : ''), 'slab')}
+      ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths), 'slab')}
+      ${grp('height', 'Slab height', btns('height', CONFIG.slabHeights), 'slab')}
       <div class="grp">
-        <div class="lbl">Custom size <b>${customOK() ? `${inFrac(s.cw)} × ${inFrac(s.ch)}` : cust ? '<span class="tbc">enter both sizes</span>' : ''}</b></div>
-        <button type="button" class="opt-btn ${cust ? 'on' : ''}" id="customToggle">${cust ? 'Using a custom size — tap for standard sizes' : 'Need a size not listed? Enter a custom size'}</button>
-        ${cust ? `
+        <div class="lbl">Overall frame size <b>${inFrac(unitInches().w)} × ${inFrac(unitInches().h)}</b></div>
         <div class="custom-size">
-          <label>Width <input type="number" id="cwIn" min="${CW_MIN}" max="${CW_MAX}" step="0.125" value="${s.cw || ''}" placeholder="e.g. 37"> in</label>
-          <label>Height <input type="number" id="chIn" min="${CH_MIN}" max="${CH_MAX}" step="0.125" value="${s.ch || ''}" placeholder="e.g. 84"> in</label>
+          <label>Width <input type="number" id="ofW" step="0.125" value="${unitInches().w}"> in</label>
+          <label>Height <input type="number" id="ofH" step="0.125" value="${unitInches().h}"> in</label>
         </div>
-        <p class="mini-note">Width ${CW_MIN}–${CW_MAX}" · height ${CH_MIN}–${CH_MAX}", in ⅛" steps. Custom sizes are priced as the nearest standard size — the final price is confirmed on your quote.</p>` : ''}
+        <p class="mini-note">Pre-filled from your picks. Type your own overall frame size and the slab resizes to suit — final sizing is confirmed on your quote.</p>
       </div>
       <div class="size-note">
         <b>Your glass sizes</b>
@@ -451,24 +452,24 @@
         <em>Approximate — exact glass sizes are confirmed on your shop drawing.</em>
       </div>
       <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>`;
-    // picking a preset switches custom off; the toggle flips modes
-    bindRows({ slabW: () => { st.sel.customSize = false; }, height: () => { st.sel.customSize = false; },
-      config: () => { if (sidesN() !== 1) delete st.picked.slSide; } });
-    paneR.querySelector('#customToggle').addEventListener('click', () => {
-      const before = price();
-      st.sel.customSize = !st.sel.customSize;
-      afterChange(before);
-    });
-    // live preview/price while typing — no pane re-render, so focus survives
-    ['cwIn', 'chIn'].forEach((id) => {
+    bindRows({ config: () => { if (sidesN() !== 1) delete st.picked.slSide; },
+      slabW: () => { st.sel.customSize = false; }, height: () => { st.sel.customSize = false; } });
+    // typing an overall frame size derives the slab from the build-ups
+    const applyOverall = () => {
+      const W = parseFloat(paneR.querySelector('#ofW').value);
+      const H = parseFloat(paneR.querySelector('#ofH').value);
+      if (isNaN(W) || isNaN(H)) return;
+      const cfg = CONFIG.configurations[sel().config], tr = CONFIG.transoms[sel().transom] || {};
+      const doorW = W - cfg.sides * 14.75;
+      st.sel.customSize = true;
+      st.sel.cw = Math.round((cfg.dbl ? (doorW - 2.25) / 2 : doorW - 1.5) * 8) / 8;
+      st.sel.ch = Math.round((H - 2.75 - (sel().transom ? (tr.arch ? W / 2 : tr.seg ? 18 : 16) : 0)) * 8) / 8;
+      paintPreview(); paintSteps(); updateNav(); syncURL();
+    };
+    ['ofW', 'ofH'].forEach((id) => {
       const el = paneR.querySelector('#' + id);
-      if (!el) return;
-      el.addEventListener('input', () => {
-        const v = parseFloat(el.value);
-        st.sel[id === 'cwIn' ? 'cw' : 'ch'] = isNaN(v) ? null : Math.round(v * 8) / 8;
-        paintPreview(); paintSteps(); updateNav(); syncURL();
-      });
-      el.addEventListener('change', () => render());   // blur/enter refreshes labels + glass note
+      el.addEventListener('input', applyOverall);
+      el.addEventListener('change', () => render());   // blur refreshes labels + glass note
     });
   }
 
