@@ -734,7 +734,7 @@ function unitSVG(door, sel, opts) {
     : (sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey);
   /* when the frame colour matches the slab, render it in the slab's actual
      displayed tone (tint + grain cast, or the paint) so they read as one unit */
-  const frameColor = opts.noGrain ? '#cfc8b8'
+  const frameColor = opts.noGrain ? ((finishTint(door.finish) || {}).color || '#cfc8b8')
     : (!interiorView && frameKey === finKey)
     ? (gk === 'smooth' ? ((FINISHES[dispKey] || {}).swatch || '#ECEAE1')
       : (tint ? tint.color : (FINISHES[frameKey] || {}).swatch || '#fbfaf6'))
@@ -890,7 +890,10 @@ function unitSVG(door, sel, opts) {
       </g></g>`;
     const face = door.image
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3"/></clipPath>` + (
-        !isStainShown
+        opts.noGrain
+        // grain not chosen yet — show the design exactly as its catalog photo
+        ? `<g clip-path="url(#${cid})"><image href="${door.image}" x="${x}" y="0" width="${w}" height="${DHu}" preserveAspectRatio="xMidYMid slice"/></g>`
+        : !isStainShown
         // painted skin (smooth grain, painted interiors): flat colour + grooves
         ? `<rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3" fill="${paintHex}"/>` + grooveLayer
         // stained woodgrain: the grain's skin texture tinted by the stain + grooves
