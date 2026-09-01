@@ -21,7 +21,7 @@
   const HOME = REVIEW - 1;   // optional photo step — never blocks Continue
 
   const qs = new URLSearchParams(location.search);
-  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext',
+  let st = { step: 0, door: null, sel: null, picked: {}, view: 'ext', scene: 'life',
     home: { url: null, x: 0.5, y: 0.62, scale: 0.42 } };   // photo composite (kept on-device only)
 
   const ALL_KEYS = ['grain','config','transom','slabW','height','frameFinish','brickmould','threshold','jamb',
@@ -131,16 +131,21 @@
     const d = f % 2 ? [f, 8] : f % 4 ? [f / 2, 4] : [f / 4, 2];
     return w + '-' + d[0] + '/' + d[1] + '"';
   }
-  // unit / rough-opening measurements from the current selection
-  function computeDims() {
+  // numeric unit size in inches — shared by the dims callouts and the scene composite
+  function unitInches() {
     const s = sel(), cfg = CONFIG.configurations[s.config];
     const slabW = effSlabW(), slabH = effSlabH();
     const doorW = cfg.dbl ? slabW * 2 + 2.25 : slabW + 1.5;      // slab(s) + frame
     const slW = 14.75;                                            // sidelite incl. frame
     const w = doorW + cfg.sides * slW;
     const h = slabH + 3.375 + (s.transom ? (CONFIG.transoms[s.transom].arch ? 20 : 16) : 0);
-    return { w: inFrac(w), roW: inFrac(w + 1), h: inFrac(h), roH: inFrac(h + 0.5),
-      door: inFrac(doorW), sl: inFrac(slW) };
+    return { w: w, h: h, doorW: doorW, slW: slW };
+  }
+  // unit / rough-opening measurements from the current selection
+  function computeDims() {
+    const u = unitInches();
+    return { w: inFrac(u.w), roW: inFrac(u.w + 1), h: inFrac(u.h), roH: inFrac(u.h + 0.5),
+      door: inFrac(u.doorW), sl: inFrac(u.slW) };
   }
   /* home-photo composite: uploaded photo + draggable, scalable door overlay */
   function placeHomeDoor() {
@@ -155,7 +160,7 @@
     pane.innerHTML = `
       <div class="hv-stage">
         <img src="${st.home.url}" alt="Your home">
-        <div class="hv-door">${unitSVG(st.door, st.sel, { bare: true })}</div>
+        <div class="hv-door">${unitSVG(st.door, st.sel, { bare: true, noHandle: !st.picked.hw })}</div>
       </div>
       <div class="pv-cap"><span>Your home · ${st.door.name}</span><b>Drag the door into place · size slider on the right</b></div>`;
     pane.querySelector('.hv-stage img').addEventListener('load', placeHomeDoor);
@@ -194,14 +199,47 @@
       ? `Custom ${inFrac(s.cw)} × ${inFrac(s.ch)}`
       : `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
     if (st.picked.swing) bits.push(`${s.handleSide === 0 ? 'Left' : 'Right'} hand hinge`, CONFIG.swings[s.swing].label);
-    pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view }) + `
-      <div class="pv-cap"><span>Live preview · ${st.view === 'int' ? 'interior' : 'exterior'} view</span><b>${bits.join(' · ')}</b></div>
+    const ext = st.view !== 'int';
+    const life = ext && st.scene !== 'studio';
+    const toggles = `
       <div class="pv-toggle" role="group" aria-label="Preview side">
-        <button type="button" class="${st.view !== 'int' ? 'on' : ''}" data-v="ext">Exterior</button>
-        <button type="button" class="${st.view === 'int' ? 'on' : ''}" data-v="int">Interior</button>
-      </div>`;
+        <button type="button" class="${ext ? 'on' : ''}" data-v="ext">Exterior</button>
+        <button type="button" class="${!ext ? 'on' : ''}" data-v="int">Interior</button>
+      </div>` + (ext ? `
+      <div class="pv-toggle" role="group" aria-label="Backdrop">
+        <button type="button" class="${life ? 'on' : ''}" data-s="life">On the house</button>
+        <button type="button" class="${!life ? 'on' : ''}" data-s="studio">Studio · sizes</button>
+      </div>` : '');
+    if (life) {
+      /* scene calibration, measured off scene-entry.jpg: alcove centre x 50.6%,
+         floor line 78% down, opening height 51.46% of the image ≙ a 114" opening —
+         so real unit heights map to scale, and wide units step back to fit */
+      const u = unitInches();
+      const svgMarkup = unitSVG(st.door, st.sel, { noFloor: true, noHandle: !st.picked.hw });
+      let hPct = Math.min(51, 51.46 * u.h / 114);
+      // wide units step back so they fit the alcove width (0.455 of the scene);
+      // width is derived from the svg viewBox — no layout measurement needed
+      const vb = (svgMarkup.match(/viewBox="([^"]+)"/) || [])[1];
+      if (vb) {
+        const p = vb.trim().split(/\s+/).map(Number);
+        const wFrac = (hPct / 100) * (1607 / 1200) * (p[2] / p[3]);
+        if (wFrac > 0.455) hPct = hPct * 0.455 / wFrac;
+      }
+      pane.innerHTML = `
+        <div class="ls-stage">
+          <img src="images/scene-entry.jpg" alt="Your door on a modern entry">
+          <div class="ls-door" style="left:50.6%;bottom:22%;height:${hPct.toFixed(2)}%">
+            ${svgMarkup}
+          </div>
+        </div>
+        <div class="pv-cap"><span>Live preview · on the house</span><b>${bits.join(' · ')}</b></div>` + toggles;
+    } else {
+      pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view, noHandle: !st.picked.hw }) + `
+        <div class="pv-cap"><span>Live preview · ${ext ? 'studio' : 'interior'} view</span><b>${bits.join(' · ')}</b></div>` + toggles;
+    }
     pane.querySelectorAll('.pv-toggle button').forEach(b => b.addEventListener('click', () => {
-      st.view = b.dataset.v;
+      if (b.dataset.v) st.view = b.dataset.v;
+      if (b.dataset.s) st.scene = b.dataset.s;
       paintPreview();
     }));
   }

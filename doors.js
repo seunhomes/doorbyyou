@@ -218,7 +218,12 @@ const CONFIG = {
     { label: `48" × 95"`,  add: 425 },
     { label: `48" × 108"`, add: 1000 },
   ],
-  finishKeys: ['natural', 'golden-oak', 'cedar', 'chestnut', 'walnut-stain', 'dark-walnut', 'mahogany', 'espresso'],
+  /* stains first (indices 0-7, stable for old share links), then the 20 paint
+     colours the smooth skin uses — finishIdxFor() picks the right slice per grain */
+  finishKeys: ['natural', 'golden-oak', 'cedar', 'chestnut', 'walnut-stain', 'dark-walnut', 'mahogany', 'espresso',
+    'snow-white', 'dover-gray', 'rockwell-blue', 'almond', 'chesapeake-gray', 'midnight-surf', 'monterey-sand',
+    'storm', 'marine-dusk', 'pebble', 'hudson-slate', 'meadow-fern', 'dark-drift', 'windswept-smoke',
+    'moonlit-moss', 'rockport-brown', 'iron-ore', 'majestic-brick', 'smoked-timber', 'coastal-blue'],
   // Direct-glaze glass; price is the 0–5 sq ft rate (typical lite). Larger glazing is quoted by sq ft.
   glass: [
     { label: 'None (solid)',          tint: null,      price: 0 },
@@ -591,10 +596,13 @@ function unitSVG(door, sel, opts) {
     : (io.key || 'snow-white');
   const dispKey = interiorView ? intKey : finKey;
   let tint = finishTint(dispKey);
-  /* grain treatment on the slab render: oak = pronounced texture, mahogany =
-     finer grain with a warmer cast on stains, smooth = flattened paint-grade */
+  /* grain treatment on the slab render: oak = the photo as shot (it IS oak),
+     mahogany = cathedral figure suppressed + fine straight striping + warmer
+     cast, smooth = flat painted skin with the grooves drawn as routed lines */
   const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
-  const grainContrast = gk === 'smooth' ? 0.5 : gk === 'mahogany' ? 0.95 : 1.12;
+  const smoothSkin = gk === 'smooth';
+  const mahogSkin = gk === 'mahogany' && !!door.image;
+  const grainContrast = mahogSkin ? 0.88 : 1.04;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
     const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
     tint = { color: '#' + ((1 << 24) + (mix((n >> 16) & 255, 122) << 16) + (mix((n >> 8) & 255, 63) << 8)
@@ -604,6 +612,12 @@ function unitSVG(door, sel, opts) {
     : (sel && sel.frame != null ? CONFIG.finishKeys[sel.frame] : finKey);
   const frameColor = (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
   const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
+  // smooth skin: true paint colour + groove/highlight tones scaled to its lightness
+  const paintHex = (FINISHES[dispKey] || {}).swatch || '#ECEAE1';
+  const pn = parseInt(paintHex.slice(1), 16);
+  const paintLuma = (0.299 * (pn >> 16 & 255) + 0.587 * (pn >> 8 & 255) + 0.114 * (pn & 255)) / 255;
+  const smoothGroove = groovesPainted ? 'rgba(0,0,0,.82)' : paintLuma > 0.55 ? 'rgba(0,0,0,.20)' : 'rgba(0,0,0,.42)';
+  const smoothHigh = paintLuma > 0.55 ? 'rgba(255,255,255,.65)' : 'rgba(255,255,255,.18)';
   const brick = !interiorView && !!(CONFIG.brickmould[sel ? sel.brickmould : 0] || {}).on;
   const extHandLeft = (CONFIG.handleSides[sel ? sel.handleSide : 0] || {}).side === 'left';
   const handLeft = interiorView ? !extHandLeft : extHandLeft;
@@ -709,18 +723,23 @@ function unitSVG(door, sel, opts) {
   // one door leaf: slab (tinted render or gradient) + edge + handle
   function leaf(x, w, handleX) {
     const cid = 'c' + uid + 'x' + Math.round(x);
-    const face = door.image
+    const face = smoothSkin
+      // paint-grade smooth skin: flat colour, the design's grooves routed in — no wood
+      ? `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>
+        <g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">${patternSVG(door.pattern, smoothGroove, smoothHigh)}</g>`
+      : door.image
       ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>
         <g clip-path="url(#${cid})" style="isolation:isolate">
           <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
           <image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1}) contrast(${grainContrast});mix-blend-mode:luminosity"/>
+          ${mahogSkin ? `<rect x="${x}" y="0" width="${w}" height="${DH}" filter="url(#mg-${uid})" style="mix-blend-mode:multiply;opacity:.4"/>` : ''}
           ${groovesPainted ? `<image href="${door.image}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" filter="url(#grv-${uid})"/>` : ''}
         </g>`
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
       ${face}
       <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
-      ${hardware(handleX, x, w)}`;
+      ${opts.noHandle ? '' : hardware(handleX, x, w)}`;
   }
 
   let leaves;
@@ -791,6 +810,7 @@ function unitSVG(door, sel, opts) {
     ${dims}
     <defs>${faceGrad}${glassDefs(uid)}
       ${groovesPainted ? `<filter id="grv-${uid}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.3 -0.59 -0.11 0 1"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 0 0 0 0 0 0.25 0.8 1 1"/></feComponentTransfer></filter>` : ''}
+      ${mahogSkin ? `<filter id="mg-${uid}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.7 0.006" numOctaves="2" seed="4"/><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .8 .8 .8 0 -1"/></filter>` : ''}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
     </defs>
@@ -802,7 +822,7 @@ function unitSVG(door, sel, opts) {
     </g>
     ${opts.bare ? '' : `<rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="7" rx="1.5" fill="${thr.swatch}"/>
     <rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="2" rx="1" fill="rgba(255,255,255,.35)"/>`}
-    ${opts.bare ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
+    ${(opts.bare || opts.noFloor) ? '' : `<ellipse cx="${totalW/2}" cy="${totalH+14}" rx="${totalW/2+8}" ry="9" fill="url(#floor-${uid})"/>`}
   </svg>`;
 }
 

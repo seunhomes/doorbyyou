@@ -183,6 +183,13 @@
   .safety-note svg{color:var(--accent);flex:none;}
   .empty-note{border:1px dashed var(--line-2);border-radius:4px;padding:16px;font-size:13.5px;color:var(--ink-2);
     line-height:1.55;margin:6px 0 4px;background:var(--surface);}
+  /* lifestyle scene backdrop — the live unit composited into a photo entry */
+  .ls-stage{position:relative;display:inline-block;max-width:100%;min-height:0;border-radius:4px;overflow:hidden;}
+  .ls-stage img{display:block;max-width:100%;max-height:calc(100vh - 280px);width:auto;height:auto;}
+  .cfg-preview .ls-door{position:absolute;transform:translateX(-50%);
+    filter:brightness(.93) saturate(.97) drop-shadow(16px 12px 22px rgba(0,0,0,.55));}
+  .cfg-preview .ls-door .door-svg{width:auto;height:100%;flex:none;max-height:none;display:block;}
+
   /* step 9 — your-home photo composite */
   .hv-stage{position:relative;display:inline-block;max-width:100%;min-height:0;border-radius:4px;overflow:hidden;}
   .hv-stage img{display:block;max-width:100%;max-height:calc(100vh - 280px);width:auto;height:auto;}
@@ -212,7 +219,8 @@
     .cfg-preview .door-svg{max-height:34vh;}
     .cfg-preview .door-tint > img,.cfg-preview img.door-photo{max-height:34vh;}
     .hv-stage img{max-height:38vh;}
-    .cfg-preview .hv-door .door-svg{max-height:none;}
+    .ls-stage img{max-height:38vh;}
+    .cfg-preview .hv-door .door-svg,.cfg-preview .ls-door .door-svg{max-height:none;}
     .steps{flex-wrap:wrap;}.step{min-width:33%;border-bottom:1px solid var(--line);}
     .model-grid{grid-template-columns:1fr 1fr;}
     .cards,.cards.four{grid-template-columns:1fr 1fr;}
