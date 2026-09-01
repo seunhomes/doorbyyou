@@ -596,32 +596,36 @@ function glassFill(tint, uid) {
 }
 /* Obscurity demo: an interior plant behind every lite — crisp through clear
    glass, a soft shadow through frost, gone behind dark tints. */
-function obscurityBackdrop(x, y, w, h, blur, opac, cid) {
-  const u = Math.min(w * 1.1, h * 0.52);
-  const cx = x + w * 0.5, base = y + h + 2;
-  const tips = [[-0.36, 0.55], [-0.18, 0.8], [0.02, 1], [0.2, 0.82], [0.38, 0.58]];
+function obscurityBackdrop(x, y, w, h, blur, opac, cid, showPlant) {
   let leaves = '';
-  tips.forEach(([fx, fy], i) => {
-    const tx = cx + fx * Math.min(w, u), ty = base - u * fy, lw = Math.max(3, w * 0.055);
-    leaves += `<path d="M${cx} ${base} Q ${tx - lw} ${(base + ty) / 2} ${tx} ${ty} Q ${tx + lw} ${(base + ty) / 2 + 4} ${cx} ${base} Z" fill="${i % 2 ? '#47613f' : '#39512f'}"/>`;
-  });
+  if (showPlant) {
+    // tall floor plant: leaf length follows the lite height; only the sideways
+    // spread is constrained by the lite width
+    const u = h * 0.85;
+    const cx = x + w * 0.5, base = y + h + 2;
+    const tips = [[-0.36, 0.55], [-0.18, 0.8], [0.02, 1], [0.2, 0.82], [0.38, 0.58]];
+    tips.forEach(([fx, fy], i) => {
+      const tx = cx + fx * Math.min(w * 0.95, u * 0.4), ty = base - u * fy, lw = Math.max(3, w * 0.07);
+      leaves += `<path d="M${cx} ${base} Q ${tx - lw} ${(base + ty) / 2} ${tx} ${ty} Q ${tx + lw} ${(base + ty) / 2 + 4} ${cx} ${base} Z" fill="${i % 2 ? '#47613f' : '#39512f'}"/>`;
+    });
+  }
   return `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>
-    ${blur ? `<filter id="pb-${cid}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${blur}"/></filter>` : ''}
+    ${blur && leaves ? `<filter id="pb-${cid}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${blur}"/></filter>` : ''}
     <g clip-path="url(#${cid})"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#edeee8"/>
-    <g opacity="${opac}"${blur ? ` filter="url(#pb-${cid})"` : ''}>${leaves}</g></g>`;
+    ${leaves ? `<g opacity="${opac}"${blur ? ` filter="url(#pb-${cid})"` : ''}>${leaves}</g>` : ''}</g>`;
 }
 /* Realistic-ish glazing: sky-reflection gradient + diagonal sheen, with
    frosted/reeded texture for etched glass and a dark gradient for tints. */
-function glassPanel(x, y, w, h, tint, uid, mullions) {
+function glassPanel(x, y, w, h, tint, uid, mullions, noPlant) {
   if (!tint) return '';
   const cidP = `gp-${uid}-${Math.round(x)}-${Math.round(y)}`;
   const OB = { clear: [0, 0.9], etch: [3, 0.75], 'frost-border': [2.5, 0.8], niagara: [3.5, 0.6],
     tint: [1.5, 0.5], privacy: [4, 0.45], iron: [1.5, 0.5] }[tint] || [2.5, 0.7];
-  const prelude = obscurityBackdrop(x, y, w, h, OB[0], OB[1], cidP);
+  const prelude = obscurityBackdrop(x, y, w, h, OB[0], OB[1], cidP, !noPlant);
   // real product art for styles that have it (tall panel art for sidelites,
   // a wide/tileable crop for transoms and thumbnails)
   const art = {
-    niagara: { sl: ['images/glass/niagara-sl.jpg?v=2', 'none'], wide: ['images/glass/niagara-tr.jpg?v=2', 'xMidYMid slice'] },
+    niagara: { sl: ['images/glass/niagara-sl.jpg?v=2', 'none'], wide: ['images/glass/niagara-tr.jpg?v=3', 'xMidYMid slice'] },
     etch:    { sl: ['images/glass/sandblast-sl.jpg', 'none'], wide: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] },
   }[tint];
   if (art) {
@@ -989,7 +993,7 @@ function unitSVG(door, sel, opts) {
     } else if (tr.seg) {
       // segmental: shallow-rise curved top over a low rectangle
       frames += `<path d="M${tx0} ${trH} L${tx0} 42 Q${tx0 + trW/2} -12 ${tx0 + trW} 42 L${tx0 + trW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      const trSegArt = { niagara: ['images/glass/niagara-tr.jpg?v=2', 'none'],
+      const trSegArt = { niagara: ['images/glass/niagara-tr.jpg?v=3', 'none'],
         etch: ['images/glass/sandblast-tr.jpg', 'xMidYMid slice'] }[trTint || 'clear'];
       if (trSegArt) {
         frames += `<clipPath id="trg-${uid}"><path d="M${tx0 + 10} ${trH - 8} L${tx0 + 10} 46 Q${tx0 + trW/2} 0 ${tx0 + trW - 10} 46 L${tx0 + trW - 10} ${trH - 8} Z"/></clipPath>

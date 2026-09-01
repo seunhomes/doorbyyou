@@ -375,7 +375,7 @@
     return `<svg viewBox="0 0 54 72" class="gt-svg" aria-hidden="true">
       <defs>${P.glassDefs(uid)}</defs>
       <rect x="1" y="1" width="52" height="70" rx="2" fill="#efece4" stroke="rgba(0,0,0,.15)"/>
-      ${P.glassPanel(4, 4, 46, 64, g.tint, uid, false)}
+      ${P.glassPanel(4, 4, 46, 64, g.tint, uid, false, true)}
     </svg>`;
   }
 
