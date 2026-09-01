@@ -710,6 +710,11 @@ function unitSVG(door, sel, opts) {
      (smooth grain, painted interiors) renders as a flat skin + grooves */
   const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
   const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
+  /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55); each skin
+     corrects its own mean (oak 0.839 bright, mahogany 0.186 dark) to that
+     baseline so every stain's mid-tone lands exactly on its swatch */
+  const skinLevel = gk === 'mahogany' ? 2.96 : 0.656;
+  const skinContrast = gk === 'mahogany' ? 0.92 : 1.12;
   const isStainShown = !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
     const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
@@ -855,7 +860,7 @@ function unitSVG(door, sel, opts) {
         // stained woodgrain: the grain's skin texture tinted by the stain + grooves
         : `<g clip-path="url(#${cid})" style="isolation:isolate">
             <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-            <image href="${skinHref}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${tint ? tint.lvl : 1});mix-blend-mode:luminosity"/>
+            <image href="${skinHref}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${((tint ? tint.lvl : 1) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/>
           </g>` + grooveLayer)
       : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
     return `
