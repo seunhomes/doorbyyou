@@ -877,13 +877,17 @@ function unitSVG(door, sel, opts) {
     const cx = hx + 3;                                  // hardware centerline
     const dir = cx < lx + lw / 2 ? 1 : -1;              // lever arm points into the door
     const edge = `stroke="rgba(0,0,0,.25)" stroke-width="1"`;
-    const rose = (cy, col, square, r) => square
-      ? `<rect x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" rx="2.5" fill="${col}" ${edge}/>`
-      : `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" ${edge}/>`;
+    const rose = (cy, col, square, r, ox = 0) => square
+      ? `<rect x="${cx + ox - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" rx="2.5" fill="${col}" ${edge}/>`
+      : `<circle cx="${cx + ox}" cy="${cy}" r="${r}" fill="${col}" ${edge}/>`;
     const keyway = (cy, ox = 0) => `<circle cx="${cx + ox}" cy="${cy}" r="4.5" fill="rgba(0,0,0,.38)"/>
       <rect x="${cx + ox - 1}" y="${cy - 3}" width="2" height="6" rx="1" fill="rgba(255,255,255,.5)"/>`;
-    const thumbturn = (cy, col, square) => rose(cy, col, square, 9) +
-      `<rect x="${cx - 2.5}" y="${cy - 7}" width="5" height="14" rx="2.5" fill="rgba(255,255,255,.35)"/>`;
+    const thumbturn = (cy, col, square, ox = 0) => rose(cy, col, square, 9, ox) +
+      `<rect x="${cx + ox - 2.5}" y="${cy - 7}" width="5" height="14" rx="2.5" fill="rgba(255,255,255,.35)"/>`;
+    const dbY = DHu - 48 * inch;   // deadbolt at standard 48" lock height
+    const gripPlate = () => `<rect x="${cx - 6.5}" y="${DHu / 2 - 66}" width="13" height="112" rx="2" fill="${handleColor}" ${edge}/>
+      <circle cx="${cx}" cy="${DHu / 2 - 60}" r="1.3" fill="rgba(255,255,255,.35)"/>
+      <circle cx="${cx}" cy="${DHu / 2 + 40}" r="1.3" fill="rgba(255,255,255,.35)"/>`;
     const lever = (cy, col) => rose(cy, col, false, 11) +
       `<rect x="${dir > 0 ? cx - 3 : cx - 33 + 3}" y="${cy - 3.5}" width="33" height="7" rx="3.5" fill="${col}" ${edge}/>`;
     const bar = (col) => {
@@ -895,12 +899,13 @@ function unitSVG(door, sel, opts) {
     };
     const barTopY = () => DHu / 2 - (barIn * inch) / 2;
     if (hwType === 'none') {
-      // prep only — double bore
-      return `<circle cx="${cx}" cy="${DHu / 2 - 40}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>
-        <circle cx="${cx}" cy="${DHu / 2}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>`;
+      // prep only — double bore, drawn as real drilled holes at standard heights
+      const bore = (cy) => `<circle cx="${cx}" cy="${cy}" r="8" fill="rgba(26,13,5,.55)" stroke="rgba(0,0,0,.45)" stroke-width="1.5"/>
+        <path d="M ${cx - 5.5} ${cy - 4.5} A 7 7 0 0 1 ${cx + 5.5} ${cy - 4.5}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>`;
+      return bore(dbY) + bore(DHu / 2);
     }
     if (interiorView) {
-      if (hwType === 'ball') return bar(barCol) + thumbturn(Math.max(34, barTopY() - 16), dbCol, dbSquare);
+      if (hwType === 'ball') return bar(barCol) + thumbturn(dbY, dbCol, dbSquare, dir * 15);
       if (hwType === 'mp' && mpStyle === 'bar') {
         // T-lever drives the multipoint from inside
         return thumbturn(DHu / 2 - 46, barCol, tSquare) + rose(DHu / 2, barCol, tSquare, 10) +
@@ -909,9 +914,14 @@ function unitSVG(door, sel, opts) {
       }
       if (hwType === 'digital') return `<rect x="${cx - 9}" y="${DHu / 2 - 62}" width="18" height="40" rx="4" fill="#2a2a2c" ${edge}/>` +
         thumbturn(DHu / 2 - 52, '#3a3a3d', false) + lever(DHu / 2, handleColor);
+      if (mpStyle === 'grip') {
+        // interior of the handleset: same plate, lever, thumbturn above
+        return gripPlate() + thumbturn(DHu / 2 - 38, handleColor, false) +
+          `<rect x="${dir > 0 ? cx - 2 : cx + 2 - 34}" y="${DHu / 2 - 3.5}" width="34" height="7" rx="3.5" fill="${handleColor}" ${edge}/>`;
+      }
       return thumbturn(DHu / 2 - 46, handleColor, dbSquare) + lever(DHu / 2, handleColor);
     }
-    if (hwType === 'ball') return bar(barCol) + rose(Math.max(34, barTopY() - 16), dbCol, dbSquare, 10) + keyway(Math.max(34, barTopY() - 16));
+    if (hwType === 'ball') return bar(barCol) + rose(dbY, dbCol, dbSquare, 10, dir * 15) + keyway(dbY, dir * 15);
     if (hwType === 'digital') {
       const ky = DHu / 2 - 60;
       const dots = [0, 1, 2].map(r => [0, 1, 2].map(c =>
@@ -921,12 +931,11 @@ function unitSVG(door, sel, opts) {
         lever(DHu / 2, handleColor);
     }
     if (mpStyle === 'grip') {
-      // handleset: backplate, thumb-latch grip, keyed cylinder up top
-      return `<rect x="${cx - 5.5}" y="${DHu / 2 - 66}" width="11" height="118" rx="5" fill="${handleColor}" ${edge}/>` +
-        keyway(DHu / 2 - 56) +
-        `<ellipse cx="${cx}" cy="${DHu / 2 - 44}" rx="8" ry="4" fill="${handleColor}" ${edge}/>
-         <path d="M ${cx} ${DHu / 2 - 40} Q ${cx + dir * 17} ${DHu / 2} ${cx} ${DHu / 2 + 42}" fill="none" stroke="${handleColor}" stroke-width="7.5" stroke-linecap="round"/>
-         <path d="M ${cx} ${DHu / 2 - 40} Q ${cx + dir * 17} ${DHu / 2} ${cx} ${DHu / 2 + 42}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.5" stroke-linecap="round"/>`;
+      // multipoint handleset per the real set: tall escutcheon plate, straight
+      // lever mid-plate, keyed cylinder above
+      return gripPlate() + rose(DHu / 2 - 38, handleColor, false, 6.5) + keyway(DHu / 2 - 38) +
+        `<rect x="${dir > 0 ? cx - 2 : cx + 2 - 34}" y="${DHu / 2 - 3.5}" width="34" height="7" rx="3.5" fill="${handleColor}" ${edge}/>
+         <rect x="${dir > 0 ? cx - 1 : cx + 3 - 34}" y="${DHu / 2 - 2.8}" width="32" height="2" rx="1" fill="rgba(255,255,255,.22)"/>`;
     }
     if (mpStyle === 'lever') return rose(DHu / 2 - 34, handleColor, false, 8) + keyway(DHu / 2 - 34) + lever(DHu / 2, handleColor);
     // multipoint pull bar + keyed cylinder beside it
