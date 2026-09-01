@@ -200,7 +200,8 @@
       ? `Custom ${inFrac(s.cw)} × ${inFrac(s.ch)}`
       : `${CONFIG.slabWidths[s.slabW].label} × ${CONFIG.slabHeights[s.height].hIn}"`);
     if (st.picked.swing) bits.push(`${s.handleSide === 0 ? 'Left' : 'Right'} hand hinge`, CONFIG.swings[s.swing].label);
-    pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view, noHandle: !st.picked.hw, noGrain: !st.picked.grain }) + `
+    pane.innerHTML = unitSVG(st.door, st.sel, { dims: sized ? computeDims() : null, view: st.view,
+      noHandle: st.step < 7 || !st.picked.hw, noGrain: !st.picked.grain }) + `
       <div class="pv-cap"><span>Live preview · ${st.view === 'int' ? 'interior' : 'exterior'} view</span><b>${bits.join(' · ')}</b></div>
       <div class="pv-toggle" role="group" aria-label="Preview side">
         <button type="button" class="${st.view !== 'int' ? 'on' : ''}" data-v="ext">Exterior</button>

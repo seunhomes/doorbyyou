@@ -710,11 +710,13 @@ function unitSVG(door, sel, opts) {
      (smooth grain, painted interiors) renders as a flat skin + grooves */
   const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
   const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
-  /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55); each skin
-     corrects its own measured mean to that baseline so every stain's mid-tone
-     lands exactly on its swatch (mahogany 0.483 gamma-normalized, oak 0.577) */
-  const skinLevel = gk === 'mahogany' ? 1.138 : 0.953;
-  const skinContrast = gk === 'mahogany' ? 1.0 : 1.05;
+  /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55). Oak (0.577
+     mean) corrects to that baseline so stains land on their swatch. Mahogany
+     (0.338 mean, mild gamma keeps its figure) deliberately runs UNcorrected:
+     real mahogany is a darker wood, so every stain renders richer and deeper
+     on it — forcing swatch parity flattened the grain to nothing. */
+  const skinLevel = gk === 'mahogany' ? 1.0 : 0.953;
+  const skinContrast = gk === 'mahogany' ? 1.05 : 1.05;
   // opts.noGrain: skin not chosen yet — render a neutral unfinished slab
   const isStainShown = !opts.noGrain && !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
