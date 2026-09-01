@@ -539,7 +539,7 @@
         `<button type="button" class="opt-sw ${pickedFlag && onIdx === i ? 'on' : ''}" data-i="${i}" title="${finLabel(i)}" style="background:${FINISHES[fk[i]].swatch}"></button>`).join('')}</div>`;
     const interior = CONFIG.interiors[s.interior] || {};
     paneR.innerHTML = `
-      <h2>Step 6 · Paint, stain &amp; colour</h2>
+      <h2>Step 6 · Colour</h2>
       <p class="sub">${grainKey() === 'smooth' ? 'Painted colours for your smooth slab.' : 'Stain tones for your woodgrain slab.'} Inside and out, factory finished.</p>
       ${grp('finish', 'Exterior slab colour', swRow('finish', allowed, s.finish, st.picked.finish))}
       <div class="grp"><div class="lbl"><span>Painted grooves${hintIco('grooves')}</span> <b>${valLabel('grooves')}</b></div>
