@@ -747,9 +747,10 @@ function unitSVG(door, sel, opts) {
     fTint = { color: '#' + ((1 << 24) + (mx((n2 >> 16) & 255, 122) << 16) + (mx((n2 >> 8) & 255, 63) << 8)
       + mx(n2 & 255, 43)).toString(16).slice(1), lvl: fTint.lvl };
   }
-  // Frame-finish choice: 'Wood grain' textures the frame, 'Smooth' keeps it flat
+  // Frame-finish choice: 'Wood grain' textures the frame (any colour — stain or
+  // paint shows over the grain), 'Smooth' keeps it flat
   const frameGrainy = ((CONFIG.frameFinishes[(sel && sel.frameFinish != null) ? sel.frameFinish : 1] || {}).key) !== 'smooth';
-  const frameWood = !opts.noGrain && frameGrainy && gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
+  const frameWood = !opts.noGrain && frameGrainy && gk !== 'smooth' && !!fTint;
   const frameFill = frameWood ? `url(#ftex-${uid})` : frameColor;
   const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
   // smooth skin: true paint colour + groove/highlight tones scaled to its lightness
@@ -790,9 +791,9 @@ function unitSVG(door, sel, opts) {
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
-  // transom spans to the outermost frame line: brickmould edge when installed,
-  // else the unit's own frame (no-sidelite units carry a 12u frame of their own)
-  const trExt = brick ? 14 : (hasSL ? 0 : 12);
+  // transom spans the unit's frame line (no-sidelite units carry a 12u frame of
+  // their own); brickmould wraps AROUND the unit and never resizes the transom
+  const trExt = hasSL ? 0 : 12;
   const trW = totalW + trExt * 2, tx0 = -trExt;
   // semi-circle: true half-circle up to a 30" rise, then a capped ellipse on wide units
   const trH = tr.h ? (tr.arch ? Math.min(Math.round(trW / 2), Math.round(30 * PPI)) : Math.round(16 * PPI)) : 0;
