@@ -747,7 +747,9 @@ function unitSVG(door, sel, opts) {
     fTint = { color: '#' + ((1 << 24) + (mx((n2 >> 16) & 255, 122) << 16) + (mx((n2 >> 8) & 255, 63) << 8)
       + mx(n2 & 255, 43)).toString(16).slice(1), lvl: fTint.lvl };
   }
-  const frameWood = !opts.noGrain && gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
+  // Frame-finish choice: 'Wood grain' textures the frame, 'Smooth' keeps it flat
+  const frameGrainy = ((CONFIG.frameFinishes[(sel && sel.frameFinish != null) ? sel.frameFinish : 1] || {}).key) !== 'smooth';
+  const frameWood = !opts.noGrain && frameGrainy && gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
   const frameFill = frameWood ? `url(#ftex-${uid})` : frameColor;
   const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
   // smooth skin: true paint colour + groove/highlight tones scaled to its lightness
