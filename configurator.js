@@ -32,7 +32,19 @@
 
   // deep-link: ?door=Name preselects the design
   const pre = qs.get('door') && DOORS.find(d => d.name.toLowerCase() === qs.get('door').toLowerCase());
-  if (pre) { st.door = pre; st.sel = defaultSel(pre); }
+  // resume this tab's in-progress build — a reload lands exactly where you were
+  try {
+    const saved = JSON.parse(sessionStorage.getItem('dby-build') || 'null');
+    if (saved && saved.name && (!pre || pre.name === saved.name)) {
+      const d = DOORS.find(x => x.name === saved.name);
+      if (d) {
+        st.door = d; st.sel = Object.assign(defaultSel(d), saved.sel);
+        st.picked = saved.picked || {}; st.step = Math.min(saved.step || 0, REVIEW);
+        st.view = saved.view === 'int' ? 'int' : 'ext';
+      }
+    }
+  } catch (e) {}
+  if (!st.door && pre) { st.door = pre; st.sel = defaultSel(pre); }
   // deep-link: ?b=token restores a saved/shared build (treated as fully chosen)
   if (qs.get('b') && P.builds) {
     const b = P.builds.decode(qs.get('b'));
@@ -41,6 +53,8 @@
       if (d) { st.door = d; st.sel = Object.assign(defaultSel(d), b.sel); pickAll(); st.step = REVIEW; }
     }
   }
+  // clean the address bar so reloads resume from this tab, not from the link
+  if (qs.get('b') || qs.get('door')) history.replaceState(null, '', location.pathname);
 
   const pane = document.getElementById('preview');
   const paneR = document.getElementById('pane');
@@ -120,9 +134,12 @@
   }
 
   function syncURL() {
-    if (!P.builds || !st.door) return;
-    const token = P.builds.encode({ product: 'door', name: st.door.name, sel: st.sel });
-    history.replaceState(null, '', '?b=' + token);
+    // progress lives in this tab only; share links are minted by the Review buttons
+    if (!st.door) return;
+    try {
+      sessionStorage.setItem('dby-build', JSON.stringify({
+        name: st.door.name, sel: st.sel, picked: st.picked, step: st.step, view: st.view }));
+    } catch (e) {}
   }
 
   /* ---------- preview ---------- */
@@ -888,6 +905,15 @@
     const s = e.target.closest('.step'); if (!s) return;
     const target = +s.dataset.s;
     if (target <= firstIncomplete()) { st.step = target; render(); }
+  });
+
+  const startOver = document.getElementById('startOver');
+  if (startOver) startOver.addEventListener('click', () => {
+    if (!confirm('Start over from the beginning? Your current build will be cleared.')) return;
+    try { sessionStorage.removeItem('dby-build'); } catch (e) {}
+    st = { step: 0, door: null, sel: null, picked: {}, view: 'ext',
+      home: { url: null, x: 0.5, y: 0.62, scale: 0.42 } };
+    render();
   });
 
   optKeyboardNav(paneR);

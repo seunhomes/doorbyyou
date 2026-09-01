@@ -15,6 +15,7 @@
   /* sticky strip: stepper + running price stay visible while the panes scroll */
   .cfg-sticky{position:sticky;top:74px;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 0;}
   .sticky-inner{display:flex;align-items:stretch;gap:16px;}
+  .sticky-inner .btn{align-self:center;flex:none;white-space:nowrap;}
   .head-price{display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:1px;padding:0 2px;}
   .head-price span{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;white-space:nowrap;}
   .head-price b{font-family:var(--serif);font-size:25px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
@@ -252,6 +253,7 @@
   <div class="cfg-sticky">
     <div class="wrap sticky-inner">
       <div class="steps" id="steps"></div>
+      <button class="btn ghost sm" id="startOver" type="button">Start over</button>
       <div class="head-price" id="headPrice" hidden>
         <span>Current build</span>
         <b id="headPriceVal">$0</b>
@@ -301,10 +303,10 @@
   </footer>
 
   <!-- bump ?v= on every deploy that touches these files — busts the Pages cache -->
-  <script src="doors.js?v=10"></script>
-  <script src="visualizer.js?v=10"></script>
-  <script src="cart.js?v=10"></script>
-  <script src="builds.js?v=10"></script>
-  <script src="configurator.js?v=10"></script>
+  <script src="doors.js?v=11"></script>
+  <script src="visualizer.js?v=11"></script>
+  <script src="cart.js?v=11"></script>
+  <script src="builds.js?v=11"></script>
+  <script src="configurator.js?v=11"></script>
 </body>
 </html>
