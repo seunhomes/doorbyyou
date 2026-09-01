@@ -711,10 +711,10 @@ function unitSVG(door, sel, opts) {
   const gk = (CONFIG.grains[(sel && sel.grain != null) ? sel.grain : 0] || CONFIG.grains[0]).key;
   const skinHref = gk === 'mahogany' ? 'images/skin-mahogany.jpg' : 'images/skin-oak.jpg';
   /* finishTint assumes a 0.55-mean-luma skin (lvl = swatch/0.55); each skin
-     corrects its own mean (oak 0.839 bright, mahogany 0.186 dark) to that
-     baseline so every stain's mid-tone lands exactly on its swatch */
-  const skinLevel = gk === 'mahogany' ? 2.96 : 0.656;
-  const skinContrast = gk === 'mahogany' ? 0.92 : 1.12;
+     corrects its own measured mean to that baseline so every stain's mid-tone
+     lands exactly on its swatch (mahogany asset is gamma-normalized to 0.515) */
+  const skinLevel = gk === 'mahogany' ? 1.07 : 0.656;
+  const skinContrast = gk === 'mahogany' ? 1.0 : 1.12;
   const isStainShown = !!(FINISHES[dispKey] || {}).stain;
   if (tint && gk === 'mahogany' && (FINISHES[dispKey] || {}).stain) {
     const n = parseInt(tint.color.slice(1), 16), mix = (a, b) => Math.round(a + (b - a) * 0.3);
@@ -729,6 +729,16 @@ function unitSVG(door, sel, opts) {
     ? (gk === 'smooth' ? ((FINISHES[dispKey] || {}).swatch || '#ECEAE1')
       : (tint ? tint.color : (FINISHES[frameKey] || {}).swatch || '#fbfaf6'))
     : (FINISHES[frameKey] || {}).swatch || '#fbfaf6';
+  /* frame in wood: a stained frame renders the grain skin tinted in its stain
+     (matching the slab by default); a painted frame stays a flat colour */
+  let fTint = (frameKey === finKey && !interiorView) ? tint : finishTint(frameKey);
+  if (fTint && fTint !== tint && gk === 'mahogany' && (FINISHES[frameKey] || {}).stain) {
+    const n2 = parseInt(fTint.color.slice(1), 16), mx = (a, b) => Math.round(a + (b - a) * 0.3);
+    fTint = { color: '#' + ((1 << 24) + (mx((n2 >> 16) & 255, 122) << 16) + (mx((n2 >> 8) & 255, 63) << 8)
+      + mx(n2 & 255, 43)).toString(16).slice(1), lvl: fTint.lvl };
+  }
+  const frameWood = gk !== 'smooth' && !!(FINISHES[frameKey] || {}).stain && !!fTint;
+  const frameFill = frameWood ? `url(#ftex-${uid})` : frameColor;
   const groovesPainted = !interiorView && !!(CONFIG.paintedGrooves[sel ? sel.grooves : 0] || {}).painted;
   // smooth skin: true paint colour + groove/highlight tones scaled to its lightness
   const paintHex = (FINISHES[dispKey] || {}).swatch || '#ECEAE1';
@@ -881,17 +891,17 @@ function unitSVG(door, sel, opts) {
   // transom
   if (tr.h) {
     if (tr.arch) {
-      frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
       frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="rgba(255,255,255,.14)"/>`;
     } else {
-      frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += glassPanel(8, 8, totalW - 16, trH - 16, trTint || 'clear', uid, false);
     }
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
-    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameColor}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
   if (leftS)  frames += glassPanel(FR, slabY, SG, DH, slTint || 'etch', uid, true);
   if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, slTint || 'etch', uid, true);
@@ -938,11 +948,15 @@ function unitSVG(door, sel, opts) {
     <defs>${faceGrad}${glassDefs(uid)}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="rgba(0,0,0,.12)"/><stop offset="1" stop-color="rgba(0,0,0,0)"/></linearGradient>
+      ${frameWood ? `<pattern id="ftex-${uid}" patternUnits="userSpaceOnUse" x="-20" y="-30" width="${totalW + 48}" height="${totalH + 60}">
+        <g style="isolation:isolate"><rect width="${totalW + 48}" height="${totalH + 60}" fill="${fTint.color}"/>
+        <image href="${skinHref}" width="${totalW + 48}" height="${totalH + 60}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${(parseFloat(fTint.lvl) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/></g>
+      </pattern>` : ''}
     </defs>
-    ${brick ? `<rect x="-14" y="-8" width="${totalW+28}" height="${totalH+16}" rx="3" fill="${frameColor}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
+    ${brick ? `<rect x="-14" y="-8" width="${totalW+28}" height="${totalH+16}" rx="3" fill="${frameFill}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
     ${frames}
     <g transform="translate(${doorX}, ${slabY})">
-      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="${frameColor}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
+      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${leaves}
     </g>
     ${opts.bare ? '' : `<rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="7" rx="1.5" fill="${thr.swatch}"/>
