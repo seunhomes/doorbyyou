@@ -345,7 +345,7 @@ const CONFIG = {
   transoms: [
     { label: 'None',        add: 0,   h: 0 },
     { label: 'Rectangular', add: 500, h: 14 },
-    { label: 'Arched',      add: 500, h: 18, arch: true },
+    { label: 'Semi-circle', add: 500, h: 18, arch: true },
   ],
   hinges: [
     { label: 'Satin Nickel', add: 0,   swatch: '#b9bcc0' },
@@ -519,7 +519,7 @@ function defaultSel(door) {
     handle: 0, handleSide: 0, hinge: 0, jamb: 0, brickmould: 0, grooves: 0, region: 0,
     /* guided-wizard keys */
     grain: 0, slabW: 2, frameFinish: 1, threshold: 0, swing: 0,
-    interior: 0, interiorC: fin, glassSL: 0, glassTR: 0,
+    interior: 1, interiorC: fin, glassSL: 0, glassTR: 0,   // interior matches exterior until chosen
     hw: 0, mpStyle: 0, barSize: 0, barColor: 0, tLever: 0, dbShape: 0, dbColor: 0 };
 }
 
@@ -765,7 +765,16 @@ function unitSVG(door, sel, opts) {
   const thr = CONFIG.thresholds[(sel && sel.threshold != null) ? sel.threshold : 0] || CONFIG.thresholds[0];
 
   const dbl = !!cfg.dbl;
-  const DWd = dbl ? 320 : DW;          // door footprint width
+  /* real-size geometry: px-per-inch anchored at 79" = 470u, so slab width,
+     height, transom and hardware all draw true to the chosen sizes */
+  const PPI = 470 / 79;
+  const slabWIn = (sel && sel.customSize && sel.cw) ? sel.cw
+    : ((CONFIG.slabWidths[(sel && sel.slabW != null) ? sel.slabW : 2] || {}).w || 36);
+  const slabHIn = (sel && sel.customSize && sel.ch) ? sel.ch
+    : ((CONFIG.slabHeights[(sel && sel.height != null) ? sel.height : 0] || {}).hIn || 79);
+  const DHu = Math.round(slabHIn * PPI);
+  const leafW = Math.round(slabWIn * PPI);
+  const DWd = dbl ? leafW * 2 + 6 : leafW;   // door footprint width
   // a single sidelite sits left or right per sel.slSide (mirrored in interior view)
   const oneSL = cfg.sides === 1;
   const slRightExt = oneSL && sel && sel.slSide === 1;
@@ -773,15 +782,15 @@ function unitSVG(door, sel, opts) {
   const leftS = cfg.sides >= 2 || (oneSL && !slRight), rightS = cfg.sides >= 2 || (oneSL && slRight);
   const hasSL = leftS || rightS;
   const FR = 13;                       // uniform jamb / mullion thickness
-  const SG = 54;                       // sidelite glass width
+  const SG = 62;                       // sidelite glass width (~10.4")
   const leftPad  = leftS  ? FR + SG + FR : (hasSL ? FR : 0);
   const rightPad = rightS ? FR + SG + FR : (hasSL ? FR : 0);
   const doorX = leftPad;
   const totalW = leftPad + DWd + rightPad;
-  const trH = tr.h ? 70 : 0;
+  const trH = tr.h ? Math.round((tr.arch ? 20 : 16) * PPI) : 0;
   const topY = trH;   // transom mulls directly onto the frame below — no air gap
   const slabY = topY + (hasSL ? FR : 0);
-  const totalH = slabY + DH;   // open threshold — no bottom rail under the slab
+  const totalH = slabY + DHu;   // open threshold — no bottom rail under the slab
 
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
@@ -793,9 +802,7 @@ function unitSVG(door, sel, opts) {
   const HWC = CONFIG.hardware;
   const hwType = (HWC.types[sel && sel.hw != null ? sel.hw : 0] || {}).key || 'mp';
   const mpStyle = (HWC.mpStyles[sel && sel.mpStyle != null ? sel.mpStyle : 0] || {}).key || 'bar';
-  const slabHIn = (sel && sel.customSize && sel.ch) ? sel.ch
-    : (CONFIG.slabHeights[(sel && sel.height != null) ? sel.height : 0] || {}).hIn || 80;
-  const inch = DH / slabHIn;
+  const inch = DHu / slabHIn;   // = PPI; hardware draws in true inches
   const barIn = [48, 60, 72][sel && sel.barSize != null ? sel.barSize : 0] || 48;
   const barCol = (HWC.barColors[sel && sel.barColor != null ? sel.barColor : 0] || {}).swatch || '#222224';
   const dbSquare = (sel && sel.dbShape != null ? sel.dbShape : 0) === 0;
@@ -815,50 +822,50 @@ function unitSVG(door, sel, opts) {
     const lever = (cy, col) => rose(cy, col, false, 11) +
       `<rect x="${dir > 0 ? cx - 3 : cx - 33 + 3}" y="${cy - 3.5}" width="33" height="7" rx="3.5" fill="${col}" ${edge}/>`;
     const bar = (col) => {
-      const L = barIn * inch, y0 = DH / 2 - L / 2;
+      const L = barIn * inch, y0 = DHu / 2 - L / 2;
       return `<circle cx="${cx}" cy="${y0 + L * .12}" r="4.5" fill="rgba(0,0,0,.3)"/>
         <circle cx="${cx}" cy="${y0 + L * .88}" r="4.5" fill="rgba(0,0,0,.3)"/>
         <rect x="${cx - 3.5}" y="${y0}" width="7" height="${L}" rx="3.5" fill="${col}" ${edge}/>
         <rect x="${cx - 2.2}" y="${y0 + 1.5}" width="2.6" height="${L - 3}" rx="1.3" fill="rgba(255,255,255,.28)"/>`;
     };
-    const barTopY = () => DH / 2 - (barIn * inch) / 2;
+    const barTopY = () => DHu / 2 - (barIn * inch) / 2;
     if (hwType === 'none') {
       // prep only — double bore
-      return `<circle cx="${cx}" cy="${DH / 2 - 40}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>
-        <circle cx="${cx}" cy="${DH / 2}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>`;
+      return `<circle cx="${cx}" cy="${DHu / 2 - 40}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>
+        <circle cx="${cx}" cy="${DHu / 2}" r="7" fill="rgba(0,0,0,.13)" ${edge}/>`;
     }
     if (interiorView) {
       if (hwType === 'ball') return bar(barCol) + thumbturn(Math.max(34, barTopY() - 16), dbCol, dbSquare);
       if (hwType === 'mp' && mpStyle === 'bar') {
         // T-lever drives the multipoint from inside
-        return thumbturn(DH / 2 - 46, barCol, tSquare) + rose(DH / 2, barCol, tSquare, 10) +
-          `<rect x="${cx - 13}" y="${DH / 2 - 13}" width="26" height="6" rx="3" fill="${barCol}" ${edge}/>
-           <rect x="${cx - 3}" y="${DH / 2 - 10}" width="6" height="24" rx="3" fill="${barCol}" ${edge}/>`;
+        return thumbturn(DHu / 2 - 46, barCol, tSquare) + rose(DHu / 2, barCol, tSquare, 10) +
+          `<rect x="${cx - 13}" y="${DHu / 2 - 13}" width="26" height="6" rx="3" fill="${barCol}" ${edge}/>
+           <rect x="${cx - 3}" y="${DHu / 2 - 10}" width="6" height="24" rx="3" fill="${barCol}" ${edge}/>`;
       }
-      if (hwType === 'digital') return `<rect x="${cx - 9}" y="${DH / 2 - 62}" width="18" height="40" rx="4" fill="#2a2a2c" ${edge}/>` +
-        thumbturn(DH / 2 - 52, '#3a3a3d', false) + lever(DH / 2, handleColor);
-      return thumbturn(DH / 2 - 46, handleColor, dbSquare) + lever(DH / 2, handleColor);
+      if (hwType === 'digital') return `<rect x="${cx - 9}" y="${DHu / 2 - 62}" width="18" height="40" rx="4" fill="#2a2a2c" ${edge}/>` +
+        thumbturn(DHu / 2 - 52, '#3a3a3d', false) + lever(DHu / 2, handleColor);
+      return thumbturn(DHu / 2 - 46, handleColor, dbSquare) + lever(DHu / 2, handleColor);
     }
     if (hwType === 'ball') return bar(barCol) + rose(Math.max(34, barTopY() - 16), dbCol, dbSquare, 10) + keyway(Math.max(34, barTopY() - 16));
     if (hwType === 'digital') {
-      const ky = DH / 2 - 60;
+      const ky = DHu / 2 - 60;
       const dots = [0, 1, 2].map(r => [0, 1, 2].map(c =>
         `<circle cx="${cx - 5 + c * 5}" cy="${ky + 8 + r * 6}" r="1.3" fill="rgba(255,255,255,.75)"/>`).join('')).join('');
       return `<rect x="${cx - 10}" y="${ky}" width="20" height="34" rx="4" fill="#2a2a2c" ${edge}/>${dots}
         <rect x="${cx - 6}" y="${ky + 26}" width="12" height="3.5" rx="1.75" fill="rgba(255,255,255,.3)"/>` +
-        lever(DH / 2, handleColor);
+        lever(DHu / 2, handleColor);
     }
     if (mpStyle === 'grip') {
       // handleset: backplate, thumb-latch grip, keyed cylinder up top
-      return `<rect x="${cx - 5.5}" y="${DH / 2 - 66}" width="11" height="118" rx="5" fill="${handleColor}" ${edge}/>` +
-        keyway(DH / 2 - 56) +
-        `<ellipse cx="${cx}" cy="${DH / 2 - 44}" rx="8" ry="4" fill="${handleColor}" ${edge}/>
-         <path d="M ${cx} ${DH / 2 - 40} Q ${cx + dir * 17} ${DH / 2} ${cx} ${DH / 2 + 42}" fill="none" stroke="${handleColor}" stroke-width="7.5" stroke-linecap="round"/>
-         <path d="M ${cx} ${DH / 2 - 40} Q ${cx + dir * 17} ${DH / 2} ${cx} ${DH / 2 + 42}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.5" stroke-linecap="round"/>`;
+      return `<rect x="${cx - 5.5}" y="${DHu / 2 - 66}" width="11" height="118" rx="5" fill="${handleColor}" ${edge}/>` +
+        keyway(DHu / 2 - 56) +
+        `<ellipse cx="${cx}" cy="${DHu / 2 - 44}" rx="8" ry="4" fill="${handleColor}" ${edge}/>
+         <path d="M ${cx} ${DHu / 2 - 40} Q ${cx + dir * 17} ${DHu / 2} ${cx} ${DHu / 2 + 42}" fill="none" stroke="${handleColor}" stroke-width="7.5" stroke-linecap="round"/>
+         <path d="M ${cx} ${DHu / 2 - 40} Q ${cx + dir * 17} ${DHu / 2} ${cx} ${DHu / 2 + 42}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2.5" stroke-linecap="round"/>`;
     }
-    if (mpStyle === 'lever') return rose(DH / 2 - 34, handleColor, false, 8) + keyway(DH / 2 - 34) + lever(DH / 2, handleColor);
+    if (mpStyle === 'lever') return rose(DHu / 2 - 34, handleColor, false, 8) + keyway(DHu / 2 - 34) + lever(DHu / 2, handleColor);
     // multipoint pull bar + keyed cylinder beside it
-    return bar(barCol) + `<circle cx="${cx + dir * 15}" cy="${DH / 2}" r="7" fill="${barCol}" ${edge}/>` + keyway(DH / 2, dir * 15);
+    return bar(barCol) + `<circle cx="${cx + dir * 15}" cy="${DHu / 2}" r="7" fill="${barCol}" ${edge}/>` + keyway(DHu / 2, dir * 15);
   }
 
   // one door leaf: slab (tinted render or gradient) + edge + handle
@@ -871,24 +878,24 @@ function unitSVG(door, sel, opts) {
       ? (groovesPainted ? 'rgba(0,0,0,.85)' : 'rgba(38,16,5,.55)')
       : smoothGroove;
     const hCol = isStainShown ? 'rgba(255,236,210,.26)' : smoothHigh;
-    const grooveLayer = `<g clip-path="url(#${cid})"><g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},1)">
+    const grooveLayer = `<g clip-path="url(#${cid})"><g transform="translate(${x},0) scale(${(w / DW).toFixed(4)},${(DHu / 470).toFixed(4)})">
         <g transform="translate(0,1.7)">${slim(patternSVG(door.pattern, hCol, 'rgba(0,0,0,0)'))}</g>
         ${slim(patternSVG(door.pattern, gCol, 'rgba(0,0,0,0)'))}
       </g></g>`;
     const face = door.image
-      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DH}" rx="3"/></clipPath>` + (
+      ? `<clipPath id="${cid}"><rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3"/></clipPath>` + (
         !isStainShown
         // painted skin (smooth grain, painted interiors): flat colour + grooves
-        ? `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="${paintHex}"/>` + grooveLayer
+        ? `<rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3" fill="${paintHex}"/>` + grooveLayer
         // stained woodgrain: the grain's skin texture tinted by the stain + grooves
         : `<g clip-path="url(#${cid})" style="isolation:isolate">
-            <rect x="${x}" y="0" width="${w}" height="${DH}" fill="${tint ? tint.color : '#bdb7a8'}"/>
-            <image href="${skinHref}" x="${x}" y="0" width="${w}" height="${DH}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${((tint ? tint.lvl : 1) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/>
+            <rect x="${x}" y="0" width="${w}" height="${DHu}" fill="${tint ? tint.color : '#bdb7a8'}"/>
+            <image href="${skinHref}" x="${x}" y="0" width="${w}" height="${DHu}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${((tint ? tint.lvl : 1) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/>
           </g>` + grooveLayer)
-      : `<rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="url(#face-${uid})"/>`;
+      : `<rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3" fill="url(#face-${uid})"/>`;
     return `
       ${face}
-      <rect x="${x}" y="0" width="${w}" height="${DH}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+      <rect x="${x}" y="0" width="${w}" height="${DHu}" rx="3" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
       ${opts.noHandle ? '' : hardware(handleX, x, w)}`;
   }
 
@@ -904,9 +911,10 @@ function unitSVG(door, sel, opts) {
   // transom
   if (tr.h) {
     if (tr.arch) {
-      frames += `<path d="M0 ${trH} L0 26 Q${totalW/2} ${-18} ${totalW} 26 L${totalW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
-      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
-      frames += `<path d="M10 ${trH-6} L10 30 Q${totalW/2} ${-6} ${totalW-10} 30 L${totalW-10} ${trH-6} Z" fill="rgba(255,255,255,.14)"/>`;
+      // true semi-circle transom: half-ellipse spanning the unit width
+      frames += `<path d="M0 ${trH} A ${totalW/2} ${trH} 0 0 1 ${totalW} ${trH} Z" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+      frames += `<path d="M12 ${trH} A ${totalW/2 - 12} ${trH - 11} 0 0 1 ${totalW - 12} ${trH} Z" fill="${glassFill(trTint || 'clear', uid)}"/>`;
+      frames += `<path d="M12 ${trH} A ${totalW/2 - 12} ${trH - 11} 0 0 1 ${totalW - 12} ${trH} Z" fill="rgba(255,255,255,.14)"/>`;
     } else {
       frames += `<rect x="0" y="0" width="${totalW}" height="${trH}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
       frames += glassPanel(8, 8, totalW - 16, trH - 16, trTint || 'clear', uid, false);
@@ -914,10 +922,10 @@ function unitSVG(door, sel, opts) {
   }
   // unified jamb behind the door + sidelites, so every mullion is equal width
   if (hasSL) {
-    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DH + FR}" rx="4" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
+    frames += `<rect x="0" y="${topY}" width="${totalW}" height="${DHu + FR}" rx="4" fill="${frameFill}" stroke="rgba(0,0,0,.14)" stroke-width="2"/>`;
   }
-  if (leftS)  frames += glassPanel(FR, slabY, SG, DH, slTint || 'etch', uid, true);
-  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DH, slTint || 'etch', uid, true);
+  if (leftS)  frames += glassPanel(FR, slabY, SG, DHu, slTint || 'etch', uid, true);
+  if (rightS) frames += glassPanel(totalW - FR - SG, slabY, SG, DHu, slTint || 'etch', uid, true);
 
   /* dimension callouts (configurator live preview)
      opts.dims = {w, roW, h, roH, door?, sl?} display strings */
@@ -925,7 +933,7 @@ function unitSVG(door, sel, opts) {
   if (opts.dims) {
     const D = opts.dims;
     const fx0 = hasSL ? 0 : doorX - 12, fx1 = hasSL ? totalW : doorX + DWd + 12;
-    const fy0 = trH ? (tr.arch ? -18 : 0) : slabY - 6, fy1 = totalH + 5;
+    const fy0 = trH ? 0 : slabY - 6, fy1 = totalH + 5;
     const dc = '#443f35', rc = '#3d6274';
     const tick = (x, y, vert) => vert
       ? `<line x1="${x - 5}" y1="${y}" x2="${x + 5}" y2="${y}"/>`
@@ -969,7 +977,7 @@ function unitSVG(door, sel, opts) {
     ${brick ? `<rect x="-14" y="-8" width="${totalW+28}" height="${totalH+16}" rx="3" fill="${frameFill}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
     ${frames}
     <g transform="translate(${doorX}, ${slabY})">
-      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DH+10}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
+      ${(opts.bare || hasSL) ? '' : `<rect x="-12" y="-6" width="${DWd+24}" height="${DHu+10}" rx="2" fill="${frameFill}" stroke="rgba(0,0,0,.1)" stroke-width="1"/>`}
       ${leaves}
     </g>
     ${opts.bare ? '' : `<rect x="${doorX - 4}" y="${totalH - 2}" width="${DWd + 8}" height="7" rx="1.5" fill="${thr.swatch}"/>

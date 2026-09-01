@@ -235,7 +235,6 @@
   }
   const btns = (key, items, extra = () => '') =>
     row(key, items, (x, i, on) => `<button class="opt-btn ${on ? 'on' : ''}" data-i="${i}">${x.label}${extra(x, i)}</button>`);
-  const priced = (x) => x.add ? ` +${fmt(x.add)}` : '';
   function grp(key, title, inner, hintKey) {
     const chosen = st.picked[key];
     const val = chosen ? valLabel(key) : '<i class="tbc">select…</i>';
@@ -322,7 +321,7 @@
   // just the glass shape, centred — None stays empty
   function transomIcon(tr) {
     const glass = tr.h ? (tr.arch
-      ? `<path d="M16 44 Q52 14 88 44 L88 48 L16 48 Z" class="li-g"/>`
+      ? `<path d="M16 50 A 36 28 0 0 1 88 50 Z" class="li-g"/>`
       : `<rect x="16" y="28" width="72" height="18" rx="2" class="li-g"/>`) : '';
     return `<svg viewBox="0 0 104 72" class="li" aria-hidden="true">${glass}</svg>`;
   }
@@ -431,8 +430,8 @@
         ? grp('slSide', 'Sidelite side · viewed from outside', btns('slSide', CONFIG.slSides))
         : ''}
       ${grp('transom', 'Transom', row('transom', CONFIG.transoms, (t, i, on) =>
-        `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${transomIcon(t)}<span>${t.label}${t.add ? ' +' + fmt(t.add) : ''}</span></button>`), 'transom')}
-      ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths, (x) => (x.std ? ' · standard' : '') + priced(x)), 'slab')}
+        `<button type="button" class="lay-card ${on ? 'on' : ''}" data-i="${i}">${transomIcon(t)}<span>${t.label}</span></button>`), 'transom')}
+      ${grp('slabW', 'Slab width', btns('slabW', CONFIG.slabWidths, (x) => x.std ? ' · standard' : ''), 'slab')}
       ${grp('height', 'Slab height', btns('height', CONFIG.slabHeights, (x) => x.std ? ' · standard' : ''), 'slab')}
       <div class="grp">
         <div class="lbl">Custom size <b>${customOK() ? `${inFrac(s.cw)} × ${inFrac(s.ch)}` : cust ? '<span class="tbc">enter both sizes</span>' : ''}</b></div>
@@ -556,7 +555,7 @@
   function stepGlass() {
     const s = sel(), sl = sidesN(), tr = s.transom;
     const tiles = (key) => row(key, CONFIG.glassStyles, (g, i, on) =>
-      `<button type="button" class="gt ${on ? 'on' : ''}" data-i="${i}">${glassTile(i)}<span>${g.label}</span>${g.add ? `<em>+${fmt(g.add)}${key === 'glassSL' && sl > 1 ? ' / lite' : ''}</em>` : '<em>included</em>'}</button>`);
+      `<button type="button" class="gt ${on ? 'on' : ''}" data-i="${i}">${glassTile(i)}<span>${g.label}</span></button>`);
     paneR.innerHTML = `
       <h2>Step 7 · Glass</h2>
       <p class="sub">Decorative glass for your sidelites and transom — the door slab itself stays solid.</p>
@@ -581,7 +580,7 @@
       <p class="sub">How your door locks and what you pull on.</p>
       <div class="cards" data-key="hw">
         ${HW.types.map((t, i) => `<button type="button" class="card ${st.picked.hw && s.hw === i ? 'on' : ''}" data-i="${i}">
-          <h3>${t.label}${t.placeholder ? ' <span class="ph">options TBD</span>' : ''}</h3><p>${t.desc}</p>${t.add ? `<em class="add">+${fmt(t.add)}</em>` : ''}
+          <h3>${t.label}${t.placeholder ? ' <span class="ph">options TBD</span>' : ''}</h3><p>${t.desc}</p>
         </button>`).join('')}
       </div>
       ${st.picked.hw && k === 'mp' ? grp('mpStyle', 'Multipoint handle style', btns('mpStyle', HW.mpStyles)) : ''}
@@ -652,7 +651,7 @@
           <h3>${o.label}</h3><p>${o.desc}</p>
         </button>`).join('')}
       </div>
-      ${hasTrim ? grp('trimFinish', 'Trim finish <small>· adders are estimates</small>', btns('trimFinish', T.finishes, priced)) : ''}
+      ${hasTrim ? grp('trimFinish', 'Trim finish', btns('trimFinish', T.finishes)) : ''}
       ${hasTrim && st.picked.trimFinish ? grp('trimStyle', 'Style <span class="ph">placeholder range</span>', btns('trimStyle', T.styles)) : ''}
       ${hasTrim && st.picked.trimFinish ? grp('trimSize', 'Casing width <span class="ph">placeholder range</span>', btns('trimSize', T.sizes)) : ''}
       ${hasTrim ? `<p class="note">Style and casing-width options are placeholders — exact trim profiles and pricing are confirmed on your quote.</p>` : ''}`;
