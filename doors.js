@@ -580,6 +580,10 @@ function glassDefs(uid) {
       <stop offset="0" stop-color="#e6eef0"/><stop offset=".34" stop-color="#c3d0d3"/>
       <stop offset=".5" stop-color="#aebfc4"/><stop offset=".78" stop-color="#bcc9cc"/><stop offset="1" stop-color="#d3dbdc"/>
     </linearGradient>
+    <linearGradient id="glcl-${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f8f9"/><stop offset=".4" stop-color="#e6edef"/>
+      <stop offset=".62" stop-color="#dbe4e7"/><stop offset="1" stop-color="#ecf1f2"/>
+    </linearGradient>
     <linearGradient id="gldk-${uid}" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#454f52"/><stop offset=".42" stop-color="#272d2f"/>
       <stop offset=".6" stop-color="#1f2426"/><stop offset="1" stop-color="#343d3f"/>
@@ -588,12 +592,32 @@ function glassDefs(uid) {
 function glassFill(tint, uid) {
   if (!tint) return null;
   const dark = tint === 'tint' || tint === 'privacy' || tint === 'iron';
-  return `url(#${dark ? 'gldk' : 'gl'}-${uid})`;
+  return `url(#${dark ? 'gldk' : tint === 'clear' ? 'glcl' : 'gl'}-${uid})`;
+}
+/* Obscurity demo: an interior plant behind every lite — crisp through clear
+   glass, a soft shadow through frost, gone behind dark tints. */
+function obscurityBackdrop(x, y, w, h, blur, opac, cid) {
+  const u = Math.min(w * 1.1, h * 0.52);
+  const cx = x + w * 0.5, base = y + h + 2;
+  const tips = [[-0.36, 0.55], [-0.18, 0.8], [0.02, 1], [0.2, 0.82], [0.38, 0.58]];
+  let leaves = '';
+  tips.forEach(([fx, fy], i) => {
+    const tx = cx + fx * Math.min(w, u), ty = base - u * fy, lw = Math.max(3, w * 0.055);
+    leaves += `<path d="M${cx} ${base} Q ${tx - lw} ${(base + ty) / 2} ${tx} ${ty} Q ${tx + lw} ${(base + ty) / 2 + 4} ${cx} ${base} Z" fill="${i % 2 ? '#47613f' : '#39512f'}"/>`;
+  });
+  return `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>
+    ${blur ? `<filter id="pb-${cid}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${blur}"/></filter>` : ''}
+    <g clip-path="url(#${cid})"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#edeee8"/>
+    <g opacity="${opac}"${blur ? ` filter="url(#pb-${cid})"` : ''}>${leaves}</g></g>`;
 }
 /* Realistic-ish glazing: sky-reflection gradient + diagonal sheen, with
    frosted/reeded texture for etched glass and a dark gradient for tints. */
 function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (!tint) return '';
+  const cidP = `gp-${uid}-${Math.round(x)}-${Math.round(y)}`;
+  const OB = { clear: [0, 0.9], etch: [3, 0.75], 'frost-border': [2.5, 0.8], niagara: [3.5, 0.6],
+    tint: [1.5, 0.5], privacy: [4, 0.45], iron: [1.5, 0.5] }[tint] || [2.5, 0.7];
+  const prelude = obscurityBackdrop(x, y, w, h, OB[0], OB[1], cidP);
   // real product art for styles that have it (tall panel art for sidelites,
   // a wide/tileable crop for transoms and thumbnails)
   const art = {
@@ -602,9 +626,8 @@ function glassPanel(x, y, w, h, tint, uid, mullions) {
   }[tint];
   if (art) {
     const pick = h >= w * 2 ? art.sl : art.wide;
-    const cid = `ng-${uid}-${Math.round(x)}-${Math.round(y)}`;
-    return `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>
-      <g clip-path="url(#${cid})"><image href="${pick[0]}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${pick[1]}"/></g>
+    return `${prelude}
+      <g clip-path="url(#${cidP})"><image href="${pick[0]}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="${pick[1]}" opacity="0.9"/></g>
       <rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1"/>
       <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
   }
@@ -612,9 +635,10 @@ function glassPanel(x, y, w, h, tint, uid, mullions) {
   if (tint === 'frost-border') {
     const b = Math.min(w, h) < 24 ? 3 : 6;   // ≈1" at unit scale
     const cid = `fb-${uid}-${Math.round(x)}-${Math.round(y)}`;
-    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#gl-${uid})"/>
+    return `${prelude}
+      <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#glcl-${uid})" fill-opacity="0.3"/>
       <clipPath id="${cid}"><rect x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}"/></clipPath>
-      <g clip-path="url(#${cid})"><image href="images/glass/sandblast-tr.jpg" x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" preserveAspectRatio="xMidYMid slice"/></g>
+      <g clip-path="url(#${cid})"><image href="images/glass/sandblast-tr.jpg" x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" preserveAspectRatio="xMidYMid slice" opacity="0.9"/></g>
       <rect x="${x+b}" y="${y+b}" width="${w-2*b}" height="${h-2*b}" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/>
       <rect x="${x+1.5}" y="${y+1.5}" width="${w-3}" height="${h-3}" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1"/>
       <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="2"/>`;
@@ -625,13 +649,16 @@ function glassPanel(x, y, w, h, tint, uid, mullions) {
   // tiny deterministic PRNG so textures are stable across re-renders
   let _r = (x * 7919 + y * 104729 + w * 31) % 233280;
   const rnd = () => (_r = (_r * 9301 + 49297) % 233280) / 233280;
-  let s = '';
-  // base glass
-  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${dark ? 'gldk' : 'gl'}-${uid})"/>`;
-  // diagonal specular sheen (skip on heavy frost so it stays soft)
+  let s = prelude;
+  // base glass — transparency varies by style so the plant reads through
+  const baseOp = tint === 'clear' ? 0.22 : dark ? 0.92 : frost ? 0.5 : 0.62;
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${glassFill(tint, uid)}" fill-opacity="${baseOp}"/>`;
+  // diagonal specular sheen (skip on heavy frost so it stays soft; crisp on clear)
   if (!frost) {
-    s += `<polygon points="${x},${y+h*0.6} ${x+w*0.52},${y} ${x+w*0.76},${y} ${x},${y+h*0.9}" fill="rgba(255,255,255,${dark ? 0.13 : 0.24})"/>`;
-    s += `<polygon points="${x+w*0.72},${y} ${x+w*0.9},${y} ${x},${y+h} ${x},${y+h*0.94}" fill="rgba(255,255,255,${dark ? 0.05 : 0.1})"/>`;
+    const a1 = dark ? 0.13 : tint === 'clear' ? 0.5 : 0.24;
+    const a2 = dark ? 0.05 : tint === 'clear' ? 0.2 : 0.1;
+    s += `<polygon points="${x},${y+h*0.6} ${x+w*0.52},${y} ${x+w*0.76},${y} ${x},${y+h*0.9}" fill="rgba(255,255,255,${a1})"/>`;
+    s += `<polygon points="${x+w*0.72},${y} ${x+w*0.9},${y} ${x},${y+h} ${x},${y+h*0.94}" fill="rgba(255,255,255,${a2})"/>`;
   }
   // frosted / acid-etch: translucent obscuring layer + fine reeded streaks
   if (frost) {
