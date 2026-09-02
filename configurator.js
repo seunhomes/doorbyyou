@@ -163,7 +163,7 @@
     // installed brickmould stands 1" proud per side: +2" width, +1" height
     const bm = (CONFIG.brickmould[s.brickmould] || {}).on ? 1 : 0;
     const w2 = w + bm * 2;
-    const h = slabH + 2.75 + bm + (s.transom ? (trT.arch ? Math.min(w / 2, 30) : 16) : 0);
+    const h = slabH + 2.75 + bm + (s.transom ? (trT.arch ? Math.min(w / 2, 30) : trT.seg ? 18 : 16) : 0);
     return { w: w2, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
@@ -468,7 +468,7 @@
         <b>Your glass sizes</b>
         <span>Slab: ${wIn}" × ${hIn}"</span>
         ${sl ? `<span>Sidelite glass: ≈ 8" × ${slGlassH}" ${sl > 1 ? '(×2)' : ''}</span>` : ''}
-        ${s.transom ? `<span>Transom glass: ≈ ${unitW - 8}" × ${CONFIG.transoms[s.transom].arch ? '16' : '12'}"</span>` : ''}
+        ${s.transom ? `<span>Transom glass: ≈ ${unitW - 8}" × ${CONFIG.transoms[s.transom].arch ? '16' : CONFIG.transoms[s.transom].seg ? '14' : '12'}"</span>` : ''}
         <em>Approximate — exact glass sizes are confirmed on your shop drawing.</em>
       </div>
       <div class="size-help">Not sure which size? <a href="Measuring Guide.html">Read the measuring guide →</a></div>`;
@@ -484,7 +484,7 @@
       const doorW = W - bm2 * 2 - cfg.sides * 14.75;
       st.sel.customSize = true;
       st.sel.cw = Math.round((cfg.dbl ? (doorW - 2.25) / 2 : doorW - 1.5) * 8) / 8;
-      st.sel.ch = Math.round((H - 2.75 - bm2 - (sel().transom ? (tr.arch ? Math.min(W / 2, 30) : 16) : 0)) * 8) / 8;
+      st.sel.ch = Math.round((H - 2.75 - bm2 - (sel().transom ? (tr.arch ? Math.min(W / 2, 30) : tr.seg ? 18 : 16) : 0)) * 8) / 8;
       paintPreview(); paintSteps(); updateNav(); syncURL();
     };
     ['ofW', 'ofH'].forEach((id) => {
