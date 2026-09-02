@@ -612,12 +612,14 @@
         ? grp('tLever', 'Interior T-lever', btns('tLever', HW.tLevers), 'tlever') : ''}
       ${st.picked.hw && k === 'ball' ? grp('dbShape', 'Deadbolt', btns('dbShape', HW.dbShapes)) : ''}
       ${st.picked.hw && k === 'ball' && st.picked.dbShape ? grp('dbColor', 'Deadbolt colour', swBtns('dbColor', HW.dbColors)) : ''}
-      ${st.picked.hw && k === 'digital' ? `<div class="empty-note">We’ll confirm keypad / smart-lock models with you on the quote — the prep is included in this build.</div>` : ''}
+      ${st.picked.hw && k === 'digital' ? `<div class="empty-note">Powered by the <a href="https://tedee.com/shop/" target="_blank" rel="noopener">Tedee GO smart lock</a> — unlock by phone, keypad or auto-unlock. We prep the door; the lock clicks on in minutes.</div>` : ''}
       ${st.picked.hw && k === 'none' ? `<div class="empty-note">Prep only · double bore. The slab arrives ready for the hardware you supply.</div>` : ''}`;
     bindRows();
     bindCards('hw', () => {
       // switching package invalidates the sub-choices — make them re-choose
       ['mpStyle', 'barSize', 'barColor', 'tLever', 'dbShape', 'dbColor'].forEach(k2 => delete st.picked[k2]);
+      // Tedee smart lock: show them the real product alongside the render
+      if (hwKey() === 'digital') window.open('https://tedee.com/shop/', '_blank', 'noopener');
     });
   }
 

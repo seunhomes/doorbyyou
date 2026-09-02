@@ -431,7 +431,7 @@ const CONFIG = {
     types: [
       { label: 'Multipoint lock', key: 'mp', add: 0, desc: '3-point locking — hooks top & bottom plus centre latch. Choose pull bar, gripset or lever.' },
       { label: 'Pull bar + ball catch', key: 'ball', add: 0, desc: 'Fixed pull bar with a ball catch (non-multipoint). Pairs with a deadbolt.' },
-      { label: 'Digital / smart lock', key: 'digital', add: 350, placeholder: true, desc: 'Keypad / smart entry. Model options coming soon — we’ll confirm on your quote.' },
+      { label: 'Tedee GO smart lock', key: 'digital', add: 350, desc: 'Keyless entry — unlock by phone, keypad or auto-unlock. Tedee GO on the interior cylinder.' },
       { label: 'No hardware', key: 'none', add: 0, desc: 'Prep only · double bore. Bring your own hardware.' },
     ],
     mpStyles: [
@@ -856,6 +856,15 @@ function unitSVG(door, sel, opts) {
   const slabY = topY + (hasSL ? FR : 0);
   const totalH = slabY + DHu;   // open threshold — no bottom rail under the slab
 
+  /* interior casing (the Trim step) — shows on the interior view only */
+  const trimOn = interiorView && sel && sel.trim === 1;
+  const trimW = trimOn ? Math.round([2.75, 3.5, 4.25][sel.trimSize || 0] * PPI) : 0;
+  const trimStained = trimOn && sel.trimFinish === 1;
+  const slabStainTint = finishTint(finKey);
+  const trimNeedsTex = trimOn && trimStained && !frameWood;
+  const trimFill = !trimOn ? null : !trimStained ? frameColor
+    : (frameWood ? frameFill : `url(#ttex-${uid})`);
+
   const faceGrad = `<linearGradient id="face-${uid}" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${st[0]}"/><stop offset=".42" stop-color="${st[1]}"/>
       <stop offset=".72" stop-color="${st[2]}"/><stop offset="1" stop-color="${st[3]}"/></linearGradient>`;
@@ -888,7 +897,8 @@ function unitSVG(door, sel, opts) {
       <circle cx="${cx}" cy="${DHu / 2 - 60}" r="1.3" fill="rgba(255,255,255,.35)"/>
       <circle cx="${cx}" cy="${DHu / 2 + 40}" r="1.3" fill="rgba(255,255,255,.35)"/>`;
     const lever = (cy, col) => rose(cy, col, false, 11) +
-      `<rect x="${dir > 0 ? cx - 3 : cx - 33 + 3}" y="${cy - 3.5}" width="33" height="7" rx="3.5" fill="${col}" ${edge}/>`;
+      `<rect x="${dir > 0 ? cx - 3 : cx - 38 + 3}" y="${cy - 4}" width="38" height="8" rx="4" fill="${col}" stroke="rgba(0,0,0,.4)" stroke-width="1.2"/>
+       <rect x="${dir > 0 ? cx - 1 : cx - 36 + 3}" y="${cy - 3}" width="34" height="2.2" rx="1.1" fill="rgba(255,255,255,.35)"/>`;
     const bar = (col) => {
       const L = barIn * inch, y0 = DHu / 2 - L / 2;
       return `<circle cx="${cx}" cy="${y0 + L * .12}" r="4.5" fill="rgba(0,0,0,.3)"/>
@@ -906,13 +916,20 @@ function unitSVG(door, sel, opts) {
     if (interiorView) {
       if (hwType === 'ball') return bar(barCol) + thumbturn(dbY, dbCol, dbSquare, dir * 15);
       if (hwType === 'mp' && mpStyle === 'bar') {
-        // T-lever drives the multipoint from inside
-        return thumbturn(DHu / 2 - 46, barCol, tSquare) + rose(DHu / 2, barCol, tSquare, 10) +
-          `<rect x="${cx - 13}" y="${DHu / 2 - 13}" width="26" height="6" rx="3" fill="${barCol}" ${edge}/>
-           <rect x="${cx - 3}" y="${DHu / 2 - 10}" width="6" height="24" rx="3" fill="${barCol}" ${edge}/>`;
+        // interior pull bar + T-lever beside it to drive the multipoint
+        const ox = dir * 16;
+        return bar(barCol) + thumbturn(DHu / 2 - 46, barCol, tSquare, ox) + rose(DHu / 2, barCol, tSquare, 10, ox) +
+          `<rect x="${cx + ox - 13}" y="${DHu / 2 - 13}" width="26" height="6" rx="3" fill="${barCol}" ${edge}/>
+           <rect x="${cx + ox - 3}" y="${DHu / 2 - 10}" width="6" height="24" rx="3" fill="${barCol}" ${edge}/>`;
       }
-      if (hwType === 'digital') return `<rect x="${cx - 9}" y="${DHu / 2 - 62}" width="18" height="40" rx="4" fill="#2a2a2c" ${edge}/>` +
-        thumbturn(DHu / 2 - 52, '#3a3a3d', false) + lever(DHu / 2, handleColor);
+      if (hwType === 'digital') {
+        // Tedee GO: black knurled cylinder puck on the interior, above the lever
+        const py = DHu / 2 - 40;
+        return `<circle cx="${cx}" cy="${py}" r="9.5" fill="#141416" ${edge}/>
+          <circle cx="${cx}" cy="${py}" r="6.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+          <circle cx="${cx}" cy="${py}" r="3" fill="#2c2c2f"/>
+          <rect x="${cx - 1}" y="${py - 6.5}" width="2" height="5" rx="1" fill="rgba(255,255,255,.5)"/>` + lever(DHu / 2, handleColor);
+      }
       if (mpStyle === 'grip') {
         // interior of the handleset: same plate, lever, thumbturn above
         return gripPlate() + thumbturn(DHu / 2 - 38, handleColor, false) +
@@ -922,12 +939,13 @@ function unitSVG(door, sel, opts) {
     }
     if (hwType === 'ball') return bar(barCol) + rose(dbY, dbCol, dbSquare, 10, dir * 15) + keyway(dbY, dir * 15);
     if (hwType === 'digital') {
-      const ky = DHu / 2 - 60;
-      const dots = [0, 1, 2].map(r => [0, 1, 2].map(c =>
-        `<circle cx="${cx - 5 + c * 5}" cy="${ky + 8 + r * 6}" r="1.3" fill="rgba(255,255,255,.75)"/>`).join('')).join('');
-      return `<rect x="${cx - 10}" y="${ky}" width="20" height="34" rx="4" fill="#2a2a2c" ${edge}/>${dots}
-        <rect x="${cx - 6}" y="${ky + 26}" width="12" height="3.5" rx="1.75" fill="rgba(255,255,255,.3)"/>` +
-        lever(DHu / 2, handleColor);
+      // exterior: Tedee keypad (slim pill, round backlit buttons) + cylinder + lever
+      const ky = DHu / 2 - 74;
+      let dots = '';
+      for (let i = 0; i < 5; i++) dots += `<circle cx="${cx - 2.6}" cy="${ky + 8 + i * 6}" r="1.6" fill="rgba(255,255,255,.8)"/>
+        <circle cx="${cx + 2.6}" cy="${ky + 8 + i * 6}" r="1.6" fill="rgba(255,255,255,.8)"/>`;
+      return `<rect x="${cx - 6.5}" y="${ky}" width="13" height="40" rx="6.5" fill="#1d1d1f" ${edge}/>${dots}` +
+        keyway(DHu / 2 - 24) + lever(DHu / 2, handleColor);
     }
     if (mpStyle === 'grip') {
       // multipoint handleset per the real set: tall escutcheon plate, straight
@@ -1024,7 +1042,13 @@ function unitSVG(door, sel, opts) {
 
   /* dimension callouts (configurator live preview)
      opts.dims = {w, roW, h, roH, door?, sl?} display strings */
-  let dims = '', vy = trH ? -24 : -14, vw = totalW + 40, vh = totalH + 34;
+  let dims = '', vx = -20, vy = trH ? -24 : -14, vw = totalW + 40, vh = totalH + 34;
+  if (trimOn) {   // widen the canvas so the casing band isn't clipped
+    vx = -trimW - 8;
+    vw = totalW + (trimW + 8) * 2;
+    vy = Math.min(vy, -trimW - 8);
+    vh = totalH + trimW + 42;
+  }
   if (opts.dims) {
     const D = opts.dims;
     const fx0 = hasSL ? 0 : doorX - 12, fx1 = hasSL ? totalW : doorX + DWd + 12;
@@ -1059,7 +1083,7 @@ function unitSVG(door, sel, opts) {
     vw += 60;
   }
   return `
-  <svg class="door-svg unit" viewBox="-20 ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <svg class="door-svg unit" viewBox="${vx} ${vy} ${vw} ${vh}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     ${dims}
     <defs>${faceGrad}${glassDefs(uid)}
       <linearGradient id="floor-${uid}" x1="0" y1="0" x2="0" y2="1">
@@ -1068,7 +1092,13 @@ function unitSVG(door, sel, opts) {
         <g style="isolation:isolate"><rect width="${totalW + 48}" height="${totalH + 60}" fill="${fTint.color}"/>
         <image href="${skinHref}" width="${totalW + 48}" height="${totalH + 60}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${(parseFloat(fTint.lvl) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/></g>
       </pattern>` : ''}
+      ${trimNeedsTex && slabStainTint ? `<pattern id="ttex-${uid}" patternUnits="userSpaceOnUse" x="${-trimW - 6}" y="${-trimW - 6}" width="${totalW + trimW * 2 + 12}" height="${totalH + trimW + 12}">
+        <g style="isolation:isolate"><rect width="${totalW + trimW * 2 + 12}" height="${totalH + trimW + 12}" fill="${slabStainTint.color}"/>
+        <image href="${skinHref}" width="${totalW + trimW * 2 + 12}" height="${totalH + trimW + 12}" preserveAspectRatio="xMidYMid slice" style="filter:grayscale(1) brightness(${(parseFloat(slabStainTint.lvl) * skinLevel).toFixed(3)}) contrast(${skinContrast});mix-blend-mode:luminosity"/></g>
+      </pattern>` : ''}
     </defs>
+    ${trimOn ? `<rect x="${-trimW}" y="${-trimW}" width="${totalW + trimW * 2}" height="${totalH + trimW}" fill="${trimFill}" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/>
+    <rect x="${-trimW + 3}" y="${-trimW + 3}" width="${totalW + trimW * 2 - 6}" height="${totalH + trimW - 3}" fill="none" stroke="rgba(0,0,0,.1)"/>` : ''}
     ${brick ? `<rect x="-14" y="${trH && (tr.arch || tr.seg) ? trH - 4 : -8}" width="${totalW+28}" height="${(trH && (tr.arch || tr.seg) ? totalH - trH + 4 : totalH) + 16}" rx="3" fill="${frameFill}" stroke="rgba(0,0,0,.22)" stroke-width="2"/>` : ''}
     ${frames}
     <g transform="translate(${doorX}, ${slabY})">
