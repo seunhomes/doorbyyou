@@ -346,7 +346,6 @@ const CONFIG = {
     { label: 'None',        add: 0,   h: 0 },
     { label: 'Rectangular', add: 500, h: 14 },
     { label: 'Semi-circle', add: 500, h: 18, arch: true },
-    { label: 'Segmental',   add: 500, h: 16, seg: true },
   ],
   hinges: [
     { label: 'Satin Nickel', add: 0,   swatch: '#b9bcc0' },

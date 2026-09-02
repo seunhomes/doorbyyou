@@ -159,8 +159,8 @@
     const slW = 14.75;                                            // sidelite incl. frame
     const w = doorW + cfg.sides * slW;
     // shop-confirmed: overall frame height = slab + 2-3/4" (81-3/4" / 97-3/4")
-    const h = slabH + 2.75 + (s.transom
-      ? (CONFIG.transoms[s.transom].arch ? Math.min(w / 2, 30) : CONFIG.transoms[s.transom].seg ? 18 : 16) : 0);
+    const trT = CONFIG.transoms[s.transom] || {};
+    const h = slabH + 2.75 + (s.transom ? (trT.arch ? Math.min(w / 2, 30) : 16) : 0);
     return { w: w, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
@@ -266,7 +266,7 @@
       case 'config': return CONFIG.configurations[s.config].label
         + (sidesN() === 1 && st.picked.slSide ? ` · sidelite ${s.slSide === 1 ? 'right' : 'left'}` : '');
       case 'slSide': return CONFIG.slSides[s.slSide || 0].label;
-      case 'transom': return CONFIG.transoms[s.transom].label;
+      case 'transom': return (CONFIG.transoms[s.transom] || CONFIG.transoms[0]).label;
       case 'slabW': return customOK() ? `Custom ${inFrac(s.cw)}` : CONFIG.slabWidths[s.slabW].label;
       case 'height': return customOK() ? `Custom ${inFrac(s.ch)}` : CONFIG.slabHeights[s.height].label;
       case 'frameFinish': return CONFIG.frameFinishes[s.frameFinish].label;
