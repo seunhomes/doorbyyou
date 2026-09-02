@@ -160,8 +160,11 @@
     const w = doorW + cfg.sides * slW;
     // shop-confirmed: overall frame height = slab + 2-3/4" (81-3/4" / 97-3/4")
     const trT = CONFIG.transoms[s.transom] || {};
-    const h = slabH + 2.75 + (s.transom ? (trT.arch ? Math.min(w / 2, 30) : 16) : 0);
-    return { w: w, h: h, doorW: doorW, slW: slW };
+    // installed brickmould stands 1" proud per side: +2" width, +1" height
+    const bm = (CONFIG.brickmould[s.brickmould] || {}).on ? 1 : 0;
+    const w2 = w + bm * 2;
+    const h = slabH + 2.75 + bm + (s.transom ? (trT.arch ? Math.min(w / 2, 30) : 16) : 0);
+    return { w: w2, h: h, doorW: doorW, slW: slW };
   }
   // unit / rough-opening measurements from the current selection
   function computeDims() {
@@ -477,10 +480,11 @@
       const H = parseFloat(paneR.querySelector('#ofH').value);
       if (isNaN(W) || isNaN(H)) return;
       const cfg = CONFIG.configurations[sel().config], tr = CONFIG.transoms[sel().transom] || {};
-      const doorW = W - cfg.sides * 14.75;
+      const bm2 = (CONFIG.brickmould[sel().brickmould] || {}).on ? 1 : 0;
+      const doorW = W - bm2 * 2 - cfg.sides * 14.75;
       st.sel.customSize = true;
       st.sel.cw = Math.round((cfg.dbl ? (doorW - 2.25) / 2 : doorW - 1.5) * 8) / 8;
-      st.sel.ch = Math.round((H - 2.75 - (sel().transom ? (tr.arch ? Math.min(W / 2, 30) : tr.seg ? 18 : 16) : 0)) * 8) / 8;
+      st.sel.ch = Math.round((H - 2.75 - bm2 - (sel().transom ? (tr.arch ? Math.min(W / 2, 30) : 16) : 0)) * 8) / 8;
       paintPreview(); paintSteps(); updateNav(); syncURL();
     };
     ['ofW', 'ofH'].forEach((id) => {
